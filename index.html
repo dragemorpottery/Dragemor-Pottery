@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Dragemor Pottery | Drachenfeuer und Lederwind
+    </title>
+
+    <meta
+        name="description"
+        content="Dragemor Pottery – handgemachte Keramik und Lederarbeiten. Drachenfeuer und Lederwind. Einzigartige Handarbeit mit Seele."
+    >
+
+    <style>
+
+        /* ========================================
+           GRUNDEINSTELLUNGEN
+        ======================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Georgia, "Times New Roman", serif;
+            background: #120f0c;
+            color: #eee7dc;
+            line-height: 1.7;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        /* ========================================
+           HEADER
+        ======================================== */
+
+        header {
+            background: rgba(12, 10, 8, 0.97);
+            border-bottom: 1px solid #4b3926;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90px;
+            margin: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+        }
+
+        .brand-text h1 {
+            color: #c99b5b;
+            font-size: 1.25rem;
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            color: #d6c6b1;
+            font-size: 0.85rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #e9dfd1;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #c99b5b;
+        }
+
+
+        /* ========================================
+           HERO
+        ======================================== */
+
+        .hero {
+            min-height: 90vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 80px 20px;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #302318 0%,
+                    #17120e 45%,
+                    #0c0907 100%
+                );
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .hero-logo {
+            width: 190px;
+            height: 190px;
+
+            object-fit: contain;
+
+            margin: 0 auto 25px;
+        }
+
+        .hero h2 {
+            color: #c99b5b;
+
+            font-size: clamp(
+                2.4rem,
+                7vw,
+                5rem
+            );
+
+            margin-bottom: 8px;
+        }
+
+        .hero h3 {
+            color: #eee7dc;
+
+            font-size: clamp(
+                1.2rem,
+                3vw,
+                2rem
+            );
+
+            font-weight: normal;
+
+            margin-bottom: 25px;
+        }
+
+        .hero p {
+            max-width: 720px;
+            margin: auto;
+
+            color: #cfc1b0;
+
+            font-size: 1.1rem;
+        }
+
+        .hero-buttons {
+            margin-top: 35px;
+
+            display: flex;
+            justify-content: center;
+
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+
+        .button {
+            display: inline-block;
+
+            padding: 12px 25px;
+
+            border: 1px solid #c99b5b;
+            border-radius: 30px;
+
+            color: #c99b5b;
+
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #c99b5b;
+            color: #120f0c;
+        }
+
+        .button-filled {
+            background: #c99b5b;
+            color: #120f0c;
+        }
+
+        .button-filled:hover {
+            background: #e0b87a;
+        }
+
+
+        /* ========================================
+           ALLGEMEINE SECTIONS
+        ======================================== */
+
+        section {
+            padding: 90px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 55px;
+        }
+
+        .section-title h2 {
+            color: #c99b5b;
+
+            font-size: 2.6rem;
+
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            max-width: 720px;
+
+            margin: auto;
+
+            color: #bcae9e;
+        }
+
+
+        /* ========================================
+           KERAMIK
+        ======================================== */
+
+        .keramik {
+            background: #18130f;
+        }
+
+        .hinweis {
+            max-width: 850px;
+
+            margin: -25px auto 55px;
+
+            padding: 20px 25px;
+
+            background: #211a14;
+
+            border: 1px solid #493824;
+            border-radius: 14px;
+
+            text-align: center;
+
+            color: #cdbfae;
+        }
+
+        .hinweis strong {
+            color: #c99b5b;
+        }
+
+
+        /* Herstellung */
+
+        .herstellung {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 0;
+
+            margin-bottom: 70px;
+
+            background: #211a14;
+
+            border: 1px solid #493824;
+            border-radius: 18px;
+
+            overflow: hidden;
+        }
+
+        .herstellung-bild {
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .herstellung-bild img {
+            width: 100%;
+            height: 430px;
+
+            object-fit: cover;
+
+            transition: transform 0.5s;
+        }
+
+        .herstellung-bild:hover img {
+            transform: scale(1.04);
+        }
+
+        .herstellung-text {
+            padding: 45px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .kleine-ueberschrift {
+            color: #c99b5b;
+
+            text-transform: uppercase;
+
+            letter-spacing: 2px;
+
+            font-size: 0.8rem;
+        }
+
+        .herstellung-text h3 {
+            color: #f0e6d8;
+
+            font-size: 2rem;
+
+            margin: 12px 0 20px;
+        }
+
+        .herstellung-text p {
+            color: #c8b9a7;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* Keramik Galerie */
+
+        .galerie {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 25px;
+        }
+
+        .galerie-card {
+            background: #211a14;
+
+            border: 1px solid #493824;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+        }
+
+        .galerie-card .bild-container {
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .galerie-card img {
+            width: 100%;
+            height: 350px;
+
+            object-fit: cover;
+
+            transition: transform 0.5s;
+        }
+
+        .galerie-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .galerie-text {
+            padding: 25px;
+        }
+
+        .galerie-text h3 {
+            color: #c99b5b;
+
+            font-size: 1.5rem;
+
+            margin-bottom: 8px;
+        }
+
+        .galerie-text p {
+            color: #c5b7a5;
+        }
+
+        .beispiel-label {
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 5px 12px;
+
+            border: 1px solid #665039;
+
+            border-radius: 20px;
+
+            color: #bda27e;
+
+            font-size: 0.78rem;
+        }
+
+
+        /* ========================================
+           LEDER
+        ======================================== */
+
+        .leder {
+            background: #120f0c;
+        }
+
+        .leder-intro {
+            max-width: 800px;
+
+            margin: 0 auto 50px;
+
+            text-align: center;
+        }
+
+        .leder-intro p {
+            color: #c8b9a7;
+        }
+
+        .leder-hauptbild {
+            max-width: 850px;
+
+            margin: 0 auto 35px;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            border: 1px solid #493824;
+
+            cursor: pointer;
+        }
+
+        .leder-hauptbild img {
+            width: 100%;
+            height: 230px;
+
+            object-fit: contain;
+
+            transition: transform 0.5s;
+        }
+
+        .leder-hauptbild:hover img {
+            transform: scale(1.03);
+        }
+
+        .leder-label {
+            text-align: center;
+
+            color: #c99b5b;
+
+            font-size: 1.5rem;
+
+            margin-bottom: 35px;
+        }
+
+        .leder-galerie {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 15px;
+        }
+
+        .leder-galerie-item {
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            border: 1px solid #3e3022;
+
+            cursor: pointer;
+        }
+
+        .leder-galerie-item img {
+            width: 100%;
+            height: 230px;
+
+            object-fit: contain;
+            
+            background: #120f0c;
+
+            transition: transform 0.5s;
+        }
+
+        .leder-galerie-item:hover img {
+            transform: scale(1.06);
+        }
+
+
+        /* ========================================
+           MÄRKTE
+        ======================================== */
+
+        .maerkte {
+            background: #18130f;
+        }
+
+        .markt-text {
+            max-width: 750px;
+
+            margin: 0 auto 50px;
+
+            text-align: center;
+        }
+
+        .markt-text p {
+            color: #c8b9a7;
+        }
+
+        .markt-galerie {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+        .markt-bild {
+            overflow: hidden;
+
+            border-radius: 15px;
+
+            border: 1px solid #493824;
+
+            cursor: pointer;
+        }
+
+        .markt-bild img {
+            width: 100%;
+            height: 300px;
+
+            object-fit: cover;
+
+            transition: transform 0.5s;
+        }
+
+        .markt-bild:hover img {
+            transform: scale(1.05);
+        }
+
+        .naechster-markt {
+            max-width: 650px;
+
+            margin: 50px auto 0;
+
+            padding: 25px;
+
+            text-align: center;
+
+            border: 1px solid #493824;
+
+            border-radius: 15px;
+
+            background: #211a14;
+        }
+
+        .naechster-markt h3 {
+            color: #c99b5b;
+
+            margin-bottom: 8px;
+        }
+
+        .naechster-markt p {
+            color: #c6b8a6;
+        }
+
+
+        /* ========================================
+           ÜBER UNS
+        ======================================== */
+
+        .ueber-uns {
+            background: #120f0c;
+        }
+
+        .ueber-uns-content {
+            max-width: 850px;
+
+            margin: auto;
+
+            text-align: center;
+        }
+
+        .ueber-uns-content p {
+            color: #c8b9a7;
+
+            margin-bottom: 20px;
+
+            font-size: 1.05rem;
+        }
+
+        .zitat {
+            margin-top: 40px;
+
+            color: #c99b5b;
+
+            font-size: 1.5rem;
+
+            font-style: italic;
+        }
+
+
+        /* ========================================
+           KONTAKT
+        ======================================== */
+
+        .kontakt {
+            background: #18130f;
+        }
+
+        .kontakt-box {
+            max-width: 750px;
+
+            margin: auto;
+
+            padding: 45px;
+
+            background: #211a14;
+
+            border: 1px solid #493824;
+
+            border-radius: 18px;
+
+            text-align: center;
+        }
+
+        .kontakt-box h3 {
+            color: #c99b5b;
+
+            font-size: 2rem;
+
+            margin-bottom: 15px;
+        }
+
+        .kontakt-box > p {
+            color: #c8b9a7;
+
+            margin-bottom: 30px;
+        }
+
+        .kontakt-info {
+            margin-bottom: 35px;
+
+            color: #c8b9a7;
+        }
+
+        .kontakt-info strong {
+            color: #c99b5b;
+        }
+
+        .kontakt-info a {
+            color: #c99b5b;
+        }
+
+        .kontakt-info a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* ========================================
+           KONTAKTFORMULAR
+        ======================================== */
+
+        .kontakt-form {
+            text-align: left;
+
+            margin-top: 20px;
+        }
+
+        .form-gruppe {
+            margin-bottom: 20px;
+        }
+
+        .form-gruppe label {
+            display: block;
+
+            color: #d8c8b5;
+
+            margin-bottom: 7px;
+
+            font-size: 0.95rem;
+        }
+
+        .form-gruppe label span {
+            color: #c99b5b;
+        }
+
+        .form-gruppe input,
+        .form-gruppe textarea {
+            width: 100%;
+
+            padding: 14px 16px;
+
+            background: #120f0c;
+
+            color: #eee7dc;
+
+            border: 1px solid #59432c;
+
+            border-radius: 10px;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 1rem;
+
+            outline: none;
+
+            transition: 0.3s;
+        }
+
+        .form-gruppe input:focus,
+        .form-gruppe textarea:focus {
+            border-color: #c99b5b;
+
+            box-shadow:
+                0 0 0 2px rgba(
+                    201,
+                    155,
+                    91,
+                    0.12
+                );
+        }
+
+        .form-gruppe textarea {
+            min-height: 180px;
+
+            resize: vertical;
+        }
+
+        .formular-button {
+            width: 100%;
+
+            margin-top: 5px;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 1rem;
+        }
+
+        .formular-hinweis {
+            margin-top: 18px;
+
+            text-align: center;
+
+            color: #8f806f;
+
+            font-size: 0.78rem;
+
+            line-height: 1.5;
+        }
+
+
+        /* ========================================
+           RECHTLICHES
+        ======================================== */
+
+        .rechtliches {
+            background: #120f0c;
+
+            padding: 80px 0;
+        }
+
+        .rechtliches.datenschutz {
+            background: #18130f;
+        }
+
+        .rechtliches-box {
+            max-width: 900px;
+
+            margin: auto;
+
+            padding: 40px;
+
+            background: #211a14;
+
+            border: 1px solid #493824;
+
+            border-radius: 18px;
+        }
+
+        .rechtliches-box h2 {
+            color: #c99b5b;
+
+            font-size: 2.2rem;
+
+            margin-bottom: 25px;
+        }
+
+        .rechtliches-box h3 {
+            color: #d7c6b1;
+
+            font-size: 1.2rem;
+
+            margin-top: 28px;
+
+            margin-bottom: 8px;
+        }
+
+        .rechtliches-box p {
+            color: #c8b9a7;
+
+            margin-bottom: 15px;
+        }
+
+        .rechtliches-box a {
+            color: #c99b5b;
+        }
+
+        .rechtliches-box a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+
+        footer {
+            background: #0c0907;
+
+            border-top: 1px solid #3e3022;
+
+            text-align: center;
+
+            padding: 35px 20px;
+
+            color: #8f806f;
+
+            font-size: 0.9rem;
+        }
+
+        footer strong {
+            color: #c99b5b;
+        }
+
+        .footer-links {
+            margin: 18px 0;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #bda27e;
+
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #c99b5b;
+        }
+
+
+        /* ========================================
+           LIGHTBOX
+        ======================================== */
+
+        .lightbox {
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, 0.92);
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+
+            z-index: 5000;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 95vw;
+
+            max-height: 90vh;
+
+            object-fit: contain;
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 20px 80px rgba(
+                    0,
+                    0,
+                    0,
+                    0.8
+                );
+        }
+
+        .lightbox-close {
+            position: absolute;
+
+            top: 20px;
+
+            right: 30px;
+
+            font-size: 3rem;
+
+            color: white;
+
+            cursor: pointer;
+
+            line-height: 1;
+        }
+
+
+        /* ========================================
+           MOBILE
+        ======================================== */
+
+        @media (max-width: 900px) {
+
+            .nav-container {
+                flex-direction: column;
+
+                padding: 15px 0;
+            }
+
+            nav {
+                justify-content: center;
+
+                gap: 15px;
+            }
+
+            .herstellung {
+                grid-template-columns: 1fr;
+            }
+
+            .herstellung-bild img {
+                height: 350px;
+            }
+
+            .leder-galerie {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .markt-galerie {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            section {
+                padding: 65px 0;
+            }
+
+            .hero {
+                min-height: 80vh;
+
+                padding: 60px 20px;
+            }
+
+            .hero-logo {
+                width: 140px;
+                height: 140px;
+            }
+
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .herstellung-text {
+                padding: 30px;
+            }
+
+            .galerie {
+                grid-template-columns: 1fr;
+            }
+
+            .galerie-card img {
+                height: 300px;
+            }
+
+            .leder-hauptbild img {
+                height: 350px;
+            }
+
+            .leder-galerie {
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 10px;
+            }
+
+            .leder-galerie-item img {
+                height: 190px;
+            }
+
+            .kontakt-box {
+                padding: 30px 20px;
+            }
+
+            .rechtliches-box {
+                padding: 30px 20px;
+            }
+
+        }
+
+
+        @media (max-width: 400px) {
+
+            .brand-text h1 {
+                font-size: 1rem;
+            }
+
+            .brand-text p {
+                font-size: 0.75rem;
+            }
+
+            nav {
+                gap: 10px;
+            }
+
+            nav a {
+                font-size: 0.8rem;
+            }
+
+            .leder-galerie-item img {
+                height: 160px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     HEADER
+======================================== -->
+
+<header>
+
+    <div class="nav-container">
+
+        <a
+            href="#start"
+            class="brand"
+        >
+
+            <img
+                src="bilder/logo.png"
+                alt="Dragemor Pottery Logo"
+            >
+
+            <div class="brand-text">
+
+                <h1>
+                    Dragemor Pottery
+                </h1>
+
+                <p>
+                    Drachenfeuer und Lederwind
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <nav>
+
+            <a href="#start">
+                Startseite
+            </a>
+
+            <a href="#keramik">
+                Keramik
+            </a>
+
+            <a href="#leder">
+                Leder
+            </a>
+
+            <a href="#maerkte">
+                Märkte
+            </a>
+
+            <a href="#ueber-uns">
+                Über uns
+            </a>
+
+            <a href="#kontakt">
+                Kontakt
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<!-- ========================================
+     HERO
+======================================== -->
+
+<section
+    class="hero"
+    id="start"
+>
+
+    <div class="hero-content">
+
+        <img
+            src="bilder/logo.png"
+            alt="Dragemor Pottery"
+            class="hero-logo"
+        >
+
+        <h2>
+            Dragemor Pottery
+        </h2>
+
+        <h3>
+            Drachenfeuer und Lederwind
+        </h3>
+
+        <p>
+            Handgemachte Keramik und besondere Lederarbeiten –
+            mit Leidenschaft gefertigt, jedes Stück einzigartig.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a
+                href="#keramik"
+                class="button button-filled"
+            >
+                Keramik entdecken
+            </a>
+
+            <a
+                href="#leder"
+                class="button"
+            >
+                Lederarbeiten ansehen
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     KERAMIK
+======================================== -->
+
+<section
+    class="keramik"
+    id="keramik"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>
+                Unsere Keramik
+            </h2>
+
+            <p>
+                Einblicke in handgemachte Keramik,
+                Formen, Glasuren und den Entstehungsprozess.
+            </p>
+
+        </div>
+
+
+        <div class="hinweis">
+
+            <strong>
+                Hinweis:
+            </strong>
+
+            Die hier gezeigten Keramikstücke dienen derzeit
+            als Beispiele und zur Veranschaulichung unserer Arbeit.
+            Aktuell verfügbare Einzelstücke können später mit
+            eigenen Produktfotos ergänzt werden.
+
+        </div>
+
+
+        <!-- HERSTELLUNG -->
+
+        <div class="herstellung">
+
+            <div class="herstellung-bild">
+
+                <img
+                    src="bilder/keramik1.jpg"
+                    alt="Beispiel aus der Herstellung von handgemachter Keramik"
+                    onclick="openLightbox(this.src)"
+                >
+
+            </div>
+
+
+            <div class="herstellung-text">
+
+                <span class="kleine-ueberschrift">
+                    Einblick in die Herstellung
+                </span>
+
+                <h3>
+                    So entsteht unsere Keramik
+                </h3>
+
+                <p>
+                    Jedes Keramikstück entsteht Schritt für Schritt
+                    in sorgfältiger Handarbeit.
+                </p>
+
+                <p>
+                    Von der Formgebung über die Bearbeitung bis hin
+                    zur Glasur und zum Brennen steckt in jedem Stück
+                    viel Zeit, Erfahrung und Handarbeit.
+                </p>
+
+                <p>
+                    Der Kringel-Henkel-Becher ist hier ausschließlich
+                    als Anschauungsbild für den Herstellungsprozess
+                    zu sehen und stellt kein konkretes Verkaufsprodukt dar.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- KERAMIK-BEISPIELE -->
+
+        <div class="galerie">
+
+
+            <!-- BEISPIEL 1 -->
+
+            <div class="galerie-card">
+
+                <div class="bild-container">
+
+                    <img
+                        src="bilder/keramik2.jpg"
+                        alt="Nature Blue Cup – Beispiel für handgemachte Keramik"
+                        onclick="openLightbox(this.src)"
+                    >
+
+                </div>
+
+                <div class="galerie-text">
+
+                    <h3>
+                        Nature Blue Cup
+                    </h3>
+
+                    <p>
+                        Ein Beispiel für unsere handgemachte Keramik
+                        mit besonderen Farben und natürlicher Ausstrahlung.
+                    </p>
+
+                    <span class="beispiel-label">
+                        Beispielbild – kein konkretes Verkaufsangebot
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- BEISPIEL 2 -->
+
+            <div class="galerie-card">
+
+                <div class="bild-container">
+
+                    <img
+                        src="bilder/keramik3.jpg"
+                        alt="Beispiel für individuelle Keramikformen"
+                        onclick="openLightbox(this.src)"
+                    >
+
+                </div>
+
+                <div class="galerie-text">
+
+                    <h3>
+                        Einzigartige Formen
+                    </h3>
+
+                    <p>
+                        Formen, Farben und Oberflächen machen
+                        handgemachte Keramik zu besonderen Einzelstücken.
+                    </p>
+
+                    <span class="beispiel-label">
+                        Beispielbild – kein konkretes Verkaufsangebot
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     LEDER
+======================================== -->
+
+<section
+    class="leder"
+    id="leder"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>
+                Lederarbeiten
+            </h2>
+
+            <p>
+                Handgefertigte Lederarbeiten mit Charakter,
+                traditionellen Materialien und viel Liebe zum Detail.
+            </p>
+
+        </div>
+
+
+        <div class="leder-intro">
+
+            <p>
+                Die folgenden Bilder zeigen Beispiele unserer
+                bisherigen Arbeiten. Sie dienen zur Veranschaulichung
+                und sind nicht automatisch aktuell erhältlich.
+            </p>
+
+        </div>
+
+
+        <!-- HAUPTBILD -->
+
+        <div class="leder-hauptbild">
+
+            <img
+                src="bilder/leder-galerie-01.jpg"
+                alt="Beispiel einer handgefertigten Lederarbeit"
+                onclick="openLightbox(this.src)"
+            >
+
+        </div>
+
+
+        <div class="leder-label">
+            Beispiele unserer Lederarbeiten
+        </div>
+
+
+        <!-- LEDER GALERIE -->
+
+        <div class="leder-galerie">
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-02.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-03.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-04.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-05.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-06.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-07.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-08.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-09.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-10.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-11.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-12.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-13.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+            <div class="leder-galerie-item">
+                <img
+                    src="bilder/leder-galerie-14.jpg"
+                    alt="Lederarbeit Beispiel"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     MÄRKTE
+======================================== -->
+
+<section
+    class="maerkte"
+    id="maerkte"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>
+                Märkte & Veranstaltungen
+            </h2>
+
+            <p>
+                Besucht uns auf Märkten und Veranstaltungen
+                und erlebt unsere Arbeiten live.
+            </p>
+
+        </div>
+
+
+        <div class="markt-text">
+
+            <p>
+                Auf Märkten können unsere Arbeiten direkt angesehen
+                und besprochen werden. Hier zeigen wir Eindrücke
+                vergangener Veranstaltungen.
+            </p>
+
+        </div>
+
+
+        <div class="markt-galerie">
+
+
+            <div class="markt-bild">
+
+                <img
+                    src="bilder/markt1.jpg"
+                    alt="Dragemor Pottery auf einem Markt"
+                    onclick="openLightbox(this.src)"
+                >
+
+            </div>
+
+
+            <div class="markt-bild">
+
+                <img
+                    src="bilder/markt2.jpg"
+                    alt="Marktstand von Dragemor Pottery"
+                    onclick="openLightbox(this.src)"
+                >
+
+            </div>
+
+
+            <div class="markt-bild">
+
+                <img
+                    src="bilder/markt3.jpg"
+                    alt="Handwerk auf einem Markt"
+                    onclick="openLightbox(this.src)"
+                >
+
+            </div>
+
+
+        </div>
+
+
+        <div class="naechster-markt">
+
+            <h3>
+                Nächster Markt
+            </h3>
+
+            <p>
+                Termine und Veranstaltungen werden
+                hier bekannt gegeben.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     ÜBER UNS
+======================================== -->
+
+<section
+    class="ueber-uns"
+    id="ueber-uns"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>
+                Über uns
+            </h2>
+
+            <p>
+                Handwerk mit Seele.
+            </p>
+
+        </div>
+
+
+        <div class="ueber-uns-content">
+
+            <p>
+                Hinter Dragemor Pottery stehen die Freude am Handwerk
+                und die Leidenschaft für besondere Materialien.
+            </p>
+
+            <p>
+                Keramik und Leder werden von Hand bearbeitet und
+                erhalten dadurch ihren eigenen Charakter.
+            </p>
+
+            <p>
+                Kleine Unregelmäßigkeiten, individuelle Formen und
+                natürliche Strukturen sind dabei kein Fehler –
+                sondern Teil des Handwerks.
+            </p>
+
+            <div class="zitat">
+
+                „Handgemacht bedeutet,
+                dass kein Stück dem anderen gleicht.“
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     KONTAKT
+======================================== -->
+
+<section
+    class="kontakt"
+    id="kontakt"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>
+                Kontakt
+            </h2>
+
+            <p>
+                Du möchtest mehr über unsere Arbeiten erfahren?
+                Schreib uns gerne.
+            </p>
+
+        </div>
+
+
+        <div class="kontakt-box">
+
+
+            <h3>
+                Interesse an einem Stück?
+            </h3>
+
+
+            <p>
+                Da unsere Arbeiten teilweise als Einzelstücke
+                entstehen, lohnt sich eine direkte Anfrage.
+            </p>
+
+
+            <!-- KONTAKTINFORMATIONEN -->
+
+            <div class="kontakt-info">
+
+                <p>
+                    <strong>
+                        Franca Bennin
+                    </strong>
+                </p>
+
+                <p>
+                    Damm 1<br>
+                    24803 Tielen<br>
+                    Deutschland
+                </p>
+
+                <p>
+                    <a href="mailto:afspring23@gmail.com">
+                        afspring23@gmail.com
+                    </a>
+                </p>
+
+            </div>
+
+
+            <!-- KONTAKTFORMULAR -->
+
+            <form
+                class="kontakt-form"
+                onsubmit="sendContactForm(event)"
+            >
+
+
+                <div class="form-gruppe">
+
+                    <label for="name">
+                        Dein Name <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Dein Name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-gruppe">
+
+                    <label for="email">
+                        Deine E-Mail-Adresse <span>*</span>
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="deine@email.de"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-gruppe">
+
+                    <label for="betreff">
+                        Betreff
+                    </label>
+
+                    <input
+                        type="text"
+                        id="betreff"
+                        name="betreff"
+                        placeholder="Worum geht es?"
+                    >
+
+                </div>
+
+
+                <div class="form-gruppe">
+
+                    <label for="nachricht">
+                        Deine Nachricht <span>*</span>
+                    </label>
+
+                    <textarea
+                        id="nachricht"
+                        name="nachricht"
+                        placeholder="Schreib uns deine Nachricht..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="button button-filled formular-button"
+                >
+                    Nachricht senden
+                </button>
+
+
+                <p class="formular-hinweis">
+                    Deine Nachricht wird direkt über das Kontaktformular
+                    an Dragemor Pottery gesendet.
+                </p>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     IMPRESSUM
+======================================== -->
+
+<section
+    class="rechtliches"
+    id="impressum"
+>
+
+    <div class="container">
+
+        <div class="rechtliches-box">
+
+            <h2>
+                Impressum
+            </h2>
+
+
+            <h3>
+                Angaben gemäß § 5 DDG
+            </h3>
+
+
+            <p>
+                <strong>
+                    Dragemor Pottery
+                </strong>
+                <br>
+                Drachenfeuer und Lederwind
+                <br>
+                Keramik und Lederherstellung
+            </p>
+
+
+            <p>
+                Inhaberin: Franca Bennin
+            </p>
+
+
+            <p>
+                Damm 1<br>
+                24803 Tielen<br>
+                Deutschland
+            </p>
+
+
+            <h3>
+                Kontakt
+            </h3>
+
+
+            <p>
+                E-Mail:
+                <a href="mailto:afspring23@gmail.com">
+                    afspring23@gmail.com
+                </a>
+            </p>
+
+
+            <p>
+                Instagram:
+                <a
+                    href="https://www.instagram.com/dragemorpottery?stkn=dnZhdXJwaGVlajJr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    @dragemorpottery
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     DATENSCHUTZ
+======================================== -->
+
+<section
+    class="rechtliches datenschutz"
+    id="datenschutz"
+>
+
+    <div class="container">
+
+        <div class="rechtliches-box">
+
+            <h2>
+                Datenschutzerklärung
+            </h2>
+
+
+            <h3>
+                1. Allgemeine Hinweise
+            </h3>
+
+            <p>
+                Der Schutz deiner persönlichen Daten ist uns wichtig.
+                Wir behandeln personenbezogene Daten vertraulich
+                und entsprechend den gesetzlichen Datenschutzvorschriften.
+            </p>
+
+
+            <h3>
+                2. Verantwortliche Stelle
+            </h3>
+
+            <p>
+                Verantwortlich für die Verarbeitung personenbezogener
+                Daten auf dieser Website ist:
+            </p>
+
+            <p>
+                Franca Bennin<br>
+                Dragemor Pottery<br>
+                Drachenfeuer und Lederwind<br>
+                Damm 1<br>
+                24803 Tielen<br>
+                Deutschland
+            </p>
+
+
+            <p>
+                E-Mail:
+                <a href="mailto:afspring23@gmail.com">
+                    afspring23@gmail.com
+                </a>
+            </p>
+
+
+            <h3>
+                3. Kontaktaufnahme per E-Mail
+            </h3>
+
+            <p>
+                Wenn du uns per E-Mail kontaktierst, werden die von dir
+                übermittelten Angaben zur Bearbeitung deiner Anfrage
+                verarbeitet.
+            </p>
+
+            <p>
+                Die Verarbeitung erfolgt nur insoweit, wie dies zur
+                Bearbeitung und Beantwortung deiner Anfrage erforderlich ist.
+            </p>
+
+
+            <h3>
+                4. Kontaktformular
+            </h3>
+
+            <p>
+                Das Kontaktformular auf dieser Website öffnet beim
+                Absenden das E-Mail-Programm des Besuchers.
+                Die Nachricht wird anschließend über den vom Besucher
+                verwendeten E-Mail-Dienst versendet.
+            </p>
+
+            <p>
+                Es werden durch dieses Formular auf der Website selbst
+                keine Nachrichten gespeichert.
+            </p>
+
+
+            <h3>
+                5. Instagram
+            </h3>
+
+            <p>
+                Auf dieser Website befindet sich ein Link zu unserem
+                Instagram-Profil. Beim Anklicken des Links wird Instagram
+                aufgerufen. Für die Verarbeitung personenbezogener Daten
+                auf Instagram gelten die Datenschutzbestimmungen von Meta.
+            </p>
+
+
+            <h3>
+                6. Server-Log-Dateien
+            </h3>
+
+            <p>
+                Beim Aufruf einer Website können durch den jeweiligen
+                Hosting-Anbieter technisch notwendige Informationen
+                verarbeitet und in sogenannten Server-Log-Dateien
+                gespeichert werden.
+            </p>
+
+            <p>
+                Welche Daten dabei konkret verarbeitet werden und wie lange
+                diese gespeichert werden, hängt vom verwendeten
+                Hosting-Anbieter ab.
+            </p>
+
+
+            <h3>
+                7. Deine Rechte
+            </h3>
+
+            <p>
+                Du hast im Rahmen der gesetzlichen Vorschriften insbesondere
+                das Recht auf Auskunft, Berichtigung, Löschung,
+                Einschränkung der Verarbeitung und gegebenenfalls
+                Widerspruch gegen die Verarbeitung deiner personenbezogenen Daten.
+            </p>
+
+
+            <h3>
+                8. Aktualisierung
+            </h3>
+
+            <p>
+                Diese Datenschutzerklärung kann angepasst werden,
+                wenn sich die Website, verwendete Dienste oder gesetzliche
+                Anforderungen ändern.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================
+     FOOTER
+======================================== -->
+
+<footer>
+
+    <p>
+        <strong>
+            Dragemor Pottery
+        </strong>
+        · Drachenfeuer und Lederwind
+    </p>
+
+
+    <p>
+        Keramik und Lederherstellung
+    </p>
+
+
+    <div class="footer-links">
+
+        <a href="#impressum">
+            Impressum
+        </a>
+
+        <a href="#datenschutz">
+            Datenschutz
+        </a>
+
+        <a
+            href="https://www.instagram.com/dragemorpottery?stkn=dnZhdXJwaGVlajJr"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Instagram
+        </a>
+
+    </div>
+
+
+    <p>
+        © 2026 Dragemor Pottery – Alle Rechte vorbehalten
+    </p>
+
+</footer>
+
+
+<!-- ========================================
+     LIGHTBOX
+======================================== -->
+
+<div
+    class="lightbox"
+    id="lightbox"
+    onclick="closeLightbox()"
+>
+
+    <span
+        class="lightbox-close"
+        onclick="closeLightbox()"
+    >
+        &times;
+    </span>
+
+
+    <img
+        id="lightbox-image"
+        src=""
+        alt="Vergrößerte Ansicht"
+        onclick="event.stopPropagation()"
+    >
+
+</div>
+
+
+<!-- ========================================
+     JAVASCRIPT
+======================================== -->
+
+<script>
+
+
+    /* ========================================
+       LIGHTBOX
+    ======================================== */
+
+    function openLightbox(imageSrc) {
+
+        const lightbox =
+            document.getElementById("lightbox");
+
+        const image =
+            document.getElementById("lightbox-image");
+
+        image.src = imageSrc;
+
+        lightbox.classList.add("active");
+
+        document.body.style.overflow = "hidden";
+    }
+
+
+    function closeLightbox() {
+
+        const lightbox =
+            document.getElementById("lightbox");
+
+        const image =
+            document.getElementById("lightbox-image");
+
+        lightbox.classList.remove("active");
+
+        image.src = "";
+
+        document.body.style.overflow = "";
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Escape") {
+
+                closeLightbox();
+
+            }
+
+        }
+    );
+
+
+    /* ========================================
+       KONTAKTFORMULAR
+    ======================================== */
+
+    async function sendContactForm(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const button = form.querySelector("button[type='submit']");
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const betreff = document.getElementById("betreff").value.trim();
+        const nachricht = document.getElementById("nachricht").value.trim();
+
+        if (!name || !email || !nachricht) {
+            alert("Bitte fülle alle Pflichtfelder aus.");
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Nachricht wird gesendet...";
+
+        try {
+            const response = await fetch("/api/send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    betreff: betreff,
+                    nachricht: nachricht
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error ||
+                    "Die Nachricht konnte nicht gesendet werden."
+                );
+            }
+
+            alert(
+                "Vielen Dank!
+
+" +
+                "Deine Nachricht wurde erfolgreich gesendet."
+            );
+
+            form.reset();
+
+        } catch (error) {
+            console.error(error);
+
+            alert(
+                "Leider konnte die Nachricht nicht gesendet werden.
+
+" +
+                "Bitte versuche es später noch einmal."
+            );
+
+        } finally {
+            button.disabled = false;
+            button.textContent = "Nachricht senden";
+        }
+    }
+
+</script>
+
+
+</body>
+</html> 
