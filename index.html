@@ -378,6 +378,18 @@
             gap: 25px;
         }
 
+        .keramik-galerie { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; }
+
+        .keramik-galerie-item { overflow: hidden; border-radius: 12px; border: 1px solid #3e3022; background: #211a14; cursor: pointer; }
+
+        .keramik-galerie-item img { width: 100%; height: 240px; object-fit: cover; transition: transform 0.5s; }
+
+        .keramik-galerie-item:hover img { transform: scale(1.06); }
+
+        .keramik-galerie-titel { text-align: center; color: #c99b5b; font-size: 1.5rem; margin: 45px 0 10px; }
+
+        .keramik-galerie-text { text-align: center; color: #c8b9a7; margin-bottom: 20px; }
+
         .galerie-card {
             background: #211a14;
 
@@ -475,9 +487,9 @@
 
         .leder-hauptbild img {
             width: 100%;
-            height: 230px;
+            height: 500px;
 
-            object-fit: contain;
+            object-fit: cover;
 
             transition: transform 0.5s;
         }
@@ -518,9 +530,7 @@
             width: 100%;
             height: 230px;
 
-            object-fit: contain;
-            
-            background: #120f0c;
+            object-fit: cover;
 
             transition: transform 0.5s;
         }
@@ -990,6 +1000,10 @@
                     repeat(3, 1fr);
             }
 
+            .keramik-galerie {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
             .markt-galerie {
                 grid-template-columns: 1fr;
             }
@@ -1028,6 +1042,15 @@
 
             .galerie {
                 grid-template-columns: 1fr;
+            }
+
+            .keramik-galerie {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .keramik-galerie-item img {
+                height: 190px;
             }
 
             .galerie-card img {
@@ -1296,150 +1319,573 @@
         </div>
 
 
-        <!-- KERAMIK-BEISPIELE -->
+        <!-- VORHANDENE KERAMIK-BILDER -->
 
-       <!-- ========================================
-     KERAMIK GALERIE – 59 EINZELSTÜCKE
-======================================== -->
-
-<div class="galerie keramik-galerie">
-
-    <img src="bilder/Keramik01.jpg" alt="Keramik 01" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik02.jpg" alt="Keramik 02" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik03.jpg" alt="Keramik 03" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik04.jpg" alt="Keramik 04" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik05.jpg" alt="Keramik 05" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik06.jpg" alt="Keramik 06" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik07.jpg" alt="Keramik 07" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik08.jpg" alt="Keramik 08" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik09.jpg" alt="Keramik 09" onclick="openLightbox(this.src)" loading="lazy">
-
-    <img src="bilder/Keramik010.jpg" alt="Keramik 010" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik011.jpg" alt="Keramik 011" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik012.jpg" alt="Keramik 012" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik013.jpg" alt="Keramik 013" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik014.jpg" alt="Keramik 014" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik015.jpg" alt="Keramik 015" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik016.jpg" alt="Keramik 016" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik017.jpg" alt="Keramik 017" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik018.jpg" alt="Keramik 018" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik019.jpg" alt="Keramik 019" onclick="openLightbox(this.src)" loading="lazy">
-
-    <img src="bilder/Keramik020.jpg" alt="Keramik 020" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik021.jpg" alt="Keramik 021" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik022.jpg" alt="Keramik 022" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik023.jpg" alt="Keramik 023" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik024.jpg" alt="Keramik 024" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik025.jpg" alt="Keramik 025" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik026.jpg" alt="Keramik 026" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik027.jpg" alt="Keramik 027" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik028.jpg" alt="Keramik 028" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik029.jpg" alt="Keramik 029" onclick="openLightbox(this.src)" loading="lazy">
-
-    <img src="bilder/Keramik030.jpg" alt="Keramik 030" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik031.jpg" alt="Keramik 031" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik032.jpg" alt="Keramik 032" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik033.jpg" alt="Keramik 033" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik034.jpg" alt="Keramik 034" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik035.jpg" alt="Keramik 035" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik036.jpg" alt="Keramik 036" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik037.jpg" alt="Keramik 037" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik038.jpg" alt="Keramik 038" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik039.jpg" alt="Keramik 039" onclick="openLightbox(this.src)" loading="lazy">
-
-    <img src="bilder/Keramik040.jpg" alt="Keramik 040" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik041.jpg" alt="Keramik 041" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik042.jpg" alt="Keramik 042" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik043.jpg" alt="Keramik 043" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik044.jpg" alt="Keramik 044" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik045.jpg" alt="Keramik 045" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik046.jpg" alt="Keramik 046" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik047.jpg" alt="Keramik 047" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik048.jpg" alt="Keramik 048" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik049.jpg" alt="Keramik 049" onclick="openLightbox(this.src)" loading="lazy">
-
-    <img src="bilder/Keramik050.jpg" alt="Keramik 050" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik051.jpg" alt="Keramik 051" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik052.jpg" alt="Keramik 052" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik053.jpg" alt="Keramik 053" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik054.jpg" alt="Keramik 054" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik055.jpg" alt="Keramik 055" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik056.jpg" alt="Keramik 056" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik057.jpg" alt="Keramik 057" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik058.jpg" alt="Keramik 058" onclick="openLightbox(this.src)" loading="lazy">
-    <img src="bilder/Keramik059.jpg" alt="Keramik 059" onclick="openLightbox(this.src)" loading="lazy">
-
-</div> 
-
-
-
-            <!-- BEISPIEL 1 -->
-
+        <div class="galerie">
             <div class="galerie-card">
-
                 <div class="bild-container">
-
                     <img
                         src="bilder/keramik2.jpg"
-                        alt="Nature Blue Cup – Beispiel für handgemachte Keramik"
+                        alt="Nature Blue Cup – handgemachte Keramik"
                         onclick="openLightbox(this.src)"
                     >
-
                 </div>
-
                 <div class="galerie-text">
-
-                    <h3>
-                        Nature Blue Cup
-                    </h3>
-
-                    <p>
-                        Ein Beispiel für unsere handgemachte Keramik
-                        mit besonderen Farben und natürlicher Ausstrahlung.
-                    </p>
-
-                    <span class="beispiel-label">
-                        Beispielbild – kein konkretes Verkaufsangebot
-                    </span>
-
+                    <h3>Nature Blue Cup</h3>
+                    <p>Handgemachte Keramik mit besonderen Farben und natürlicher Ausstrahlung.</p>
                 </div>
-
             </div>
-
-
-            <!-- BEISPIEL 2 -->
 
             <div class="galerie-card">
-
                 <div class="bild-container">
-
                     <img
                         src="bilder/keramik3.jpg"
-                        alt="Beispiel für individuelle Keramikformen"
+                        alt="Individuelle Keramikformen"
                         onclick="openLightbox(this.src)"
                     >
-
                 </div>
-
                 <div class="galerie-text">
-
-                    <h3>
-                        Einzigartige Formen
-                    </h3>
-
-                    <p>
-                        Formen, Farben und Oberflächen machen
-                        handgemachte Keramik zu besonderen Einzelstücken.
-                    </p>
-
-                    <span class="beispiel-label">
-                        Beispielbild – kein konkretes Verkaufsangebot
-                    </span>
-
+                    <h3>Einzigartige Formen</h3>
+                    <p>Formen, Farben und Oberflächen machen handgemachte Keramik zu besonderen Einzelstücken.</p>
                 </div>
+            </div>
+        </div>
 
+        <h3 class="keramik-galerie-titel">Weitere Keramikstücke</h3>
+        <p class="keramik-galerie-text">Entdecke unsere handgefertigten Keramikstücke. Jedes Stück ist einzigartig und mit viel Liebe zum Detail entstanden.</p>
+
+        <div class="keramik-galerie">
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik01.jpg"
+                    alt="Handgemachte Keramik 1"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
             </div>
 
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik02.jpg"
+                    alt="Handgemachte Keramik 2"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik03.jpg"
+                    alt="Handgemachte Keramik 3"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik04.jpg"
+                    alt="Handgemachte Keramik 4"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik05.jpg"
+                    alt="Handgemachte Keramik 5"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik06.jpg"
+                    alt="Handgemachte Keramik 6"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik07.jpg"
+                    alt="Handgemachte Keramik 7"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik08.jpg"
+                    alt="Handgemachte Keramik 8"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik09.jpg"
+                    alt="Handgemachte Keramik 9"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik010.jpg"
+                    alt="Handgemachte Keramik 10"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik011.jpg"
+                    alt="Handgemachte Keramik 11"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik012.jpg"
+                    alt="Handgemachte Keramik 12"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik013.jpg"
+                    alt="Handgemachte Keramik 13"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik014.jpg"
+                    alt="Handgemachte Keramik 14"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik015.jpg"
+                    alt="Handgemachte Keramik 15"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik016.jpg"
+                    alt="Handgemachte Keramik 16"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik017.jpg"
+                    alt="Handgemachte Keramik 17"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik018.jpg"
+                    alt="Handgemachte Keramik 18"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik019.jpg"
+                    alt="Handgemachte Keramik 19"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik020.jpg"
+                    alt="Handgemachte Keramik 20"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik021.jpg"
+                    alt="Handgemachte Keramik 21"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik022.jpg"
+                    alt="Handgemachte Keramik 22"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik023.jpg"
+                    alt="Handgemachte Keramik 23"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik024.jpg"
+                    alt="Handgemachte Keramik 24"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik025.jpg"
+                    alt="Handgemachte Keramik 25"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik026.jpg"
+                    alt="Handgemachte Keramik 26"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik027.jpg"
+                    alt="Handgemachte Keramik 27"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik028.jpg"
+                    alt="Handgemachte Keramik 28"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik029.jpg"
+                    alt="Handgemachte Keramik 29"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik030.jpg"
+                    alt="Handgemachte Keramik 30"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik031.jpg"
+                    alt="Handgemachte Keramik 31"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik032.jpg"
+                    alt="Handgemachte Keramik 32"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik033.jpg"
+                    alt="Handgemachte Keramik 33"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik034.jpg"
+                    alt="Handgemachte Keramik 34"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik035.jpg"
+                    alt="Handgemachte Keramik 35"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik036.jpg"
+                    alt="Handgemachte Keramik 36"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik037.jpg"
+                    alt="Handgemachte Keramik 37"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik038.jpg"
+                    alt="Handgemachte Keramik 38"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik039.jpg"
+                    alt="Handgemachte Keramik 39"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik040.jpg"
+                    alt="Handgemachte Keramik 40"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik041.jpg"
+                    alt="Handgemachte Keramik 41"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik042.jpg"
+                    alt="Handgemachte Keramik 42"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik043.jpg"
+                    alt="Handgemachte Keramik 43"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik044.jpg"
+                    alt="Handgemachte Keramik 44"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik045.jpg"
+                    alt="Handgemachte Keramik 45"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik046.jpg"
+                    alt="Handgemachte Keramik 46"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik047.jpg"
+                    alt="Handgemachte Keramik 47"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik048.jpg"
+                    alt="Handgemachte Keramik 48"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik049.jpg"
+                    alt="Handgemachte Keramik 49"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik050.jpg"
+                    alt="Handgemachte Keramik 50"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik051.jpg"
+                    alt="Handgemachte Keramik 51"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik052.jpg"
+                    alt="Handgemachte Keramik 52"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik053.jpg"
+                    alt="Handgemachte Keramik 53"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik054.jpg"
+                    alt="Handgemachte Keramik 54"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik055.jpg"
+                    alt="Handgemachte Keramik 55"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik056.jpg"
+                    alt="Handgemachte Keramik 56"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik057.jpg"
+                    alt="Handgemachte Keramik 57"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik058.jpg"
+                    alt="Handgemachte Keramik 58"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
+
+            <div class="keramik-galerie-item">
+                <img
+                    src="bilder/Keramik059.jpg"
+                    alt="Handgemachte Keramik 59"
+                    loading="lazy"
+                    onclick="openLightbox(this.src)"
+                >
+            </div>
 
         </div>
 
@@ -1927,8 +2373,8 @@
 
 
                 <p class="formular-hinweis">
-                    Deine Nachricht wird direkt über das Kontaktformular
-                    an Dragemor Pottery gesendet.
+                    Beim Absenden wird dein E-Mail-Programm geöffnet
+                    und eine Nachricht an Dragemor Pottery vorbereitet.
                 </p>
 
 
@@ -2302,67 +2748,69 @@
        KONTAKTFORMULAR
     ======================================== */
 
-    async function sendContactForm(event) {
+    function sendContactForm(event) {
+
         event.preventDefault();
 
-        const form = event.target;
-        const button = form.querySelector("button[type='submit']");
 
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const betreff = document.getElementById("betreff").value.trim();
-        const nachricht = document.getElementById("nachricht").value.trim();
+        const name =
+            document.getElementById("name").value.trim();
 
-        if (!name || !email || !nachricht) {
-            alert("Bitte fülle alle Pflichtfelder aus.");
-            return;
-        }
+        const email =
+            document.getElementById("email").value.trim();
 
-        button.disabled = true;
-        button.textContent = "Nachricht wird gesendet...";
+        const betreff =
+            document.getElementById("betreff").value.trim();
 
-        try {
-            const response = await fetch("/api/send", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    betreff: betreff,
-                    nachricht: nachricht
-                })
-            });
+        const nachricht =
+            document.getElementById("nachricht").value.trim();
 
-            const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(
-                    data.error ||
-                    "Die Nachricht konnte nicht gesendet werden."
-                );
-            }
+        const emailAdresse =
+            "afspring23@gmail.com";
 
-            alert(
-                "Vielen Dank!\n\n" +
-                "Deine Nachricht wurde erfolgreich gesendet."
-            );
 
-            form.reset();
+        const emailBetreff =
+            betreff ||
+            "Anfrage über die Website";
 
-        } catch (error) {
-            console.error(error);
 
-            alert(
-                "Leider konnte die Nachricht nicht gesendet werden." +
-                "Bitte versuche es später noch einmal."
-            );
+        const emailText =
+            "Hallo Dragemor Pottery,%0D%0A%0D%0A" +
 
-        } finally {
-            button.disabled = false;
-            button.textContent = "Nachricht senden";
-        }
+            "Name: " +
+            encodeURIComponent(name) +
+
+            "%0D%0A" +
+
+            "E-Mail: " +
+            encodeURIComponent(email) +
+
+            "%0D%0A%0D%0A" +
+
+            "Nachricht:%0D%0A" +
+
+            encodeURIComponent(nachricht) +
+
+            "%0D%0A%0D%0A" +
+
+            "Viele Grüße%0D%0A" +
+
+            encodeURIComponent(name);
+
+
+        const mailtoLink =
+            "mailto:" +
+            emailAdresse +
+            "?subject=" +
+            encodeURIComponent(emailBetreff) +
+            "&body=" +
+            emailText;
+
+
+        window.location.href =
+            mailtoLink;
+
     }
 
 </script>
