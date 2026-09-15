@@ -21,8 +21,7 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: "Dragmor Pottery 
-          <kontakt@dragemor-pottery.de>",
+        from: "Dragmor Pottery<kontakt@dragemor-pottery.de>",
         to: ["afspring23@gmail.com"],
         reply_to: email,
         subject: betreff || "Neue Nachricht über Dragemor Pottery",
