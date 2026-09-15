@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
     if (!name || !email || !nachricht) {
       return res.status(400).json({
-        error: "Bitte alle Pflichtfelder ausfüllen."
+        error: "Bitte alle Pflichtfelder ausfÃ¼llen."
       });
     }
 
@@ -21,12 +21,13 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: "Dragemor Pottery <onboarding@resend.dev>",
+        from: "Dragmor Pottery 
+          <kontakt@dragemor-pottery.de>",
         to: ["afspring23@gmail.com"],
         reply_to: email,
-        subject: betreff || "Neue Nachricht über Dragemor Pottery",
+        subject: betreff || "Neue Nachricht Ã¼ber Dragemor Pottery",
         text:
-          `Neue Nachricht über die Website\n\n` +
+          `Neue Nachricht Ã¼ber die Website\n\n` +
           `Name: ${name}\n` +
           `E-Mail: ${email}\n` +
           `Betreff: ${betreff || "-"}\n\n` +
