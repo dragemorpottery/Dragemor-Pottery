@@ -1128,7 +1128,431 @@
 
         }
 
-    </style>
+    
+
+        /* ========================================
+           STARTSEITE – KOLLEKTIONS-BUTTONS
+        ======================================== */
+
+        .hero {
+            background:
+                radial-gradient(circle at 50% 15%, rgba(255,255,255,0.28), transparent 35%),
+                #a9b69b;
+            color: #1d241b;
+        }
+
+        .hero-logo {
+            width: min(280px, 70vw);
+            height: min(280px, 70vw);
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 18px 45px rgba(25, 31, 22, 0.28);
+            border: 3px solid rgba(201,155,91,0.9);
+        }
+
+        .hero h2 {
+            color: #273126;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+        }
+
+        .hero h3 {
+            color: #4a5544;
+        }
+
+        .hero p {
+            color: #34402f;
+        }
+
+        .start-kollektionen {
+            max-width: 1100px;
+            margin: 42px auto 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .start-card {
+            position: relative;
+            min-height: 285px;
+            overflow: hidden;
+            border-radius: 22px;
+            border: 2px solid rgba(201,155,91,0.9);
+            background: #253023;
+            box-shadow: 0 16px 35px rgba(25, 31, 22, 0.22);
+            color: #fff;
+            text-decoration: none;
+            isolation: isolate;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .start-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 42px rgba(25, 31, 22, 0.3);
+        }
+
+        .start-card-images {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .start-card.single-image .start-card-images {
+            grid-template-columns: 1fr;
+        }
+
+        .start-card-images img {
+            width: 100%;
+            height: 100%;
+            min-height: 285px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .start-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(to top, rgba(12,15,10,0.92), rgba(12,15,10,0.05) 70%);
+        }
+
+        .start-card-content {
+            position: absolute;
+            z-index: 2;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .start-card-content h4 {
+            margin: 0 0 5px;
+            color: #f7ead4;
+            font-size: 1.45rem;
+        }
+
+        .start-card-content span {
+            display: inline-block;
+            color: #f0d49e;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 800px) {
+            .start-kollektionen {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+            }
+        }
+
+
+        /* ========================================
+           SALBEIGRÜNER HINTERGRUND
+        ======================================== */
+
+        body {
+            background: #aebaa5;
+            color: #273126;
+        }
+
+        .keramik,
+        .leder,
+        .maerkte,
+        .ueber-uns,
+        .kontakt,
+        .rechtliches,
+        .rechtliches.datenschutz {
+            background: #aebaa5;
+        }
+
+        .section-title h2,
+        .keramik-galerie-titel,
+        .leder-label,
+        .naechster-markt h3,
+        .rechtliches-box h2,
+        .kontakt-box h3 {
+            color: #354333;
+        }
+
+        .section-title p,
+        .keramik-galerie-text,
+        .leder-intro p,
+        .markt-text p,
+        .ueber-uns-content p,
+        .kontakt-box > p,
+        .kontakt-info,
+        .rechtliches-box p {
+            color: #3d4939;
+        }
+
+        .hinweis,
+        .herstellung,
+        .galerie-card,
+        .keramik-galerie-item,
+        .naechster-markt,
+        .kontakt-box,
+        .rechtliches-box {
+            background: #e9eee5;
+            border-color: rgba(53,67,51,0.35);
+        }
+
+        .herstellung-text h3,
+        .galerie-text h3,
+        .rechtliches-box h3 {
+            color: #354333;
+        }
+
+        .herstellung-text p,
+        .galerie-text p {
+            color: #465342;
+        }
+
+        .zitat {
+            color: #354333;
+        }
+
+        .form-gruppe label {
+            color: #354333;
+        }
+
+        .form-gruppe input,
+        .form-gruppe textarea {
+            background: #f4f6f1;
+            color: #273126;
+            border-color: rgba(53,67,51,0.4);
+        }
+
+        footer {
+            background: #263025;
+        }
+
+    
+        .collection-hinweis {
+            text-align: center;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(233, 238, 229, 0.75);
+            border: 1px solid rgba(53,67,51,0.25);
+            border-radius: 18px;
+        }
+
+        .collection-button {
+            margin-top: 0.8rem;
+            padding: 0.85rem 1.4rem;
+            border: 1px solid #b28a4b;
+            border-radius: 999px;
+            background: #354333;
+            color: #f4ead8;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .herstellung-section {
+            background: #aebaa5;
+            padding: 70px 0;
+        }
+
+        .herstellung-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1050px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 22px;
+            border: 2px solid rgba(201,155,91,0.9);
+            background: #e9eee5;
+            text-decoration: none;
+            color: #273126;
+            box-shadow: 0 16px 35px rgba(25,31,22,0.18);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .herstellung-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 22px 42px rgba(25,31,22,0.25);
+        }
+
+        .herstellung-card-bild {
+            min-height: 360px;
+            overflow: hidden;
+        }
+
+        .herstellung-card-bild img {
+            width: 100%;
+            height: 100%;
+            min-height: 360px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .herstellung-card:hover img { transform: scale(1.04); }
+
+        .herstellung-card-text {
+            padding: 42px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .herstellung-card-text h3 {
+            color: #354333;
+            font-size: 2rem;
+            margin: 12px 0 18px;
+        }
+
+        .herstellung-card-text p {
+            color: #465342;
+            line-height: 1.7;
+        }
+
+        .herstellung-card-link,
+        .instagram-link {
+            margin-top: 20px;
+            color: #7d5d2e;
+            font-weight: bold;
+        }
+
+        .instagram-section {
+            background: #aebaa5;
+            padding: 30px 0 70px;
+        }
+
+        .instagram-card {
+            display: flex;
+            align-items: center;
+            gap: 35px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 28px 35px;
+            border-radius: 22px;
+            border: 2px solid rgba(201,155,91,0.9);
+            background: #e9eee5;
+            text-decoration: none;
+            color: #273126;
+            box-shadow: 0 16px 35px rgba(25,31,22,0.16);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .instagram-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 22px 42px rgba(25,31,22,0.24);
+        }
+
+        .instagram-card img {
+            width: 125px;
+            height: 125px;
+            object-fit: cover;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .instagram-card h2 {
+            margin: 6px 0 8px;
+            color: #354333;
+        }
+
+        .instagram-card p {
+            margin: 0;
+            color: #465342;
+            line-height: 1.6;
+        }
+
+        .collection-back {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10000;
+            padding: 0.72rem 1.05rem;
+            border: 1px solid #b28a4b;
+            border-radius: 999px;
+            background: #354333;
+            color: #f4ead8;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .collection-back:hover { background: #4b6048; }
+
+        .collection-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            display: none;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: rgba(18, 25, 17, 0.96);
+        }
+
+        .collection-modal.active { display: block; }
+
+        .collection-modal-inner {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3.5rem 0 2rem;
+        }
+
+        .collection-modal h2 {
+            margin: 0 0 1.5rem;
+            text-align: center;
+            color: #f4ead8;
+            font-family: Georgia, serif;
+        }
+
+        .collection-close {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 46px;
+            height: 46px;
+            border: 1px solid #b28a4b;
+            border-radius: 50%;
+            background: #354333;
+            color: #f4ead8;
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .collection-grid-item {
+            overflow: hidden;
+            border-radius: 14px;
+            background: #e9eee5;
+            border: 1px solid rgba(178,138,75,0.5);
+        }
+
+        .collection-grid-item img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        @media (max-width: 700px) {
+            .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+            .collection-modal { padding: 0.75rem; }
+            .collection-modal-inner { padding-top: 3.5rem; }
+        }
+
+        @media (max-width: 700px) {
+            .herstellung-card { grid-template-columns: 1fr; }
+            .herstellung-card-bild, .herstellung-card-bild img { min-height: 260px; height: 260px; }
+            .herstellung-card-text { padding: 28px 24px; }
+            .instagram-card { flex-direction: column; text-align: center; padding: 28px 22px; gap: 18px; }
+            .instagram-card img { width: 105px; height: 105px; }
+            .collection-back { top: 0.75rem; left: 0.75rem; font-size: 0.9rem; }
+            .collection-close { top: 0.75rem; right: 0.75rem; }
+        }
+</style>
 </head>
 
 
@@ -1174,11 +1598,11 @@
                 Startseite
             </a>
 
-            <a href="#keramik">
+            <a href="#keramik" onclick="openCollection('keramik'); return false;">
                 Keramik
             </a>
 
-            <a href="#leder">
+            <a href="#leder" onclick="openCollection('leder'); return false;">
                 Leder
             </a>
 
@@ -1214,928 +1638,55 @@
 
         <img
             src="bilder/logo.png"
-            alt="Dragemor Pottery"
+            alt="Dragemor Pottery – Drachenfeuer und Lederwind"
             class="hero-logo"
         >
 
         <h2>
-            Dragemor Pottery
+            Handwerk mit Seele
         </h2>
 
         <h3>
-            Drachenfeuer und Lederwind
+            KERAMIK &amp; LEDER
         </h3>
 
         <p>
-            Handgemachte Keramik und besondere Lederarbeiten –
-            mit Leidenschaft gefertigt, jedes Stück einzigartig.
+            Einzigartige Handarbeit mit Feuer, Erde und Leder –
+            jedes Stück mit Charakter und viel Leidenschaft gefertigt.
         </p>
 
-        <div class="hero-buttons">
+        <div class="start-kollektionen">
 
-            <a
-                href="#keramik"
-                class="button button-filled"
-            >
-                Keramik entdecken
+            <a href="#keramik" class="start-card" onclick="openCollection('keramik'); return false;">
+                <div class="start-card-images">
+                    <img src="bilder/keramik2.jpg" alt="Nature Blue Cup">
+                    <img src="bilder/keramik3.jpg" alt="Einzigartige Formen">
+                </div>
+                <div class="start-card-content">
+                    <h4>Keramik</h4>
+                    <span>Unsere einzigartigen Stücke entdecken →</span>
+                </div>
             </a>
 
-            <a
-                href="#leder"
-                class="button"
-            >
-                Lederarbeiten ansehen
+            <a href="#leder" class="start-card single-image" onclick="openCollection('leder'); return false;">
+                <div class="start-card-images">
+                    <img src="bilder/leder-galerie-01.jpg" alt="Handgefertigtes Lederarmband">
+                </div>
+                <div class="start-card-content">
+                    <h4>Leder</h4>
+                    <span>Handgefertigte Lederarbeiten entdecken →</span>
+                </div>
             </a>
 
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================
-     KERAMIK
-======================================== -->
-
-<section
-    class="keramik"
-    id="keramik"
->
-
-    <div class="container">
-
-        <div class="section-title">
-
-            <h2>
-                Unsere Keramik
-            </h2>
-
-            <p>
-                Einblicke in handgemachte Keramik,
-                Formen, Glasuren und den Entstehungsprozess.
-            </p>
-
-        </div>
-
-
-        <div class="hinweis">
-
-            <strong>
-                Hinweis:
-            </strong>
-
-            Die hier gezeigten Keramikstücke dienen derzeit
-            als Beispiele und zur Veranschaulichung unserer Arbeit.
-            Aktuell verfügbare Einzelstücke können später mit
-            eigenen Produktfotos ergänzt werden.
-
-        </div>
-
-
-        <!-- HERSTELLUNG -->
-
-        <div class="herstellung">
-
-            <div class="herstellung-bild">
-
-                <img
-                    src="bilder/keramik1.jpg"
-                    alt="Beispiel aus der Herstellung von handgemachter Keramik"
-                    onclick="openLightbox(this.src)"
-                >
-
-            </div>
-
-
-            <div class="herstellung-text">
-
-                <span class="kleine-ueberschrift">
-                    Einblick in die Herstellung
-                </span>
-
-                <h3>
-                    So entsteht unsere Keramik
-                </h3>
-
-                <p>
-                    Jedes Keramikstück entsteht Schritt für Schritt
-                    in sorgfältiger Handarbeit.
-                </p>
-
-                <p>
-                    Von der Formgebung über die Bearbeitung bis hin
-                    zur Glasur und zum Brennen steckt in jedem Stück
-                    viel Zeit, Erfahrung und Handarbeit.
-                </p>
-
-                <p>
-                    Der Kringel-Henkel-Becher ist hier ausschließlich
-                    als Anschauungsbild für den Herstellungsprozess
-                    zu sehen und stellt kein konkretes Verkaufsprodukt dar.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- VORHANDENE KERAMIK-BILDER -->
-
-        <div class="galerie">
-            <div class="galerie-card">
-                <div class="bild-container">
-                    <img
-                        src="bilder/keramik2.jpg"
-                        alt="Nature Blue Cup – handgemachte Keramik"
-                        onclick="openLightbox(this.src)"
-                    >
+            <a href="#maerkte" class="start-card single-image">
+                <div class="start-card-images">
+                    <img src="bilder/markt2.jpg" alt="Abendmarkt von Dragemor Pottery">
                 </div>
-                <div class="galerie-text">
-                    <h3>Nature Blue Cup</h3>
-                    <p>Handgemachte Keramik mit besonderen Farben und natürlicher Ausstrahlung.</p>
+                <div class="start-card-content">
+                    <h4>Termine Märkte</h4>
+                    <span>Termine und Eindrücke ansehen →</span>
                 </div>
-            </div>
-
-            <div class="galerie-card">
-                <div class="bild-container">
-                    <img
-                        src="bilder/keramik3.jpg"
-                        alt="Individuelle Keramikformen"
-                        onclick="openLightbox(this.src)"
-                    >
-                </div>
-                <div class="galerie-text">
-                    <h3>Einzigartige Formen</h3>
-                    <p>Formen, Farben und Oberflächen machen handgemachte Keramik zu besonderen Einzelstücken.</p>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="keramik-galerie-titel">Weitere Keramikstücke</h3>
-        <p class="keramik-galerie-text">Entdecke unsere handgefertigten Keramikstücke. Jedes Stück ist einzigartig und mit viel Liebe zum Detail entstanden.</p>
-
-        <div class="keramik-galerie">
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik01.jpg"
-                    alt="Handgemachte Keramik 1"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik02.jpg"
-                    alt="Handgemachte Keramik 2"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik03.jpg"
-                    alt="Handgemachte Keramik 3"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik04.jpg"
-                    alt="Handgemachte Keramik 4"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik05.jpg"
-                    alt="Handgemachte Keramik 5"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik06.jpg"
-                    alt="Handgemachte Keramik 6"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik07.jpg"
-                    alt="Handgemachte Keramik 7"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik08.jpg"
-                    alt="Handgemachte Keramik 8"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik09.jpg"
-                    alt="Handgemachte Keramik 9"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik010.jpg"
-                    alt="Handgemachte Keramik 10"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik011.jpg"
-                    alt="Handgemachte Keramik 11"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik012.jpg"
-                    alt="Handgemachte Keramik 12"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik013.jpg"
-                    alt="Handgemachte Keramik 13"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik014.jpg"
-                    alt="Handgemachte Keramik 14"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik015.jpg"
-                    alt="Handgemachte Keramik 15"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik016.jpg"
-                    alt="Handgemachte Keramik 16"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik017.jpg"
-                    alt="Handgemachte Keramik 17"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik018.jpg"
-                    alt="Handgemachte Keramik 18"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik019.jpg"
-                    alt="Handgemachte Keramik 19"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik020.jpg"
-                    alt="Handgemachte Keramik 20"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik021.jpg"
-                    alt="Handgemachte Keramik 21"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik022.jpg"
-                    alt="Handgemachte Keramik 22"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik023.jpg"
-                    alt="Handgemachte Keramik 23"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik024.jpg"
-                    alt="Handgemachte Keramik 24"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik025.jpg"
-                    alt="Handgemachte Keramik 25"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik026.jpg"
-                    alt="Handgemachte Keramik 26"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik027.jpg"
-                    alt="Handgemachte Keramik 27"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik028.jpg"
-                    alt="Handgemachte Keramik 28"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik029.jpg"
-                    alt="Handgemachte Keramik 29"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik030.jpg"
-                    alt="Handgemachte Keramik 30"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik031.jpg"
-                    alt="Handgemachte Keramik 31"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik032.jpg"
-                    alt="Handgemachte Keramik 32"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik033.jpg"
-                    alt="Handgemachte Keramik 33"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik034.jpg"
-                    alt="Handgemachte Keramik 34"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik035.jpg"
-                    alt="Handgemachte Keramik 35"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik036.jpg"
-                    alt="Handgemachte Keramik 36"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik037.jpg"
-                    alt="Handgemachte Keramik 37"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik038.jpg"
-                    alt="Handgemachte Keramik 38"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik039.jpg"
-                    alt="Handgemachte Keramik 39"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik040.jpg"
-                    alt="Handgemachte Keramik 40"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik041.jpg"
-                    alt="Handgemachte Keramik 41"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik042.jpg"
-                    alt="Handgemachte Keramik 42"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik043.jpg"
-                    alt="Handgemachte Keramik 43"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik044.jpg"
-                    alt="Handgemachte Keramik 44"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik045.jpg"
-                    alt="Handgemachte Keramik 45"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik046.jpg"
-                    alt="Handgemachte Keramik 46"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik047.jpg"
-                    alt="Handgemachte Keramik 47"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik048.jpg"
-                    alt="Handgemachte Keramik 48"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik049.jpg"
-                    alt="Handgemachte Keramik 49"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik050.jpg"
-                    alt="Handgemachte Keramik 50"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik051.jpg"
-                    alt="Handgemachte Keramik 51"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik052.jpg"
-                    alt="Handgemachte Keramik 52"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik053.jpg"
-                    alt="Handgemachte Keramik 53"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik054.jpg"
-                    alt="Handgemachte Keramik 54"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik055.jpg"
-                    alt="Handgemachte Keramik 55"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik056.jpg"
-                    alt="Handgemachte Keramik 56"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik057.jpg"
-                    alt="Handgemachte Keramik 57"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik058.jpg"
-                    alt="Handgemachte Keramik 58"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-            <div class="keramik-galerie-item">
-                <img
-                    src="bilder/Keramik059.jpg"
-                    alt="Handgemachte Keramik 59"
-                    loading="lazy"
-                    decoding="async"
-                    onclick="openLightbox(this.src)"
-                >
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================
-     LEDER
-======================================== -->
-
-<section
-    class="leder"
-    id="leder"
->
-
-    <div class="container">
-
-        <div class="section-title">
-
-            <h2>
-                Lederarbeiten
-            </h2>
-
-            <p>
-                Handgefertigte Lederarbeiten mit Charakter,
-                traditionellen Materialien und viel Liebe zum Detail.
-            </p>
-
-        </div>
-
-
-        <div class="leder-intro">
-
-            <p>
-                Die folgenden Bilder zeigen Beispiele unserer
-                bisherigen Arbeiten. Sie dienen zur Veranschaulichung
-                und sind nicht automatisch aktuell erhältlich.
-            </p>
-
-        </div>
-
-
-        <!-- HAUPTBILD -->
-
-        <div class="leder-hauptbild">
-
-            <img
-                src="bilder/leder-galerie-01.jpg"
-                alt="Beispiel einer handgefertigten Lederarbeit"
-                onclick="openLightbox(this.src)"
-            >
-
-        </div>
-
-
-        <div class="leder-label">
-            Beispiele unserer Lederarbeiten
-        </div>
-
-
-        <!-- LEDER GALERIE -->
-
-        <div class="leder-galerie">
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-02.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-03.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-04.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-05.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-06.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-07.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-08.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-09.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-10.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-11.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-12.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-13.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
-
-            <div class="leder-galerie-item">
-                <img
-                    src="bilder/leder-galerie-14.jpg"
-                    alt="Lederarbeit Beispiel" loading="lazy" decoding="async" onclick="openLightbox(this.src)"
-                >
-            </div>
-
+            </a>
 
         </div>
 
@@ -2244,6 +1795,37 @@
 
 
 <!-- ========================================
+     SO ENTSTEHT UNSERE KERAMIK
+======================================== -->
+
+<section class="herstellung-section" id="herstellung">
+    <div class="container">
+        <div class="section-title">
+            <h2>So entsteht unsere Keramik</h2>
+            <p>Ein Blick auf die handwerkliche Entstehung unserer Keramik.</p>
+        </div>
+
+        <a href="#" class="herstellung-card" onclick="openCollection('keramik'); return false;">
+            <div class="herstellung-card-bild">
+                <img
+                    src="bilder/keramik1.jpg"
+                    alt="Rohe Tasse mit Kringel-Henkel – So entsteht unsere Keramik"
+                    loading="lazy"
+                    decoding="async"
+                >
+            </div>
+            <div class="herstellung-card-text">
+                <span class="kleine-ueberschrift">Einblick in die Herstellung</span>
+                <h3>So entsteht unsere Keramik</h3>
+                <p>Von der Formgebung bis zum fertigen Einzelstück entsteht jedes Stück Schritt für Schritt in Handarbeit.</p>
+                <span class="herstellung-card-link">Keramik-Galerie öffnen →</span>
+            </div>
+        </a>
+    </div>
+</section>
+
+
+<!-- ========================================
      ÜBER UNS
 ======================================== -->
 
@@ -2296,6 +1878,30 @@
 
     </div>
 
+</section>
+
+
+<!-- ========================================
+     INSTAGRAM
+======================================== -->
+
+<section class="instagram-section">
+    <div class="container">
+        <a
+            class="instagram-card"
+            href="https://www.instagram.com/dragemorpottery/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            <img src="bilder/logo.png" alt="Dragemor Pottery Instagram">
+            <div>
+                <span class="kleine-ueberschrift">Folge uns</span>
+                <h2>Instagram</h2>
+                <p>Entdecke aktuelle Arbeiten, neue Stücke und Einblicke hinter die Kulissen.</p>
+                <span class="instagram-link">Zu Instagram →</span>
+            </div>
+        </a>
+    </div>
 </section>
 
 
@@ -2734,6 +2340,20 @@
 
 
 <!-- ========================================
+     KOLLEKTIONS-GALERIE
+======================================== -->
+
+<div id="collection-modal" class="collection-modal" onclick="closeCollection(event)">
+    <div class="collection-modal-inner" onclick="event.stopPropagation()">
+        <button class="collection-back" type="button" onclick="backToHome()">← Zur Hauptseite</button>
+        <button class="collection-close" type="button" onclick="closeCollection()" aria-label="Galerie schließen">&times;</button>
+        <h2 id="collection-title"></h2>
+        <div id="collection-grid" class="collection-grid"></div>
+    </div>
+</div>
+
+
+<!-- ========================================
      LIGHTBOX
 ======================================== -->
 
@@ -2767,6 +2387,74 @@
 
 <script>
 
+
+
+    /* ========================================
+       KOLLEKTIONS-GALERIEN
+       Bilder werden erst beim Öffnen geladen.
+    ======================================== */
+
+    const collectionImages = {
+        keramik: Array.from({ length: 59 }, (_, i) => {
+            const n = i + 1;
+            const filename = n < 10 ? `Keramik0${n}.jpg` : `Keramik0${n}.jpg`;
+            return `bilder/${filename}`;
+        }),
+        leder: Array.from({ length: 14 }, (_, i) =>
+            `bilder/leder-galerie-${String(i + 1).padStart(2, '0')}.jpg`
+        )
+    };
+
+    // Die ersten neun Keramikdateien heißen Keramik01.jpg bis Keramik09.jpg,
+    // danach Keramik010.jpg bis Keramik059.jpg.
+    collectionImages.keramik = Array.from({ length: 59 }, (_, i) => {
+        const n = i + 1;
+        return `bilder/Keramik${n < 10 ? `0${n}` : `0${n}`}.jpg`;
+    });
+
+    function openCollection(type) {
+        const modal = document.getElementById('collection-modal');
+        const title = document.getElementById('collection-title');
+        const grid = document.getElementById('collection-grid');
+        if (!modal || !title || !grid) return;
+
+        const isKeramik = type === 'keramik';
+        title.textContent = isKeramik ? 'Unsere Keramik' : 'Lederarbeiten';
+        grid.innerHTML = '';
+
+        collectionImages[type].forEach((src, index) => {
+            const item = document.createElement('div');
+            item.className = 'collection-grid-item';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = isKeramik ? `Handgemachte Keramik ${index + 1}` : `Handgefertigte Lederarbeit ${index + 1}`;
+            img.loading = index < 4 ? 'eager' : 'lazy';
+            img.decoding = 'async';
+            img.onclick = () => openLightbox(src);
+            item.appendChild(img);
+            grid.appendChild(item);
+        });
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function backToHome() {
+        closeCollection();
+        const start = document.getElementById('start');
+        if (start) {
+            setTimeout(() => start.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        }
+    }
+
+    function closeCollection(event) {
+        if (event && event.target !== event.currentTarget) return;
+        const modal = document.getElementById('collection-modal');
+        const grid = document.getElementById('collection-grid');
+        if (modal) modal.classList.remove('active');
+        if (grid) grid.innerHTML = '';
+        document.body.style.overflow = '';
+    }
 
     /* ========================================
        LIGHTBOX
