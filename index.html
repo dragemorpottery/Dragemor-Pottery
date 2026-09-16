@@ -1616,6 +1616,51 @@
             .ueber-uns-gemeinsam img { max-height: 520px; }
         }
 
+
+/* ========================================
+   SHOP – PRODUKTÜBERSICHT & PRODUKTDETAIL
+======================================== */
+.shop-tabs {
+    display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin:0 0 28px;
+}
+.shop-tab {
+    padding:10px 18px; border:1px solid #b28a4b; border-radius:999px;
+    background:#e9eee5; color:#354333; font:inherit; cursor:pointer;
+}
+.shop-tab.active { background:#354333; color:#f4ead8; }
+.product-card { cursor:pointer; transition:transform .25s, box-shadow .25s; }
+.product-card:hover { transform:translateY(-4px); box-shadow:0 14px 28px rgba(0,0,0,.18); }
+.product-card img { aspect-ratio:1/1; object-fit:cover; }
+.product-card-info { padding:14px 15px 16px; color:#354333; }
+.product-card-info h3 { font-size:1.08rem; margin:0 0 5px; }
+.product-card-info p { margin:0; color:#657060; font-size:.9rem; }
+.product-detail {
+    display:none; max-width:1000px; margin:0 auto; color:#273126;
+    background:#e9eee5; border:1px solid rgba(178,138,75,.55);
+    border-radius:22px; overflow:hidden;
+}
+.product-detail.active { display:grid; grid-template-columns:1.2fr .8fr; }
+.product-gallery-main img { width:100%; aspect-ratio:1/1; object-fit:cover; cursor:pointer; }
+.product-thumbs { display:flex; gap:8px; padding:10px; overflow-x:auto; background:#dfe6da; }
+.product-thumbs img { width:74px; height:74px; object-fit:cover; border-radius:9px; cursor:pointer; border:2px solid transparent; }
+.product-thumbs img.active { border-color:#b28a4b; }
+.product-info { padding:34px; }
+.product-info h3 { color:#354333; font-size:1.7rem; margin-bottom:8px; }
+.product-info .placeholder { color:#6c7768; margin:10px 0; }
+.product-back {
+    display:inline-block; margin-bottom:20px; border:0; background:none; color:#7d5d2e;
+    font:inherit; font-weight:bold; cursor:pointer; padding:0;
+}
+.product-status {
+    display:inline-block; margin-top:14px; padding:6px 11px; border-radius:999px;
+    background:#dfe6da; color:#52604f; font-size:.86rem;
+}
+@media(max-width:700px){
+    .product-detail.active { grid-template-columns:1fr; }
+    .product-info { padding:24px 20px 28px; }
+    .collection-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
 </style>
 </head>
 
@@ -1727,7 +1772,7 @@
                     <img src="bilder/keramik3.jpg" alt="Einzigartige Formen">
                 </div>
                 <div class="start-card-content">
-                    <h4>Keramik</h4>
+                    <h4>Shop · Keramik</h4>
                     <span>Unsere einzigartigen Stücke entdecken →</span>
                 </div>
             </a>
@@ -1737,7 +1782,7 @@
                     <img src="bilder/leder-galerie-01.jpg" alt="Handgefertigtes Lederarmband">
                 </div>
                 <div class="start-card-content">
-                    <h4>Leder</h4>
+                    <h4>Shop · Lederarbeiten</h4>
                     <span>Handgefertigte Lederarbeiten entdecken →</span>
                 </div>
             </a>
@@ -2393,15 +2438,37 @@
 
 
 <!-- ========================================
-     KOLLEKTIONS-GALERIE
+     SHOP
 ======================================== -->
-
 <div id="collection-modal" class="collection-modal" onclick="closeCollection(event)">
     <div class="collection-modal-inner" onclick="event.stopPropagation()">
         <button class="collection-back" type="button" onclick="backToHome()">← Zur Hauptseite</button>
-        <button class="collection-close" type="button" onclick="closeCollection()" aria-label="Galerie schließen">&times;</button>
-        <h2 id="collection-title"></h2>
+        <button class="collection-close" type="button" onclick="closeCollection()" aria-label="Shop schließen">&times;</button>
+        <h2 id="collection-title">Shop</h2>
+
+        <div id="shop-tabs" class="shop-tabs">
+            <button class="shop-tab" id="tab-keramik" onclick="renderCollection('keramik')">Keramik</button>
+            <button class="shop-tab" id="tab-leder" onclick="renderCollection('leder')">Lederarbeiten</button>
+        </div>
+
         <div id="collection-grid" class="collection-grid"></div>
+
+        <div id="product-detail" class="product-detail">
+            <div>
+                <div class="product-gallery-main">
+                    <img id="product-main-image" src="" alt="" onclick="openLightbox(this.src)">
+                </div>
+                <div id="product-thumbs" class="product-thumbs"></div>
+            </div>
+            <div class="product-info">
+                <button class="product-back" type="button" onclick="backToCollection()">← Zurück zur Übersicht</button>
+                <h3 id="product-name"></h3>
+                <p id="product-description" class="placeholder">Beschreibung folgt.</p>
+                <p id="product-measure" class="placeholder"></p>
+                <p id="product-price" class="placeholder">Preis: wird ergänzt</p>
+                <span class="product-status">Verfügbarkeit wird ergänzt</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -2443,71 +2510,177 @@
 
 
     /* ========================================
-       KOLLEKTIONS-GALERIEN
-       Bilder werden erst beim Öffnen geladen.
+       SHOP
+       Erste Nummer jeder Keramikgruppe = Hauptfoto.
     ======================================== */
 
-    const collectionImages = {
-        keramik: Array.from({ length: 59 }, (_, i) => {
-            const n = i + 1;
-            const filename = n < 10 ? `Keramik0${n}.jpg` : `Keramik0${n}.jpg`;
-            return `bilder/${filename}`;
-        }),
-        leder: Array.from({ length: 14 }, (_, i) =>
-            `bilder/leder-galerie-${String(i + 1).padStart(2, '0')}.jpg`
-        )
+    const shopProducts = {
+        keramik: [
+            ["01","02","03"],
+            ["04","05","06"],
+            ["08","07"],
+            ["09","010","011"],
+            ["013","012"],
+            ["014","016"],
+            ["017","018","019"],
+            ["020","021"],
+            ["022","023"],
+            ["024","025"],
+            ["029","027","026","028"],
+            ["030","031","032"],
+            ["033","034","035","036"],
+            ["037","038","039"],
+            ["040","041","042"],
+            ["043","044","045","046"],
+            ["047","048"],
+            ["050","049","051"],
+            ["052","053"],
+            ["054","055"],
+            ["056","057"],
+            ["058","059"]
+        ].map((nums, i) => ({
+            id: `keramik-${i + 1}`,
+            name: `Keramikstück ${i + 1}`,
+            images: nums.map(n => `bilder/Keramik${n}.jpg`),
+            description: "Beschreibung folgt.",
+            measure: "Volumen / Durchmesser: wird ergänzt",
+            price: "Preis: wird ergänzt"
+        })),
+        leder: Array.from({length:14}, (_, i) => {
+            const n = String(i + 1).padStart(2, "0");
+            return {
+                id: `leder-${i + 1}`,
+                name: `Lederarbeit ${i + 1}`,
+                images: [`bilder/leder-galerie-${n}.jpg`],
+                description: "Beschreibung folgt.",
+                measure: "Breite / Länge: wird ergänzt",
+                price: "Preis: wird ergänzt"
+            };
+        })
     };
 
-    // Die ersten neun Keramikdateien heißen Keramik01.jpg bis Keramik09.jpg,
-    // danach Keramik010.jpg bis Keramik059.jpg.
-    collectionImages.keramik = Array.from({ length: 59 }, (_, i) => {
-        const n = i + 1;
-        return `bilder/Keramik${n < 10 ? `0${n}` : `0${n}`}.jpg`;
-    });
+    let currentCollection = "keramik";
 
-    function openCollection(type) {
-        const modal = document.getElementById('collection-modal');
-        const title = document.getElementById('collection-title');
-        const grid = document.getElementById('collection-grid');
-        if (!modal || !title || !grid) return;
+    function openCollection(type = "keramik") {
+        const modal = document.getElementById("collection-modal");
+        if (!modal) return;
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+        renderCollection(type);
+        history.pushState({shop:true, type}, "", "#shop-" + type);
+    }
 
-        const isKeramik = type === 'keramik';
-        title.textContent = isKeramik ? 'Unsere Keramik' : 'Lederarbeiten';
-        grid.innerHTML = '';
+    function renderCollection(type) {
+        currentCollection = type;
+        const title = document.getElementById("collection-title");
+        const grid = document.getElementById("collection-grid");
+        const detail = document.getElementById("product-detail");
+        const tabs = document.getElementById("shop-tabs");
+        if (!grid || !detail) return;
 
-        collectionImages[type].forEach((src, index) => {
-            const item = document.createElement('div');
-            item.className = 'collection-grid-item';
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = isKeramik ? `Handgemachte Keramik ${index + 1}` : `Handgefertigte Lederarbeit ${index + 1}`;
-            img.loading = index < 4 ? 'eager' : 'lazy';
-            img.decoding = 'async';
-            img.onclick = () => openLightbox(src);
-            item.appendChild(img);
-            grid.appendChild(item);
+        title.textContent = type === "keramik" ? "Shop · Keramik" : "Shop · Lederarbeiten";
+        document.getElementById("tab-keramik")?.classList.toggle("active", type === "keramik");
+        document.getElementById("tab-leder")?.classList.toggle("active", type === "leder");
+        tabs.style.display = "flex";
+        detail.classList.remove("active");
+        grid.style.display = "grid";
+        grid.innerHTML = "";
+
+        shopProducts[type].forEach((product, index) => {
+            const card = document.createElement("article");
+            card.className = "collection-grid-item product-card";
+            card.onclick = () => openProduct(type, index);
+
+            const img = document.createElement("img");
+            img.src = product.images[0];
+            img.alt = product.name;
+            img.loading = index < 4 ? "eager" : "lazy";
+            img.decoding = "async";
+
+            const info = document.createElement("div");
+            info.className = "product-card-info";
+            info.innerHTML = `<h3>${product.name}</h3><p>Details ansehen →</p>`;
+
+            card.append(img, info);
+            grid.appendChild(card);
         });
+    }
 
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+    function openProduct(type, index, pushHistory = true) {
+        const product = shopProducts[type][index];
+        if (!product) return;
+        currentCollection = type;
+
+        const grid = document.getElementById("collection-grid");
+        const detail = document.getElementById("product-detail");
+        document.getElementById("shop-tabs").style.display = "none";
+        grid.style.display = "none";
+        detail.classList.add("active");
+
+        document.getElementById("collection-title").textContent =
+            type === "keramik" ? "Keramik" : "Lederarbeiten";
+        document.getElementById("product-name").textContent = product.name;
+        document.getElementById("product-description").textContent = product.description;
+        document.getElementById("product-measure").textContent = product.measure;
+        document.getElementById("product-price").textContent = product.price;
+
+        const main = document.getElementById("product-main-image");
+        main.src = product.images[0];
+        main.alt = product.name;
+
+        const thumbs = document.getElementById("product-thumbs");
+        thumbs.innerHTML = "";
+        product.images.forEach((src, i) => {
+            const thumb = document.createElement("img");
+            thumb.src = src;
+            thumb.alt = `${product.name} – Ansicht ${i + 1}`;
+            if (i === 0) thumb.classList.add("active");
+            thumb.onclick = () => {
+                main.src = src;
+                thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active"));
+                thumb.classList.add("active");
+            };
+            thumbs.appendChild(thumb);
+        });
+        thumbs.style.display = product.images.length > 1 ? "flex" : "none";
+
+        if (pushHistory) history.pushState({shop:true, type, index}, "", `#${product.id}`);
+    }
+
+    function backToCollection() {
+        renderCollection(currentCollection);
+        history.pushState({shop:true, type:currentCollection}, "", "#shop-" + currentCollection);
     }
 
     function backToHome() {
         closeCollection();
-        const start = document.getElementById('start');
-        if (start) {
-            setTimeout(() => start.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-        }
+        history.pushState({}, "", "#start");
+        const start = document.getElementById("start");
+        if (start) setTimeout(() => start.scrollIntoView({behavior:"smooth", block:"start"}), 50);
     }
 
     function closeCollection(event) {
         if (event && event.target !== event.currentTarget) return;
-        const modal = document.getElementById('collection-modal');
-        const grid = document.getElementById('collection-grid');
-        if (modal) modal.classList.remove('active');
-        if (grid) grid.innerHTML = '';
-        document.body.style.overflow = '';
+        const modal = document.getElementById("collection-modal");
+        const grid = document.getElementById("collection-grid");
+        const detail = document.getElementById("product-detail");
+        if (modal) modal.classList.remove("active");
+        if (grid) grid.innerHTML = "";
+        if (detail) detail.classList.remove("active");
+        document.body.style.overflow = "";
     }
+
+    window.addEventListener("popstate", (event) => {
+        const state = event.state;
+        if (!state || !state.shop) {
+            closeCollection();
+            return;
+        }
+        document.getElementById("collection-modal")?.classList.add("active");
+        document.body.style.overflow = "hidden";
+        if (Number.isInteger(state.index)) openProduct(state.type, state.index, false);
+        else renderCollection(state.type);
+    });
 
     /* ========================================
        LIGHTBOX
