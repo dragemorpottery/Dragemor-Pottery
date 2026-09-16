@@ -1552,6 +1552,70 @@
             .collection-back { top: 0.75rem; left: 0.75rem; font-size: 0.9rem; }
             .collection-close { top: 0.75rem; right: 0.75rem; }
         }
+
+        /* ========================================
+           ÜBER UNS – PERSONEN & GEMEINSAM
+        ======================================== */
+        .ueber-uns-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 30px;
+            max-width: 1050px;
+            margin: 0 auto 45px;
+        }
+        .ueber-uns-person {
+            overflow: hidden;
+            border-radius: 22px;
+            border: 2px solid rgba(201,155,91,0.9);
+            background: #e9eee5;
+            box-shadow: 0 16px 35px rgba(25,31,22,0.16);
+        }
+        .ueber-uns-person img {
+            width: 100%;
+            height: 440px;
+            object-fit: cover;
+        }
+        .ueber-uns-person-text { padding: 30px; }
+        .ueber-uns-person-text h3,
+        .ueber-uns-gemeinsam-text h3 {
+            color: #354333;
+            font-size: 1.65rem;
+            margin-bottom: 15px;
+        }
+        .ueber-uns-person-text p,
+        .ueber-uns-gemeinsam-text p {
+            color: #3d4939;
+            margin-bottom: 15px;
+        }
+        .ueber-uns-gemeinsam {
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 22px;
+            border: 2px solid rgba(201,155,91,0.9);
+            background: #e9eee5;
+            box-shadow: 0 16px 35px rgba(25,31,22,0.16);
+        }
+        .ueber-uns-gemeinsam img {
+            width: 100%;
+            max-height: 650px;
+            object-fit: cover;
+        }
+        .ueber-uns-gemeinsam-text {
+            padding: 32px;
+            text-align: center;
+        }
+        .ueber-uns-gemeinsam .zitat {
+            margin-top: 24px;
+            margin-bottom: 0;
+        }
+        @media (max-width: 700px) {
+            .ueber-uns-grid { grid-template-columns: 1fr; gap: 22px; }
+            .ueber-uns-person img { height: 390px; }
+            .ueber-uns-person-text, .ueber-uns-gemeinsam-text { padding: 24px 22px; }
+            .ueber-uns-gemeinsam img { max-height: 520px; }
+        }
+
 </style>
 </head>
 
@@ -1829,55 +1893,43 @@
      ÜBER UNS
 ======================================== -->
 
-<section
-    class="ueber-uns"
-    id="ueber-uns"
->
-
+<section class="ueber-uns" id="ueber-uns">
     <div class="container">
-
         <div class="section-title">
-
-            <h2>
-                Über uns
-            </h2>
-
-            <p>
-                Handgetöpferte Keramik mit Leidenschaft.
-            </p>
-
+            <h2>Über uns</h2>
+            <p>Zwei Handwerke, die mit Leidenschaft, natürlichen Materialien und viel Handarbeit entstehen.</p>
         </div>
 
+        <div class="ueber-uns-grid">
+            <article class="ueber-uns-person">
+                <img src="bilder/ueber-uns-franca.jpg" alt="Franca – Keramik bei Dragemor Pottery" loading="lazy" decoding="async">
+                <div class="ueber-uns-person-text">
+                    <h3>Franca – Keramik mit Seele</h3>
+                    <p>Keramik ist für mich mehr als nur ein Handwerk. Die Arbeit mit Erde, Wasser, Luft und Feuer verbindet mich mit der Natur und macht die Entstehung jedes Stückes zu einem besonderen Prozess.</p>
+                    <p>Mit viel Ruhe, Leidenschaft und Liebe zum Detail entstehen Stücke, die ihren ganz eigenen Charakter tragen. Natürliche Formen, Strukturen und kleine Unregelmäßigkeiten machen jedes Werk zu einem echten Unikat.</p>
+                </div>
+            </article>
 
-        <div class="ueber-uns-content">
+            <article class="ueber-uns-person">
+                <img src="bilder/ueber-uns-andre.jpg" alt="André – handgefertigte Lederarbeiten" loading="lazy" decoding="async">
+                <div class="ueber-uns-person-text">
+                    <h3>André – Leder mit Charakter</h3>
+                    <p>Leder ist ein lebendiges Material, das mit der Zeit seinen ganz eigenen Charakter entwickelt. In sorgfältiger Handarbeit verbinde ich traditionelle Techniken mit eigenen Ideen und schaffe daraus individuelle und langlebige Stücke.</p>
+                    <p>Dabei steht nicht die Perfektion einer Maschine im Vordergrund, sondern echtes Handwerk – jedes Stück darf seine eigene Geschichte erzählen.</p>
+                </div>
+            </article>
+        </div>
 
-            <p>
-                Wir arbeiten mit allen 4 Elementen und jedes einzelne Keramik Stück, 
-                wird durch Energie und Leidenschaft, zu einem ganz besonderen Prozess.
-            </p>
-
-            <p>
-                Keramik und Leder werden von Hand gefertigt und erhalten
-                von uns damit ihren persöhnlichen und einzigartigen Charakter.
-            </p>
-
-            <p>
-                Kleine Unregelmäßigkeiten, individuelle Formen und
-                natürliche Strukturen sind dabei kein Fehler –
-                sondern Teil unseres Handwerks.
-            </p>
-
-            <div class="zitat">
-
-                „Handgemacht bedeutet,
-                dass kein Stück dem anderen gleicht.“
-
+        <div class="ueber-uns-gemeinsam">
+            <img src="bilder/ueber-uns-gemeinsam.jpg" alt="Franca und André – gemeinsamer Marktauftritt" loading="lazy" decoding="async">
+            <div class="ueber-uns-gemeinsam-text">
+                <h3>Zwei Handwerke. Eine gemeinsame Leidenschaft.</h3>
+                <p>Keramik und Leder sind zwei unterschiedliche Handwerke, doch uns verbindet die Freude am kreativen Arbeiten, an natürlichen Materialien und daran, mit den eigenen Händen etwas Besonderes entstehen zu lassen.</p>
+                <p><strong>Gemeinsam findet ihr uns auf Märkten unter dem Namen „Drachenfeuer und Lederwind“.</strong></p>
+                <div class="zitat">„Handgemacht bedeutet, dass kein Stück dem anderen gleicht.“</div>
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 
