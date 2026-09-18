@@ -1850,10 +1850,132 @@
     background:#354333; color:#fff;
 }
 </style>
+
+<style>
+.shop-category-drawer-toggle{
+    position:fixed;
+    left:14px;
+    top:92px;
+    z-index:1200;
+    width:48px;height:48px;
+    border-radius:50%;
+    border:1px solid rgba(177,139,76,.45);
+    background:#354333;
+    color:#fff;
+    font-size:22px;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+}
+.shop-category-drawer{
+    position:fixed;
+    z-index:1199;
+    left:-330px;
+    top:0;
+    width:min(315px,88vw);
+    height:100vh;
+    padding:155px 20px 30px;
+    background:#eef2ea;
+    box-shadow:8px 0 30px rgba(0,0,0,.15);
+    transition:left .25s ease;
+    overflow:auto;
+}
+.shop-category-drawer.open{left:0}
+.shop-category-drawer h3{
+    font-family:Georgia,serif;
+    color:#354333;
+    margin:0 0 18px;
+    font-size:1.45rem;
+}
+.shop-category-drawer button{
+    display:block;
+    width:100%;
+    text-align:left;
+    border:0;
+    border-bottom:1px solid rgba(138,105,55,.18);
+    background:transparent;
+    padding:14px 8px;
+    color:#354333;
+    font-family:Georgia,serif;
+    font-size:1rem;
+    cursor:pointer;
+}
+.shop-category-drawer button:hover{padding-left:13px}
+.shop-type-heading{
+    text-align:center;
+    font-family:Georgia,serif;
+    color:#354333;
+    margin:8px 0 18px;
+}
+</style>
+
+<style>
+/* Kompakte Produktliste statt Karten nebeneinander */
+#shop-grid .collection-grid{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:14px !important;
+    max-width:820px;
+    margin:0 auto;
+}
+#shop-grid .collection-grid-item.product-card{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:150px 1fr !important;
+    align-items:center;
+    gap:20px;
+    padding:12px !important;
+    border-radius:16px;
+    cursor:pointer;
+}
+#shop-grid .collection-grid-item.product-card > img{
+    width:150px !important;
+    height:120px !important;
+    object-fit:cover !important;
+    border-radius:12px;
+    display:block;
+}
+#shop-grid .product-card-info{
+    padding:4px 8px !important;
+    text-align:left !important;
+}
+#shop-grid .product-card-info h3{
+    margin:0 0 7px;
+    font-size:1.18rem;
+}
+#shop-grid .product-card-info p{
+    margin:4px 0;
+}
+@media(max-width:600px){
+    #shop-grid .collection-grid-item.product-card{
+        grid-template-columns:105px 1fr !important;
+        gap:13px;
+        padding:9px !important;
+    }
+    #shop-grid .collection-grid-item.product-card > img{
+        width:105px !important;
+        height:92px !important;
+    }
+    #shop-grid .product-card-info h3{font-size:1.02rem}
+    #shop-grid .product-card-info p{font-size:.9rem}
+}
+</style>
 </head>
 
 
 <body>
+
+<button id="shopCategoryToggle" class="shop-category-drawer-toggle" type="button"
+        aria-label="Shop-Kategorien öffnen" onclick="toggleShopCategoryDrawer()">☰</button>
+<aside id="shopCategoryDrawer" class="shop-category-drawer">
+  <h3>Shop · Kategorien</h3>
+  <button onclick="chooseShopCategory('Momente des Innehaltens')">Momente des Innehaltens</button>
+  <button onclick="chooseShopCategory('Gemeinsame Zeit')">Gemeinsame Zeit</button>
+  <button onclick="chooseShopCategory('Raum für Natur')">Raum für Natur</button>
+  <button onclick="chooseShopCategory('Kleine Schätze')">Kleine Schätze</button>
+  <button onclick="chooseChristmas()">Weihnachtswerkstatt</button>
+  <button onclick="chooseLeather()">Leder</button>
+</aside>
+
 
 <section id="shop-category-home">
   <div class="shop-category-home-inner">
@@ -2894,7 +3016,7 @@
         if (type === "keramik") {
             const intro = document.createElement("div");
             intro.className = "christmas-intro";
-            intro.innerHTML = `<h3>Keramik nach Momenten entdecken</h3><div class="christmas-categories"><span><strong>Momente des Innehaltens</strong><br>Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält.</span><span><strong>Gemeinsame Zeit</strong><br>Teller, Servierschalen und Schüsseln, die den Tisch bereichern.</span><span><strong>Raum für Natur</strong><br>Vasen, Blumentöpfe und Steckvasen.</span><span><strong>Kleine Schätze</strong><br>Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte.</span></div>`;
+            intro.innerHTML = `<h3> entdecken</h3><div class="christmas-categories"><span><strong>Momente des Innehaltens</strong><br>Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält.</span><span><strong>Gemeinsame Zeit</strong><br>Teller, Servierschalen und Schüsseln, die den Tisch bereichern.</span><span><strong>Raum für Natur</strong><br>Vasen, Blumentöpfe und Steckvasen.</span><span><strong>Kleine Schätze</strong><br>Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte.</span></div>`;
             grid.appendChild(intro);
         }
         if (type === "weihnachten") {
@@ -3263,7 +3385,7 @@ function getCeramicType(product){
 
 function categoryTypes(category){
     const preferred = {
-        "Momente des Innehaltens":["Tasse","Becher","Teeschale","Krug","Set"],
+        "Momente des Innehaltens":["Tasse","Becher","Matchabowl","Teeschale","Krug","Set"],
         "Gemeinsame Zeit":["Teller","Schale","Schüssel","Set"],
         "Raum für Natur":["Vase","Blumentopf","Steckvase"],
         "Kleine Schätze":["Teelichthalter","Seifenschale","Deko","Sonstiges"]
@@ -3331,6 +3453,32 @@ window.openShopCategory = function(category){
         renderCeramicCategory(category,"Alle");
     },0);
 };
+</script>
+
+<script>
+function toggleShopCategoryDrawer(force){
+    const d=document.getElementById("shopCategoryDrawer");
+    if(!d) return;
+    if(typeof force==="boolean") d.classList.toggle("open",force);
+    else d.classList.toggle("open");
+}
+function chooseShopCategory(category){
+    toggleShopCategoryDrawer(false);
+    openShop("keramik");
+    setTimeout(()=>{
+        const title=document.getElementById("shop-title");
+        if(title) title.textContent=category;
+        renderCeramicCategory(category,"Alle");
+    },0);
+}
+function chooseChristmas(){
+    toggleShopCategoryDrawer(false);
+    if(typeof openChristmasWorkshop==="function") openChristmasWorkshop();
+}
+function chooseLeather(){
+    toggleShopCategoryDrawer(false);
+    openShop("leder");
+}
 </script>
 </body>
 </html> 
