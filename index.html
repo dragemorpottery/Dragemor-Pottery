@@ -2156,14 +2156,39 @@
 </style>
 
 
-<style>
-/* FINALER MENÜ-FIX: Shop-Unterkategorien immer sichtbar, ohne fehleranfälliges Aufklappen */
-#main-nav .shop-menu-fixed{display:block !important;width:100% !important;position:static !important;}
-#main-nav .shop-heading{display:block !important;width:100% !important;padding:13px 12px !important;color:#c99b5b !important;font-weight:bold !important;}
-#main-nav .shop-submenu-fixed{display:block !important;position:static !important;opacity:1 !important;visibility:visible !important;transform:none !important;width:100% !important;min-width:0 !important;margin:0 0 10px 10px !important;padding:5px !important;background:#211a14 !important;border:1px solid #493824 !important;box-shadow:none !important;}
-#main-nav .shop-submenu-fixed a{display:block !important;visibility:visible !important;opacity:1 !important;color:#e8dccd !important;padding:10px 12px !important;}
-#main-nav .nav-direct{display:block !important;visibility:visible !important;opacity:1 !important;color:#f3eadf !important;}
+<style id="final-menu-fix">
+/* FINALER MENÜ-FIX: vollständige Navigation, Untermenüs nur nach Klick */
+#main-nav .nav-group { display:block !important; width:auto; }
+#main-nav .nav-submenu { display:none !important; opacity:1 !important; visibility:visible !important; transform:none !important; }
+#main-nav .nav-group.open > .nav-submenu { display:block !important; }
+/* Auch am Desktop nicht automatisch per Hover öffnen – nur per Klick */
+#main-nav .nav-group:hover > .nav-submenu,
+#main-nav .nav-group:focus-within > .nav-submenu { display:none !important; }
+#main-nav .nav-group.open:hover > .nav-submenu,
+#main-nav .nav-group.open:focus-within > .nav-submenu { display:block !important; }
+@media (max-width:1100px), (max-height:650px) {
+  #main-nav.main-nav.active > .nav-direct,
+  #main-nav.main-nav.active > .nav-group { display:block !important; opacity:1 !important; visibility:visible !important; }
+  #main-nav.main-nav.active > .nav-group > .nav-parent { display:flex !important; }
+  #main-nav .nav-submenu { position:static !important; }
+}
 </style>
+
+<style>
+/* ===== DRAGEMOR WARENKORB ===== */
+.cart-open-button{position:fixed;right:18px;top:96px;z-index:1250;border:1px solid rgba(178,138,75,.65);border-radius:999px;background:#354333;color:#f4ead8;padding:11px 15px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.2)}
+.cart-count{display:inline-flex;align-items:center;justify-content:center;min-width:23px;height:23px;margin-left:7px;padding:0 6px;border-radius:999px;background:#c99b5b;color:#1b2119;font-size:.82rem}
+.cart-drawer{position:fixed;z-index:13000;top:0;right:-430px;width:min(410px,94vw);height:100vh;background:#eef2ea;color:#273126;box-shadow:-10px 0 35px rgba(0,0,0,.28);transition:right .25s ease;display:flex;flex-direction:column}
+.cart-drawer.open{right:0}.cart-head{display:flex;align-items:center;justify-content:space-between;padding:22px;border-bottom:1px solid rgba(138,105,55,.25)}
+.cart-head h2{margin:0;color:#354333}.cart-close{border:0;background:none;color:#354333;font-size:2rem;cursor:pointer}
+.cart-items{flex:1;overflow:auto;padding:18px 22px}.cart-empty{color:#657060;text-align:center;padding:45px 12px}
+.cart-item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid rgba(138,105,55,.2);align-items:center}.cart-item img{width:72px;height:72px;object-fit:cover;border-radius:10px}.cart-item h3{font-size:1rem;margin:0 0 4px;color:#354333}.cart-item p{margin:0;color:#8a6937;font-weight:700}.cart-remove{border:0;background:none;color:#7d5d2e;cursor:pointer;font:inherit;font-size:.9rem}
+.cart-footer{padding:20px 22px 26px;border-top:1px solid rgba(138,105,55,.25);background:#e9eee5}.cart-total{display:flex;justify-content:space-between;font-size:1.12rem;font-weight:700;margin-bottom:14px}.cart-checkout{width:100%;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.cart-checkout:disabled{opacity:.5;cursor:not-allowed}
+.add-to-cart{width:100%;margin-top:20px;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.add-to-cart:disabled{opacity:.55;cursor:not-allowed}.cart-note{margin-top:9px;color:#657060;font-size:.86rem;line-height:1.45}
+.cart-backdrop{position:fixed;z-index:12999;inset:0;background:rgba(0,0,0,.45);display:none}.cart-backdrop.open{display:block}
+@media(max-width:700px){.cart-open-button{top:88px;right:10px;padding:9px 12px}.cart-drawer{width:94vw}}
+</style>
+
 </head>
 
 
@@ -2259,25 +2284,53 @@
         <nav id="main-nav" class="main-nav">
             <a href="#start" class="nav-direct" onclick="closeMainMenu()">Startseite</a>
 
-            <div class="nav-group shop-menu-fixed">
-                <div class="nav-parent shop-heading">Shop</div>
-                <div class="nav-submenu shop-submenu-fixed">
-                    <a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
-                    <a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
-                    <a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
-                    <a href="javascript:void(0)" onclick="chooseShopCategory('Kleine Schätze'); closeMainMenu()">Kleine Schätze<span class="menu-category-desc">Teelichthalter · Seifenschalen · Deko · besondere Einzelstücke</span></a>
-                    <a href="javascript:void(0)" onclick="chooseChristmas(); closeMainMenu()">Weihnachtswerkstatt<span class="menu-category-desc">Weihnachtliche Keramik · festliche Unikate</span></a>
-                    <a href="javascript:void(0)" onclick="chooseLeather(); closeMainMenu()">Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this); return false;">Shop <span>⌄</span></button>
+                <div class="nav-submenu">
+
+<a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Kleine Schätze'); closeMainMenu()">Kleine Schätze<span class="menu-category-desc">Teelichthalter · Seifenschalen · Deko · besondere Einzelstücke</span></a>
+<a href="javascript:void(0)" onclick="chooseChristmas(); closeMainMenu()">Weihnachtswerkstatt<span class="menu-category-desc">Weihnachtliche Keramik · Licht &amp; Geborgenheit · festliche Unikate</span></a>
+<a href="javascript:void(0)" onclick="chooseLeather(); closeMainMenu()">Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
+</div>
+            </div>
+
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Handwerk <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#herstellung" onclick="closeMainMenu()">Keramik · Herstellung</a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">Unsere Handarbeit</a>
                 </div>
             </div>
 
-            <a href="#herstellung" class="nav-direct" onclick="closeMainMenu()">Handwerk</a>
-            <a href="#maerkte" class="nav-direct" onclick="closeMainMenu()">Märkte</a>
-            <a href="#ueber-uns" class="nav-direct" onclick="closeMainMenu()">Über uns</a>
-            <a href="#kontakt" class="nav-direct" onclick="closeMainMenu()">Kontakt</a>
-            <a href="https://www.instagram.com/dragemorpottery/" target="_blank" rel="noopener noreferrer" class="nav-direct" onclick="closeMainMenu()">Instagram</a>
-            <a href="#impressum" class="nav-direct" onclick="closeMainMenu()">Impressum</a>
-            <a href="#datenschutz" class="nav-direct" onclick="closeMainMenu()">Datenschutz</a>
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Märkte <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#maerkte" onclick="closeMainMenu()">Termine</a>
+                    <a href="#maerkte" onclick="closeMainMenu()">Markt-Eindrücke</a>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Über uns <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#ueber-uns" onclick="closeMainMenu()">Franca · Keramik</a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">André · Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">Gemeinsam auf Märkten</a>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Kontakt <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#kontakt" onclick="closeMainMenu()">Kontaktformular</a>
+                    <a href="https://www.instagram.com/dragemorpottery/" target="_blank" rel="noopener noreferrer" onclick="closeMainMenu()">Instagram</a>
+                    <a href="#impressum" onclick="closeMainMenu()">Impressum</a>
+                    <a href="#datenschutz" onclick="closeMainMenu()">Datenschutz</a>
+                </div>
+            </div>
         </nav>
 
     </div>
@@ -3023,7 +3076,7 @@
 ======================================== -->
 <div id="collection-modal" class="collection-modal" onclick="closeCollection(event)">
     <div class="collection-modal-inner" onclick="event.stopPropagation()">
-        <button class="collection-back" type="button" onclick="backToHome()">← Zur Hauptseite</button>
+        <button class="collection-back" type="button" onclick="backToHome()">← Zurück</button>
         <button class="collection-close" type="button" onclick="closeCollection()" aria-label="Shop schließen">&times;</button>
         <h2 id="collection-title">Shop</h2>
 
@@ -3172,8 +3225,10 @@
     };
 
     let currentCollection = "keramik";
+    let currentShopCategory = null;
 
     function openCollection(type = "keramik") {
+        currentShopCategory = null;
         const modal = document.getElementById("collection-modal");
         if (!modal) return;
         modal.classList.add("active");
@@ -3336,19 +3391,17 @@
             }
         }
 
-        if (pushHistory) history.pushState({shop:true, type, index}, "", `#${product.id}`);
+        if (pushHistory) history.pushState({shop:true, type, index, category: currentShopCategory}, "", `#${product.id}`);
     }
 
     function backToCollection() {
-        renderCollection(currentCollection);
-        history.pushState({shop:true, type:currentCollection}, "", "#shop-" + currentCollection);
+        // Genau einen zuvor gegangenen Schritt zurückgehen.
+        history.back();
     }
 
     function backToHome() {
-        closeCollection();
-        history.pushState({}, "", "#start");
-        const start = document.getElementById("start");
-        if (start) setTimeout(() => start.scrollIntoView({behavior:"smooth", block:"start"}), 50);
+        // Auch hier nicht zur Startseite springen, sondern exakt eine Ebene zurück.
+        history.back();
     }
 
     function closeCollection(event) {
@@ -3363,15 +3416,36 @@
     }
 
     window.addEventListener("popstate", (event) => {
-        const state = event.state;
-        if (!state || !state.shop) {
+        const state = event.state || {};
+        const shopHome = document.getElementById("shop-category-home");
+
+        if (state.shopHome) {
             closeCollection();
+            if (shopHome) shopHome.classList.add("active");
             return;
         }
+
+        if (!state.shop) {
+            closeCollection();
+            if (shopHome) shopHome.classList.remove("active");
+            return;
+        }
+
+        if (shopHome) shopHome.classList.remove("active");
         document.getElementById("collection-modal")?.classList.add("active");
         document.body.style.overflow = "hidden";
-        if (Number.isInteger(state.index)) openProduct(state.type, state.index, false);
-        else renderCollection(state.type);
+
+        if (Number.isInteger(state.index)) {
+            currentShopCategory = state.category || null;
+            openProduct(state.type, state.index, false);
+        } else if (state.category && state.type === "keramik") {
+            currentCollection = "keramik";
+            currentShopCategory = state.category;
+            renderCeramicCategory(state.category, state.selectedType || "Alle");
+        } else {
+            currentShopCategory = null;
+            renderCollection(state.type);
+        }
     });
 
     /* ========================================
@@ -3534,6 +3608,7 @@
 function showShopCategoryHome(pushHistory=true){
     const home = document.getElementById("shop-category-home");
     if (!home) return;
+    closeCollection();
     home.classList.add("active");
     window.scrollTo({top:0, behavior:"smooth"});
     if (pushHistory) history.pushState({shopHome:true}, "", "#shop");
@@ -3596,7 +3671,10 @@ function renderCeramicCategory(category, selectedType="Alle"){
         b.type = "button";
         b.textContent = type;
         if(type === selectedType) b.classList.add("active");
-        b.onclick = ()=>renderCeramicCategory(category,type);
+        b.onclick = ()=>{
+            renderCeramicCategory(category,type);
+            history.pushState({shop:true,type:"keramik",category,selectedType:type}, "", "#shop-" + encodeURIComponent(category) + "-" + encodeURIComponent(type));
+        };
         filter.appendChild(b);
     });
     grid.appendChild(filter);
@@ -3633,8 +3711,14 @@ function openShopCategory(category){
     const home = document.getElementById("shop-category-home");
     if (home) home.classList.remove("active");
 
-    openCollection("keramik");
-    setTimeout(()=>renderCeramicCategory(category, "Alle"), 0);
+    const modal = document.getElementById("collection-modal");
+    if (!modal) return;
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    currentCollection = "keramik";
+    currentShopCategory = category;
+    renderCeramicCategory(category, "Alle");
+    history.pushState({shop:true,type:"keramik",category,selectedType:"Alle"}, "", "#shop-" + encodeURIComponent(category));
 }
 
 function toggleShopCategoryDrawer(force){
@@ -3658,6 +3742,87 @@ function chooseLeather(){
     toggleShopCategoryDrawer(false);
     openCollection("leder");
 }
+</script>
+
+
+<!-- ===== WARENKORB ===== -->
+<button id="cartOpenButton" class="cart-open-button" type="button" onclick="openCart()" aria-label="Warenkorb öffnen">Warenkorb <span id="cartCount" class="cart-count">0</span></button>
+<div id="cartBackdrop" class="cart-backdrop" onclick="closeCart()"></div>
+<aside id="cartDrawer" class="cart-drawer" aria-label="Warenkorb">
+  <div class="cart-head"><h2>Warenkorb</h2><button class="cart-close" type="button" onclick="closeCart()" aria-label="Warenkorb schließen">×</button></div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Gesamtsumme</span><span id="cartTotal">0,00 €</span></div>
+    <button id="cartCheckout" class="cart-checkout" type="button" disabled>Zur Kasse</button>
+    <p class="cart-note">Bezahlung wird im nächsten Schritt eingerichtet.</p>
+  </div>
+</aside>
+<script>
+/* ===== WARENKORB – Einzelstücke, lokal im Browser gespeichert ===== */
+let dragemorCart = [];
+try { dragemorCart = JSON.parse(localStorage.getItem('dragemorCart') || '[]'); } catch(e) { dragemorCart = []; }
+
+function numericEuroPrice(text){
+  const m = String(text || '').trim().match(/^(\d+(?:[.,]\d{1,2})?)\s*€$/);
+  return m ? Number(m[1].replace(',', '.')) : null;
+}
+function saveCart(){ localStorage.setItem('dragemorCart', JSON.stringify(dragemorCart)); renderCart(); }
+function openCart(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartBackdrop').classList.add('open'); renderCart(); }
+function closeCart(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartBackdrop').classList.remove('open'); }
+function addCurrentProductToCart(){
+  const type = currentCollection;
+  const id = document.getElementById('product-detail')?.dataset.productId;
+  const product = (shopProducts[type] || []).find(p => p.id === id);
+  if(!product) return;
+  const value = numericEuroPrice(product.price);
+  if(value === null) return;
+  if(!dragemorCart.some(x => x.id === product.id)){
+    dragemorCart.push({id:product.id,type,name:product.name,priceText:product.price,price:value,image:product.images[0]});
+    saveCart();
+  }
+  openCart();
+}
+function removeCartItem(id){ dragemorCart = dragemorCart.filter(x => x.id !== id); saveCart(); }
+function renderCart(){
+  const box=document.getElementById('cartItems'), count=document.getElementById('cartCount'), total=document.getElementById('cartTotal'), checkout=document.getElementById('cartCheckout');
+  if(!box) return;
+  count.textContent=dragemorCart.length;
+  box.innerHTML='';
+  if(!dragemorCart.length){ box.innerHTML='<div class="cart-empty">Dein Warenkorb ist noch leer.</div>'; }
+  dragemorCart.forEach(item=>{
+    const row=document.createElement('div'); row.className='cart-item';
+    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${item.name}</h3><p>${item.priceText}</p></div><button class="cart-remove" type="button">Entfernen</button>`;
+    row.querySelector('button').onclick=()=>removeCartItem(item.id); box.appendChild(row);
+  });
+  const sum=dragemorCart.reduce((a,x)=>a+Number(x.price||0),0);
+  total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+  checkout.disabled=!dragemorCart.length;
+}
+function prepareCartButton(product){
+  const detail=document.getElementById('product-detail'); if(!detail) return;
+  detail.dataset.productId=product.id;
+  let btn=document.getElementById('addToCartButton');
+  let note=document.getElementById('addToCartNote');
+  if(!btn){
+    btn=document.createElement('button'); btn.id='addToCartButton'; btn.className='add-to-cart'; btn.type='button'; btn.onclick=addCurrentProductToCart;
+    note=document.createElement('p'); note.id='addToCartNote'; note.className='cart-note';
+    const info=detail.querySelector('.product-info'); info.append(btn,note);
+  }
+  const price=numericEuroPrice(product.price);
+  const already=dragemorCart.some(x=>x.id===product.id);
+  if(price===null){ btn.disabled=true; btn.textContent='Variante / Preis noch auswählen'; note.textContent='Dieses Produkt hat noch keinen eindeutigen Einzelpreis und kann deshalb noch nicht in den Warenkorb gelegt werden.'; }
+  else if(already){ btn.disabled=true; btn.textContent='Bereits im Warenkorb'; note.textContent='Dieses handgefertigte Einzelstück ist bereits für deinen Warenkorb vorgemerkt.'; }
+  else { btn.disabled=false; btn.textContent='In den Warenkorb'; note.textContent='Einzelstück – daher maximal 1 Stück verfügbar.'; }
+}
+
+/* openProduct ergänzen, ohne die bestehende Navigation zu verändern */
+const dragemorOriginalOpenProduct = openProduct;
+openProduct = function(type,index,pushHistory=true){
+  dragemorOriginalOpenProduct(type,index,pushHistory);
+  const product=(shopProducts[type]||[])[index]; if(product) prepareCartButton(product);
+};
+
+document.addEventListener('DOMContentLoaded', renderCart);
 </script>
 
 </body>
