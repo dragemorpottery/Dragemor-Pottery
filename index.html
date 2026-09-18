@@ -2194,23 +2194,18 @@
 @media(max-width:700px){.cart-open-button{top:88px;right:10px;padding:9px 12px}.cart-drawer{width:94vw}}
 </style>
 
+
+<style id="shop-navigation-single-controller">
+/* Shop-Navigation: genau eine sichtbare Steuerung – das Hauptmenü. */
+#shopCategoryToggle, #shopCategoryDrawer { display:none !important; }
+#main-nav .nav-group > .nav-submenu { display:none !important; }
+#main-nav .nav-group.open > .nav-submenu { display:block !important; }
+#main-nav .nav-group > .nav-parent { cursor:pointer; }
+</style>
 </head>
 
 
 <body>
-
-<button id="shopCategoryToggle" class="shop-category-drawer-toggle" type="button"
-        aria-label="Shop-Kategorien öffnen" onclick="toggleShopCategoryDrawer()">☰</button>
-<aside id="shopCategoryDrawer" class="shop-category-drawer">
-  <h3>Shop · Kategorien</h3>
-  <button onclick="chooseShopCategory('Momente des Innehaltens')">Momente des Innehaltens</button>
-  <button onclick="chooseShopCategory('Gemeinsame Zeit')">Gemeinsame Zeit</button>
-  <button onclick="chooseShopCategory('Raum für Natur')">Raum für Natur</button>
-  <button onclick="chooseShopCategory('Kleine Schätze')">Kleine Schätze</button>
-  <button onclick="chooseChristmas()">Weihnachtswerkstatt</button>
-  <button onclick="chooseLeather()">Leder</button>
-</aside>
-
 
 <section id="shop-category-home">
   <div class="shop-category-home-inner">
@@ -2219,19 +2214,19 @@
       <p>Entdecke unsere handgefertigten Einzelstücke nach Kategorien.</p>
     </div>
     <div class="shop-category-choice-grid">
-      <button class="shop-category-choice" onclick="openShopCategory('Momente des Innehaltens')">
+      <button class="shop-category-choice" onclick="navigateShop('category','Momente des Innehaltens')">
         <h3>Momente des Innehaltens</h3>
         <p>Tassen, Becher und Teeschalen</p>
       </button>
-      <button class="shop-category-choice" onclick="openShopCategory('Gemeinsame Zeit')">
+      <button class="shop-category-choice" onclick="navigateShop('category','Gemeinsame Zeit')">
         <h3>Gemeinsame Zeit</h3>
         <p>Teller, Servierschalen und Schüsseln</p>
       </button>
-      <button class="shop-category-choice" onclick="openShopCategory('Raum für Natur')">
+      <button class="shop-category-choice" onclick="navigateShop('category','Raum für Natur')">
         <h3>Raum für Natur</h3>
         <p>Vasen, Blumentöpfe und Steckvasen</p>
       </button>
-      <button class="shop-category-choice" onclick="openShopCategory('Kleine Schätze')">
+      <button class="shop-category-choice" onclick="navigateShop('category','Kleine Schätze')">
         <h3>Kleine Schätze</h3>
         <p>Besondere Einzelstücke, Seifenschalen und Deko-Objekte</p>
       </button>
@@ -2293,12 +2288,12 @@
                 <button class="nav-parent" type="button" onclick="toggleSubmenu(this); return false;">Shop <span>⌄</span></button>
                 <div class="nav-submenu">
 
-<a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
-<a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
-<a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
-<a href="javascript:void(0)" onclick="chooseShopCategory('Kleine Schätze'); closeMainMenu()">Kleine Schätze<span class="menu-category-desc">Teelichthalter · Seifenschalen · Deko · besondere Einzelstücke</span></a>
-<a href="javascript:void(0)" onclick="chooseChristmas(); closeMainMenu()">Weihnachtswerkstatt<span class="menu-category-desc">Weihnachtliche Keramik · Licht &amp; Geborgenheit · festliche Unikate</span></a>
-<a href="javascript:void(0)" onclick="chooseLeather(); closeMainMenu()">Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
+<a href="javascript:void(0)" onclick="navigateShop('category','Momente des Innehaltens')">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
+<a href="javascript:void(0)" onclick="navigateShop('category','Gemeinsame Zeit')">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
+<a href="javascript:void(0)" onclick="navigateShop('category','Raum für Natur')">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
+<a href="javascript:void(0)" onclick="navigateShop('category','Kleine Schätze')">Kleine Schätze<span class="menu-category-desc">Teelichthalter · Seifenschalen · Deko · besondere Einzelstücke</span></a>
+<a href="javascript:void(0)" onclick="navigateShop('collection','weihnachten')">Weihnachtswerkstatt<span class="menu-category-desc">Weihnachtliche Keramik · Licht &amp; Geborgenheit · festliche Unikate</span></a>
+<a href="javascript:void(0)" onclick="navigateShop('collection','leder')">Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
 </div>
             </div>
 
@@ -3726,26 +3721,25 @@ function openShopCategory(category){
     history.pushState({shop:true,type:"keramik",category,selectedType:"Alle"}, "", "#shop-" + encodeURIComponent(category));
 }
 
-function toggleShopCategoryDrawer(force){
-    const drawer = document.getElementById("shopCategoryDrawer");
-    if (!drawer) return;
-    if (typeof force === "boolean") drawer.classList.toggle("open", force);
-    else drawer.classList.toggle("open");
-}
+/* EINZIGE STEUERUNG FÜR ALLE SHOP-NAVIGATIONEN.
+   Hauptmenü und Shop-Kacheln benutzen ausschließlich diese Funktion. */
+function navigateShop(kind, value){
+    closeMainMenu();
 
-function chooseShopCategory(category){
-    toggleShopCategoryDrawer(false);
-    openShopCategory(category);
-}
+    const home = document.getElementById("shop-category-home");
+    if (home) home.classList.remove("active");
 
-function chooseChristmas(){
-    toggleShopCategoryDrawer(false);
-    openCollection("weihnachten");
-}
-
-function chooseLeather(){
-    toggleShopCategoryDrawer(false);
-    openCollection("leder");
+    if (kind === "category") {
+        openShopCategory(value);
+        return;
+    }
+    if (kind === "collection" && (value === "leder" || value === "weihnachten")) {
+        openCollection(value);
+        return;
+    }
+    if (kind === "home") {
+        showShopCategoryHome(true);
+    }
 }
 </script>
 
