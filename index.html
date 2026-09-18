@@ -2196,11 +2196,11 @@
         <h3>Kleine Schätze</h3>
         <p>Besondere Einzelstücke, Seifenschalen und Deko-Objekte</p>
       </button>
-      <button class="shop-category-choice special" onclick="openChristmasWorkshop()">
+      <button class="shop-category-choice special" onclick="openCollection('weihnachten')">
         <h3>Weihnachtswerkstatt</h3>
         <p>Handgefertigte Stücke für die Weihnachtszeit</p>
       </button>
-      <button class="shop-category-choice special" onclick="openShop('leder')">
+      <button class="shop-category-choice special" onclick="openCollection('leder')">
         <h3>Leder</h3>
         <p>Handgefertigte Lederarbeiten</p>
       </button>
@@ -3546,35 +3546,18 @@
 
 
 
+
 <script>
+/* ===== KATEGORISIERUNG – FIX FÜR DESKTOP UND HANDY ===== */
+
 function showShopCategoryHome(pushHistory=true){
-    document.querySelectorAll("section").forEach(s=>{
-        if(s.id==="shop-category-home") return;
-        if(["shop-overview","product-detail"].includes(s.id)) s.style.display="none";
-    });
-    const home=document.getElementById("shop-category-home");
+    const home = document.getElementById("shop-category-home");
+    if (!home) return;
     home.classList.add("active");
-    window.scrollTo({top:0,behavior:"smooth"});
-    if(pushHistory) history.pushState({shopHome:true},"","#shop");
+    window.scrollTo({top:0, behavior:"smooth"});
+    if (pushHistory) history.pushState({shopHome:true}, "", "#shop");
 }
-function openShopCategory(category){
-    document.getElementById("shop-category-home").classList.remove("active");
-    openShop("keramik");
-    setTimeout(()=>{
-        const grid=document.getElementById("shop-grid");
-        if(!grid) return;
-        [...grid.children].forEach(section=>{
-            const heading=section.querySelector("h3");
-            section.style.display = heading && heading.textContent.trim()===category ? "" : "none";
-        });
-        const title=document.getElementById("shop-title");
-        if(title) title.textContent=category;
-    },0);
-}
-</script>
 
-
-<script>
 const ceramicTypeByFirstImage = {
     "01":"Tasse","04":"Tasse","07":"Tasse","09":"Becher",
     "012":"Set","014":"Tasse","016":"Tasse",
@@ -3585,8 +3568,8 @@ const ceramicTypeByFirstImage = {
 };
 
 function getCeramicType(product){
-    const first = (product.images && product.images[0] ? product.images[0] : "");
-    const match = String(first).match(/(\d{2,3})(?!.*\d)/);
+    const first = (product.images && product.images[0]) ? product.images[0] : "";
+    const match = String(first).match(/Keramik(\d{2,3})/i) || String(first).match(/(\d{2,3})(?!.*\d)/);
     const key = match ? match[1] : "";
     return ceramicTypeByFirstImage[key] || "Sonstiges";
 }
@@ -3602,91 +3585,99 @@ function categoryTypes(category){
 }
 
 function renderCeramicCategory(category, selectedType="Alle"){
-    const grid=document.getElementById("shop-grid");
-    if(!grid) return;
-    grid.innerHTML="";
+    const grid = document.getElementById("collection-grid");
+    const title = document.getElementById("collection-title");
+    const detail = document.getElementById("product-detail");
+    const tabs = document.getElementById("shop-tabs");
 
-    const entries=shopProducts.keramik
-      .map((product,index)=>({product,index,type:getCeramicType(product)}))
-      .filter(x=>x.product.category===category);
+    if (!grid) return;
+
+    if (title) title.textContent = category;
+    if (detail) detail.classList.remove("active");
+    if (tabs) tabs.style.display = "flex";
+    grid.style.display = "grid";
+    grid.innerHTML = "";
+
+    const entries = shopProducts.keramik
+        .map((product,index)=>({product,index,type:getCeramicType(product)}))
+        .filter(x => x.product.category === category);
 
     const available = [...new Set(entries.map(x=>x.type))];
     const ordered = categoryTypes(category).filter(x=>available.includes(x));
     available.forEach(x=>{ if(!ordered.includes(x)) ordered.push(x); });
 
-    const filter=document.createElement("div");
-    filter.className="ceramic-type-filter";
-    ["Alle",...ordered].forEach(type=>{
-        const b=document.createElement("button");
-        b.type="button";
-        b.textContent=type;
-        if(type===selectedType) b.classList.add("active");
-        b.onclick=()=>renderCeramicCategory(category,type);
+    const filter = document.createElement("div");
+    filter.className = "ceramic-type-filter";
+    filter.style.gridColumn = "1 / -1";
+
+    ["Alle", ...ordered].forEach(type=>{
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = type;
+        if(type === selectedType) b.classList.add("active");
+        b.onclick = ()=>renderCeramicCategory(category,type);
         filter.appendChild(b);
     });
     grid.appendChild(filter);
 
-    const productsGrid=document.createElement("div");
-    productsGrid.className="collection-grid";
-    productsGrid.style.gridColumn="1 / -1";
+    const productsGrid = document.createElement("div");
+    productsGrid.className = "collection-grid";
+    productsGrid.style.cssText = "padding:0;grid-column:1 / -1;";
 
     entries
-      .filter(x=>selectedType==="Alle" || x.type===selectedType)
-      .forEach(({product,index})=>{
-        const card=document.createElement("article");
-        card.className="collection-grid-item product-card";
-        card.onclick=()=>openProduct("keramik",index);
+        .filter(x => selectedType === "Alle" || x.type === selectedType)
+        .forEach(({product,index})=>{
+            const card = document.createElement("article");
+            card.className = "collection-grid-item product-card";
+            card.onclick = ()=>openProduct("keramik", index);
 
-        const img=document.createElement("img");
-        img.src=product.images[0]; img.alt=product.name;
-        img.loading="lazy"; img.decoding="async";
+            const img = document.createElement("img");
+            img.src = product.images[0];
+            img.alt = product.name;
+            img.loading = "lazy";
+            img.decoding = "async";
 
-        const info=document.createElement("div");
-        info.className="product-card-info";
-        info.innerHTML=`<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
-        card.append(img,info);
-        productsGrid.appendChild(card);
-      });
+            const info = document.createElement("div");
+            info.className = "product-card-info";
+            info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+
+            card.append(img, info);
+            productsGrid.appendChild(card);
+        });
 
     grid.appendChild(productsGrid);
 }
 
-const originalOpenShopCategory = window.openShopCategory;
-window.openShopCategory = function(category){
-    document.getElementById("shop-category-home").classList.remove("active");
-    openShop("keramik");
-    setTimeout(()=>{
-        const title=document.getElementById("shop-title");
-        if(title) title.textContent=category;
-        renderCeramicCategory(category,"Alle");
-    },0);
-};
-</script>
+function openShopCategory(category){
+    const home = document.getElementById("shop-category-home");
+    if (home) home.classList.remove("active");
 
-<script>
-function toggleShopCategoryDrawer(force){
-    const d=document.getElementById("shopCategoryDrawer");
-    if(!d) return;
-    if(typeof force==="boolean") d.classList.toggle("open",force);
-    else d.classList.toggle("open");
+    openCollection("keramik");
+    setTimeout(()=>renderCeramicCategory(category, "Alle"), 0);
 }
+
+function toggleShopCategoryDrawer(force){
+    const drawer = document.getElementById("shopCategoryDrawer");
+    if (!drawer) return;
+    if (typeof force === "boolean") drawer.classList.toggle("open", force);
+    else drawer.classList.toggle("open");
+}
+
 function chooseShopCategory(category){
     toggleShopCategoryDrawer(false);
-    openShop("keramik");
-    setTimeout(()=>{
-        const title=document.getElementById("shop-title");
-        if(title) title.textContent=category;
-        renderCeramicCategory(category,"Alle");
-    },0);
+    openShopCategory(category);
 }
+
 function chooseChristmas(){
     toggleShopCategoryDrawer(false);
-    if(typeof openChristmasWorkshop==="function") openChristmasWorkshop();
+    openCollection("weihnachten");
 }
+
 function chooseLeather(){
     toggleShopCategoryDrawer(false);
-    openShop("leder");
+    openCollection("leder");
 }
 </script>
+
 </body>
 </html> 
