@@ -2202,6 +2202,26 @@
 #main-nav .nav-group.open > .nav-submenu { display:block !important; }
 #main-nav .nav-group > .nav-parent { cursor:pointer; }
 </style>
+
+<style id="shop-navigation-desktop-mobile-final-fix">
+/* Einheitliche Shop-Navigation auf Desktop und Mobil */
+.menu-toggle{display:block !important;}
+#main-nav.main-nav{display:none !important;}
+#main-nav.main-nav.active{display:flex !important;flex-direction:column !important;align-items:stretch !important;}
+#main-nav.main-nav.active > .nav-direct,
+#main-nav.main-nav.active > .nav-group{display:block !important;opacity:1 !important;visibility:visible !important;}
+#main-nav .nav-group > .nav-parent{display:flex !important;width:100% !important;align-items:center !important;justify-content:space-between !important;}
+#main-nav .nav-group > .nav-submenu{display:none !important;opacity:1 !important;visibility:visible !important;transform:none !important;}
+#main-nav .nav-group.open > .nav-submenu{display:block !important;}
+/* Shop-Kategoriekacheln dürfen auf großen Bildschirmen nicht ausgeblendet werden. */
+#shop-category-home.active{display:block !important;}
+#shop-category-home.active .shop-category-choice-grid{display:grid !important;}
+#shop-category-home.active .shop-category-choice{display:block !important;visibility:visible !important;opacity:1 !important;}
+@media (min-width:1101px) and (min-height:651px){
+  #main-nav.main-nav{position:absolute !important;top:100% !important;left:0 !important;right:auto !important;width:min(390px,92vw) !important;height:auto !important;max-height:calc(100vh - 80px) !important;padding:14px 16px 20px !important;overflow-y:auto !important;background:rgba(12,10,8,.985) !important;z-index:10010 !important;}
+  #main-nav .nav-submenu{position:static !important;margin:0 0 7px 10px !important;}
+}
+</style>
 </head>
 
 
