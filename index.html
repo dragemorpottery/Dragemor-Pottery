@@ -2302,6 +2302,21 @@
 }
 </style>
 
+
+<style>
+.shop-category-description{
+    margin:-10px auto 26px;
+    text-align:center;
+    color:#cdbfae;
+    font-size:1rem;
+    line-height:1.6;
+    letter-spacing:.01em;
+}
+@media(max-width:650px){
+    .shop-category-description{font-size:.92rem;margin:-8px 16px 22px;}
+}
+</style>
+
 </head>
 
 
@@ -3854,8 +3869,8 @@ function navigateShop(kind, value){
   <div id="cartItems" class="cart-items"></div>
   <div class="cart-footer">
     <div class="cart-total"><span>Gesamtsumme</span><span id="cartTotal">0,00 €</span></div>
-    <button id="cartCheckout" class="cart-checkout" type="button" disabled>Zur Kasse</button>
-    <p class="cart-note">Bezahlung wird im nächsten Schritt eingerichtet.</p>
+    <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
+    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe.</p>
   </div>
 </aside>
 <script>
@@ -3899,6 +3914,30 @@ function renderCart(){
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
   checkout.disabled=!dragemorCart.length;
 }
+async function startStripeCheckout(){
+  const checkout=document.getElementById('cartCheckout');
+  const status=document.getElementById('checkoutStatus');
+  if(!dragemorCart.length) return;
+  checkout.disabled=true;
+  checkout.textContent='Checkout wird geöffnet …';
+  if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
+  try{
+    const response=await fetch('/api/create-checkout-session',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({items:dragemorCart.map(item=>({id:item.id,type:item.type}))})
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok || !data.url) throw new Error(data.error || 'Checkout konnte nicht gestartet werden.');
+    window.location.href=data.url;
+  }catch(error){
+    console.error('Stripe Checkout Fehler:',error);
+    if(status) status.textContent=error.message || 'Checkout konnte nicht gestartet werden.';
+    checkout.disabled=false;
+    checkout.textContent='Zur Kasse';
+  }
+}
+
 function prepareCartButton(product){
   const detail=document.getElementById('product-detail'); if(!detail) return;
   detail.dataset.productId=product.id;
@@ -3924,6 +3963,52 @@ openProduct = function(type,index,pushHistory=true){
 };
 
 document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+
+
+<script>
+(function(){
+    const categoryDescriptions = {
+        "Momente des Innehaltens": "Tassen · Becher · Krüge · Teeschalen",
+        "Gemeinsame Zeit": "Teller · Schalen · Servierschalen · Schüsseln",
+        "Raum für Natur": "Vasen · Blumentöpfe · Steckvasen",
+        "Kleine Schätze": "Seifenschalen · Deko-Objekte · besondere Einzelstücke"
+    };
+
+    function updateShopCategoryDescription(){
+        const headings = Array.from(document.querySelectorAll("h1,h2,h3"));
+        const heading = headings.find(el => {
+            const t = (el.textContent || "").trim();
+            return Object.keys(categoryDescriptions).some(name =>
+                t === name || t.endsWith("· " + name) || t.includes("Keramik · " + name)
+            );
+        });
+        if(!heading) return;
+
+        const name = Object.keys(categoryDescriptions).find(n =>
+            (heading.textContent || "").includes(n)
+        );
+        if(!name) return;
+
+        let desc = heading.parentElement.querySelector(".shop-category-description");
+        if(!desc){
+            desc = document.createElement("p");
+            desc.className = "shop-category-description";
+            heading.insertAdjacentElement("afterend", desc);
+        }
+        desc.textContent = categoryDescriptions[name];
+    }
+
+    document.addEventListener("click", function(){
+        setTimeout(updateShopCategoryDescription, 0);
+        setTimeout(updateShopCategoryDescription, 120);
+    });
+    window.addEventListener("hashchange", function(){
+        setTimeout(updateShopCategoryDescription, 0);
+    });
+    document.addEventListener("DOMContentLoaded", updateShopCategoryDescription);
+    setTimeout(updateShopCategoryDescription, 150);
+})();
 </script>
 
 </body>
