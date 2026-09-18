@@ -2222,6 +2222,81 @@
   #main-nav .nav-submenu{position:static !important;margin:0 0 7px 10px !important;}
 }
 </style>
+
+<style id="shop-navigation-orientation-proof">
+/* Shop ist eine eigene Ebene: Startseite -> Shop-Kategorien -> Kategorie -> Produkt.
+   Keine ausklappbare zweite Shop-Navigation mehr; dadurch unabhängig von Hoch-/Querformat. */
+#shop-category-home{display:none !important;position:relative !important;z-index:1 !important;width:100% !important;min-height:100vh !important;}
+#shop-category-home.active{display:block !important;}
+#shop-category-home.active .shop-category-home-inner{display:block !important;}
+#shop-category-home.active .shop-category-choice-grid{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+#shop-category-home.active .shop-category-choice{display:block !important;visibility:visible !important;opacity:1 !important;}
+@media (max-width:700px){#shop-category-home.active .shop-category-choice-grid{grid-template-columns:1fr !important;}}
+</style>
+
+<style id="mobile-menu-below-header-fix">
+/* Das mobile/Querformat-Menü beginnt unter dem schwarzen Kopfbereich und überdeckt Logo/Marke nicht. */
+@media (max-width:1100px), (max-height:650px) {
+  #main-nav.main-nav {
+    top:90px !important;
+    height:calc(100dvh - 90px) !important;
+    max-height:calc(100dvh - 90px) !important;
+    padding:10px 14px 20px !important;
+  }
+}
+@media (orientation:landscape) and (max-height:650px) {
+  #main-nav.main-nav {
+    top:72px !important;
+    height:calc(100dvh - 72px) !important;
+    max-height:calc(100dvh - 72px) !important;
+    padding:8px 12px 14px !important;
+  }
+  header .nav-container { min-height:72px !important; }
+  header .brand img { width:52px !important; height:52px !important; }
+  header .brand-text h1 { font-size:1.05rem !important; }
+  header .brand-text p { font-size:.74rem !important; }
+}
+</style>
+
+
+<style id="shop-submenu-compact-final">
+/* Shop-Kategorien gehören ausschließlich als kompaktes Untermenü unter „Shop“. */
+#shop-category-home{display:none !important;}
+#main-nav .nav-shop-group > .nav-shop-submenu{
+  background:#211a14 !important;
+  border:1px solid #493824 !important;
+  border-radius:10px !important;
+  padding:5px !important;
+  margin:0 0 7px 10px !important;
+  box-shadow:none !important;
+}
+#main-nav .nav-shop-group.open > .nav-shop-submenu{display:block !important;}
+#main-nav .nav-shop-submenu a{
+  color:#d8cbb9 !important;
+  background:transparent !important;
+  padding:9px 11px !important;
+  font-size:.92rem !important;
+  line-height:1.25 !important;
+  border-radius:7px !important;
+}
+#main-nav .nav-shop-submenu a:hover{background:#30251b !important;color:#c99b5b !important;}
+#main-nav .nav-shop-submenu .menu-category-desc{font-size:.72rem !important;margin-top:2px !important;line-height:1.25 !important;}
+@media (orientation:landscape) and (max-height:650px){
+  #main-nav .nav-shop-submenu a{padding:6px 9px !important;font-size:.86rem !important;}
+  #main-nav .nav-shop-submenu .menu-category-desc{font-size:.67rem !important;line-height:1.15 !important;}
+}
+</style>
+
+
+<style>
+/* Vereinfachte Shop-Navigation: im Hauptmenü nur Shop > Keramik. */
+@media (orientation:landscape) and (max-height:650px){
+  #main-nav.main-nav{padding-top:64px !important;}
+  #main-nav .nav-direct,#main-nav .nav-parent{min-height:38px !important;padding:7px 10px !important;font-size:.9rem !important;}
+  #main-nav .nav-submenu a{padding:7px 10px !important;font-size:.88rem !important;}
+}
+</style>
+
 </head>
 
 
@@ -2304,17 +2379,12 @@
         <nav id="main-nav" class="main-nav">
             <a href="#start" class="nav-direct" onclick="closeMainMenu()">Startseite</a>
 
-            <div class="nav-group">
-                <button class="nav-parent" type="button" onclick="toggleSubmenu(this); return false;">Shop <span>⌄</span></button>
-                <div class="nav-submenu">
-
-<a href="javascript:void(0)" onclick="navigateShop('category','Momente des Innehaltens')">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
-<a href="javascript:void(0)" onclick="navigateShop('category','Gemeinsame Zeit')">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
-<a href="javascript:void(0)" onclick="navigateShop('category','Raum für Natur')">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
-<a href="javascript:void(0)" onclick="navigateShop('category','Kleine Schätze')">Kleine Schätze<span class="menu-category-desc">Teelichthalter · Seifenschalen · Deko · besondere Einzelstücke</span></a>
-<a href="javascript:void(0)" onclick="navigateShop('collection','weihnachten')">Weihnachtswerkstatt<span class="menu-category-desc">Weihnachtliche Keramik · Licht &amp; Geborgenheit · festliche Unikate</span></a>
-<a href="javascript:void(0)" onclick="navigateShop('collection','leder')">Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
-</div>
+            <div class="nav-group nav-shop-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Shop <span>⌄</span></button>
+                <div class="nav-submenu nav-shop-submenu">
+                    <a href="javascript:void(0)" onclick="closeMainMenu(); openCollection('keramik'); return false;">Keramik</a>
+                    <a href="javascript:void(0)" onclick="closeMainMenu(); openCollection('leder'); return false;">Leder</a>
+                </div>
             </div>
 
             <div class="nav-group">
@@ -3269,7 +3339,7 @@
         document.getElementById("tab-keramik")?.classList.toggle("active", type === "keramik");
         document.getElementById("tab-leder")?.classList.toggle("active", type === "leder");
         document.getElementById("tab-weihnachten")?.classList.toggle("active", type === "weihnachten");
-        tabs.style.display = "flex";
+        tabs.style.display = type === "keramik" ? "none" : "flex";
         detail.classList.remove("active");
         grid.style.display = "grid";
         grid.innerHTML = "";
@@ -3277,7 +3347,7 @@
         if (type === "keramik") {
             const intro = document.createElement("div");
             intro.className = "christmas-intro";
-            intro.innerHTML = `<h3> entdecken</h3><div class="christmas-categories"><span><strong>Momente des Innehaltens</strong><br>Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält.</span><span><strong>Gemeinsame Zeit</strong><br>Teller, Servierschalen und Schüsseln, die den Tisch bereichern.</span><span><strong>Raum für Natur</strong><br>Vasen, Blumentöpfe und Steckvasen.</span><span><strong>Kleine Schätze</strong><br>Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte.</span></div>`;
+            intro.innerHTML = `<h3>Keramik entdecken</h3><p>Wähle zuerst aus, welche Keramik du dir ansehen möchtest.</p>`;
             grid.appendChild(intro);
         }
         if (type === "weihnachten") {
@@ -3307,30 +3377,24 @@
         };
 
         if (type === "keramik") {
-            const categoryOrder = ["Momente des Innehaltens", "Gemeinsame Zeit", "Raum für Natur", "Kleine Schätze"];
-            categoryOrder.forEach(category => {
-                const matches = shopProducts.keramik
-                    .map((product, index) => ({product, index}))
-                    .filter(({product}) => product.category === category);
-
-                if (!matches.length) return;
-
-                const section = document.createElement("section");
-                section.className = "shop-category-section";
-                section.style.gridColumn = "1 / -1";
-
-                const heading = document.createElement("h3");
-                heading.textContent = category;
-                heading.style.cssText = "color:#354333;margin:24px 0 12px;font-size:1.35rem;";
-
-                const productsGrid = document.createElement("div");
-                productsGrid.className = "collection-grid";
-                productsGrid.style.cssText = "padding:0;";
-
-                matches.forEach(({product, index}) => addProductCard(product, index, productsGrid));
-                section.append(heading, productsGrid);
-                grid.appendChild(section);
+            const categories = [
+                ["Momente des Innehaltens", "Tassen, Becher, Matchabowls, Teeschalen, Krüge & Sets"],
+                ["Gemeinsame Zeit", "Teller, Bowls, Schalen, Schüsseln & Sets"],
+                ["Raum für Natur", "Vasen, Blumentöpfe & Steckvasen"],
+                ["Kleine Schätze", "Teelichthalter, Seifenschalen, Deko & besondere Einzelstücke"]
+            ];
+            const choices = document.createElement("div");
+            choices.className = "shop-category-choice-grid";
+            choices.style.gridColumn = "1 / -1";
+            categories.forEach(([category, description]) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "shop-category-choice";
+                button.innerHTML = `<h3>${category}</h3><p>${description}</p>`;
+                button.onclick = () => openShopCategory(category);
+                choices.appendChild(button);
             });
+            grid.appendChild(choices);
         } else {
             shopProducts[type].forEach((product, index) => addProductCard(product, index));
         }
@@ -3758,7 +3822,11 @@ function navigateShop(kind, value){
         return;
     }
     if (kind === "home") {
-        showShopCategoryHome(true);
+        const shopButton = document.querySelector(".nav-shop-group > .nav-parent");
+        if (shopButton) {
+            const group = shopButton.closest(".nav-group");
+            if (group) group.classList.add("open");
+        }
     }
 }
 </script>
