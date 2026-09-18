@@ -1856,7 +1856,7 @@
     position:fixed;
     left:14px;
     top:92px;
-    z-index:1200;
+    z-index:11020;
     width:48px;height:48px;
     border-radius:50%;
     border:1px solid rgba(177,139,76,.45);
@@ -1868,7 +1868,7 @@
 }
 .shop-category-drawer{
     position:fixed;
-    z-index:1199;
+    z-index:11019;
     left:-330px;
     top:0;
     width:min(315px,88vw);
@@ -1906,6 +1906,11 @@
     color:#354333;
     margin:8px 0 18px;
 }
+
+/* Shop-Kategorien müssen auch über der geöffneten Shop-/Produktansicht sichtbar bleiben. */
+#shopCategoryToggle { z-index:11020 !important; }
+#shopCategoryDrawer { z-index:11019 !important; }
+
 </style>
 
 <style>
