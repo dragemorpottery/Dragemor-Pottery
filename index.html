@@ -1651,6 +1651,69 @@
     display:inline-block; margin-bottom:20px; border:0; background:none; color:#7d5d2e;
     font:inherit; font-weight:bold; cursor:pointer; padding:0;
 }
+.product-detail-facts {
+    margin-top:14px;
+}
+.product-detail-facts p {
+    margin:8px 0;
+    line-height:1.6;
+}
+.product-detail-facts strong {
+    color:#354333;
+}
+.shop-card-price {
+    font-size:1.08rem !important;
+    font-weight:700;
+    color:#8a6937 !important;
+    margin-top:7px !important;
+}
+.series-related {
+    margin-top:28px;
+    padding-top:22px;
+    border-top:1px solid rgba(178,138,75,.35);
+}
+.series-related h4 {
+    color:#354333;
+    font-size:1.15rem;
+    margin:0 0 14px;
+}
+.series-related-grid {
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;
+}
+.series-related-card {
+    border:0;
+    background:#eef2ea;
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    text-align:left;
+    padding:0;
+    color:#354333;
+}
+.series-related-card img {
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    display:block;
+}
+.series-related-card span {
+    display:block;
+    padding:9px 10px 3px;
+    font-family:Georgia,serif;
+    font-weight:700;
+}
+.series-related-card small {
+    display:block;
+    padding:0 10px 10px;
+    color:#8a6937;
+    font-weight:700;
+}
+@media (max-width:600px) {
+    .series-related-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
 .product-status {
     display:inline-block; margin-top:14px; padding:6px 11px; border-radius:999px;
     background:#dfe6da; color:#52604f; font-size:.86rem;
@@ -1732,10 +1795,101 @@
 @media(max-width:620px){.ueber-mich-bildspalte{grid-template-columns:1fr;}.ueber-mich-kopf{grid-template-columns:1fr;padding:22px 22px 0;}.ueber-mich-portrait{max-width:280px;margin:0 auto;width:100%;}.ueber-mich-geschichte{padding:22px;}.ueber-mich-kopftext{text-align:center;}.ueber-mich-kopftext h3{font-size:1.7rem;}}
 
 </style>
+
+<style>
+#shop-category-home{
+    display:none;
+    min-height:100vh;
+    padding:105px 20px 70px;
+    background:#eef2ea;
+}
+#shop-category-home.active{display:block}
+.shop-category-home-inner{max-width:1100px;margin:0 auto}
+.shop-category-home-head{text-align:center;margin-bottom:38px}
+.shop-category-home-head h2{font-family:Georgia,serif;color:#354333;font-size:clamp(2rem,5vw,3.4rem);margin-bottom:10px}
+.shop-category-home-head p{color:#665f54;line-height:1.7}
+.shop-category-choice-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+}
+.shop-category-choice{
+    min-height:145px;
+    border:1px solid rgba(138,105,55,.28);
+    border-radius:18px;
+    background:#f8f6ef;
+    padding:26px;
+    text-align:left;
+    cursor:pointer;
+    box-shadow:0 8px 25px rgba(0,0,0,.06);
+    transition:.2s ease;
+}
+.shop-category-choice:hover{transform:translateY(-2px)}
+.shop-category-choice h3{font-family:Georgia,serif;color:#354333;font-size:1.35rem;margin:0 0 8px}
+.shop-category-choice p{color:#746b5e;margin:0;line-height:1.5}
+.shop-category-choice.special{border-color:rgba(178,138,75,.55)}
+@media(max-width:650px){
+    .shop-category-choice-grid{grid-template-columns:1fr}
+    .shop-category-choice{min-height:120px}
+}
+</style>
+
+
+<style>
+.ceramic-type-filter{
+    display:flex; flex-wrap:wrap; gap:9px; justify-content:center;
+    margin:18px 0 28px;
+}
+.ceramic-type-filter button{
+    border:1px solid rgba(138,105,55,.35);
+    background:#f8f6ef; color:#354333;
+    border-radius:999px; padding:9px 15px;
+    font-family:Georgia,serif; cursor:pointer;
+}
+.ceramic-type-filter button.active{
+    background:#354333; color:#fff;
+}
+</style>
 </head>
 
 
 <body>
+
+<section id="shop-category-home">
+  <div class="shop-category-home-inner">
+    <div class="shop-category-home-head">
+      <h2>Shop</h2>
+      <p>Entdecke unsere handgefertigten Einzelstücke nach Kategorien.</p>
+    </div>
+    <div class="shop-category-choice-grid">
+      <button class="shop-category-choice" onclick="openShopCategory('Momente des Innehaltens')">
+        <h3>Momente des Innehaltens</h3>
+        <p>Tassen, Becher und Teeschalen</p>
+      </button>
+      <button class="shop-category-choice" onclick="openShopCategory('Gemeinsame Zeit')">
+        <h3>Gemeinsame Zeit</h3>
+        <p>Teller, Servierschalen und Schüsseln</p>
+      </button>
+      <button class="shop-category-choice" onclick="openShopCategory('Raum für Natur')">
+        <h3>Raum für Natur</h3>
+        <p>Vasen, Blumentöpfe und Steckvasen</p>
+      </button>
+      <button class="shop-category-choice" onclick="openShopCategory('Kleine Schätze')">
+        <h3>Kleine Schätze</h3>
+        <p>Besondere Einzelstücke, Seifenschalen und Deko-Objekte</p>
+      </button>
+      <button class="shop-category-choice special" onclick="openChristmasWorkshop()">
+        <h3>Weihnachtswerkstatt</h3>
+        <p>Handgefertigte Stücke für die Weihnachtszeit</p>
+      </button>
+      <button class="shop-category-choice special" onclick="openShop('leder')">
+        <h3>Leder</h3>
+        <p>Handgefertigte Lederarbeiten</p>
+      </button>
+    </div>
+  </div>
+</section>
+
 
 
 <!-- ========================================
@@ -2583,10 +2737,16 @@
             <div class="product-info">
                 <button class="product-back" type="button" onclick="backToCollection()">← Zurück zur Übersicht</button>
                 <h3 id="product-name"></h3>
-                <p id="product-description" class="placeholder">Beschreibung folgt.</p>
-                <p id="product-measure" class="placeholder"></p>
-                <p id="product-price" class="placeholder">Preis: wird ergänzt</p>
+                <div class="product-detail-facts">
+                    <p><strong>Material:</strong> Steinzeugkeramik</p>
+                    <p><strong>Details / Farbe & Glasur:</strong></p>
+                    <p id="product-description" class="placeholder">Beschreibung folgt.</p>
+                    <p><strong>Maße / Volumen:</strong> <span id="product-measure"></span></p>
+                    <p><strong>Preis:</strong> <span id="product-price"></span></p>
+                    <p><strong>Herstellung:</strong> handgefertigtes Einzelstück</p>
+                </div>
                 <span class="product-status">Verfügbarkeit wird ergänzt</span>
+                <div id="series-related" class="series-related"></div>
             </div>
         </div>
     </div>
@@ -2634,16 +2794,28 @@
        Erste Nummer jeder Keramikgruppe = Hauptfoto.
     ======================================== */
 
+
+    const ceramicDescriptions = {
+        "Erdtanz": "Schwarze Steinzeugkeramik mit einem filigranen Aufdruck und einer warmen braunen Innenseite. Der Kontrast zwischen dem dunklen Äußeren und dem erdigen Braun verleiht jedem Stück seinen besonderen Charakter.",
+        "WaterDragon": "Ein besonderer Effekt in der Keramik zieht sich wie eine Spirale über Innen- und Außenseite. Die türkis-grüne Farbgebung schimmert am Rand sanft weißlich und erinnert an bewegtes Wasser.",
+        "DragonGold": "Eine goldene Oberfläche, die im Licht wie Abermillionen kleine Sterne schimmert. Die Innenseite reicht von tiefem Dunkelbraun bis Schwarz. Der Henkel schimmert ebenfalls golden und wird durch einen filigranen Druck veredelt.",
+        "des Drachens Wasser": "Eine leuchtend helltürkise Glasur, deren Farbspiel an Wellen erinnert, die an einem weißen Strand vor- und zurücktreiben. Filigrane Drucke verleihen jedem Stück zusätzliche feine Details. Bei den Tellern wird die Glasur teilweise von einem dezent schimmernden goldenen Effekt ergänzt.",
+        "Meeresgrund": "Eine spektakulär schimmernde Glasur in Blau- und Beigetönen auf schwarzem Ton. Das lebendige Farbspiel erinnert an die Tiefe und Bewegung des Meeres. Ein filigraner Druck in der Mitte setzt einen feinen, besonderen Akzent.",
+        "Nebelwald": "Auf dunkelbrauner Steinzeugkeramik entfaltet sich ein sanfter, beigefarbener Schimmer, der stellenweise von feinen Blautönen durchzogen wird. Ein filigraner Druck am unteren Rand und am Griff verleiht dem Stück seine besonderen Details.",
+        "Waldritual – Keramikset": "Auf den ersten Blick zeigt sich die Glasur in einem tiefen Blau. Im Licht offenbaren sich Schimmer in Weinrot und Lila, die an einzelnen Stellen durch das Blau hindurchtreten. Der Krug wird zusätzlich durch einen filigranen Druck veredelt.",
+        "Wilde Küste": "Vier unterschiedliche Schalen aus schwarzer Steinzeugkeramik, jede mit einem filigranen Druck versehen. Verschiedene Brauntöne legen sich über die feinen Strukturen und bringen den Druck besonders schön zur Geltung. Im Inneren zeigt jede Schale ihren eigenen Charakter: von tiefem Braun über Schwarz bis hin zu Kristallblau. Blaue Umbrüche am Rand sorgen für zusätzliche Tiefe."
+    };
+
     const shopProducts = {
         keramik: [
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["01","02","03"], measure: "ca. 400 ml", price: "18 €" },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["04","05","06"], measure: "ca. 500 ml", price: "18 €" },
-            { category: "Momente des Innehaltens", name: "Drachensee", images: ["07","08"], measure: "ca. 350 ml", price: "18 €" },
+            { category: "Momente des Innehaltens", name: "Erdtanz", images: ["07","08"], measure: "ca. 350 ml", price: "18 €" },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["09","010","011"], measure: "ca. 200 ml", price: "15 €" },
             { category: "Momente des Innehaltens", name: "Waldritual – Keramikset", images: ["012","013"], measure: "Krug ca. 500 ml · Becher ca. 200 ml · Kännchen ca. 50 ml", price: "35 €" },
             { category: "Momente des Innehaltens", name: "Nebelwald", images: ["014","015","016"], measure: "ca. 200 ml", price: "15 €" },
-            { category: "Gemeinsame Zeit", name: "Wilde Küste", images: ["017","018","019"], measure: "Große Schale · kleine Schale", price: "groß 18 € · klein 15 €" },
-            { category: "Momente des Innehaltens", name: "Wilde Küste II", images: ["020","021"], measure: "ca. 250–400 ml", price: "15 €" },
+            { category: "Gemeinsame Zeit", name: "Wilde Küste", images: ["017","018","019"], measure: "4 unterschiedliche Schalen", price: "groß 18 € · klein 15 €" },
+            { category: "Momente des Innehaltens", name: "Erdtanz", images: ["020","021"], measure: "ca. 250–400 ml", price: "15 €" },
             { category: "Momente des Innehaltens", name: "Erdtanz", images: ["022","023"], measure: "ca. 500 ml", price: "19 €" },
             { category: "Momente des Innehaltens", name: "Erdtanz", images: ["024","025","026","027","028"], measure: "ca. 200 ml", price: "15 €" },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["029"], measure: "ca. 200 ml", price: "10 €" },
@@ -2663,7 +2835,7 @@
             name: product.name,
             category: product.category,
             images: product.images.map(n => `bilder/Keramik${n}.jpg`),
-            description: "Handgefertigtes Einzelstück von Dragemor Pottery.",
+            description: ceramicDescriptions[product.name] || "Handgefertigtes Einzelstück von Dragemor Pottery.",
             measure: product.measure,
             price: product.price
         })),
@@ -2732,7 +2904,7 @@
             grid.appendChild(intro);
         }
 
-        shopProducts[type].forEach((product, index) => {
+        const addProductCard = (product, index, target = grid) => {
             const card = document.createElement("article");
             card.className = "collection-grid-item product-card";
             card.onclick = () => openProduct(type, index);
@@ -2745,11 +2917,40 @@
 
             const info = document.createElement("div");
             info.className = "product-card-info";
-            info.innerHTML = `<h3>${product.name}</h3>${product.category ? `<p><strong>${product.category}</strong></p>` : ""}<p>${product.measure}</p><p>Details ansehen →</p>`;
+            info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
 
             card.append(img, info);
-            grid.appendChild(card);
-        });
+            target.appendChild(card);
+        };
+
+        if (type === "keramik") {
+            const categoryOrder = ["Momente des Innehaltens", "Gemeinsame Zeit", "Raum für Natur", "Kleine Schätze"];
+            categoryOrder.forEach(category => {
+                const matches = shopProducts.keramik
+                    .map((product, index) => ({product, index}))
+                    .filter(({product}) => product.category === category);
+
+                if (!matches.length) return;
+
+                const section = document.createElement("section");
+                section.className = "shop-category-section";
+                section.style.gridColumn = "1 / -1";
+
+                const heading = document.createElement("h3");
+                heading.textContent = category;
+                heading.style.cssText = "color:#354333;margin:24px 0 12px;font-size:1.35rem;";
+
+                const productsGrid = document.createElement("div");
+                productsGrid.className = "collection-grid";
+                productsGrid.style.cssText = "padding:0;";
+
+                matches.forEach(({product, index}) => addProductCard(product, index, productsGrid));
+                section.append(heading, productsGrid);
+                grid.appendChild(section);
+            });
+        } else {
+            shopProducts[type].forEach((product, index) => addProductCard(product, index));
+        }
     }
 
     function openProduct(type, index, pushHistory = true) {
@@ -2789,6 +2990,43 @@
             thumbs.appendChild(thumb);
         });
         thumbs.style.display = product.images.length > 1 ? "flex" : "none";
+
+        const related = document.getElementById("series-related");
+        if (related) {
+            related.innerHTML = "";
+            const siblings = shopProducts[type]
+                .map((item, itemIndex) => ({ item, itemIndex }))
+                .filter(({item, itemIndex}) => itemIndex !== index && item.name === product.name);
+
+            if (siblings.length) {
+                const heading = document.createElement("h4");
+                heading.textContent = `Weitere Stücke aus ${product.name}`;
+                const relatedGrid = document.createElement("div");
+                relatedGrid.className = "series-related-grid";
+
+                siblings.forEach(({item, itemIndex}) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "series-related-card";
+                    button.onclick = () => openProduct(type, itemIndex);
+
+                    const preview = document.createElement("img");
+                    preview.src = item.images[0];
+                    preview.alt = item.name;
+                    preview.loading = "lazy";
+
+                    const label = document.createElement("span");
+                    label.textContent = item.name;
+                    const price = document.createElement("small");
+                    price.textContent = item.price;
+
+                    button.append(preview, label, price);
+                    relatedGrid.appendChild(button);
+                });
+
+                related.append(heading, relatedGrid);
+            }
+        }
 
         if (pushHistory) history.pushState({shop:true, type, index}, "", `#${product.id}`);
     }
@@ -2977,5 +3215,122 @@
 </script>
 
 
+
+<script>
+function showShopCategoryHome(pushHistory=true){
+    document.querySelectorAll("section").forEach(s=>{
+        if(s.id==="shop-category-home") return;
+        if(["shop-overview","product-detail"].includes(s.id)) s.style.display="none";
+    });
+    const home=document.getElementById("shop-category-home");
+    home.classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+    if(pushHistory) history.pushState({shopHome:true},"","#shop");
+}
+function openShopCategory(category){
+    document.getElementById("shop-category-home").classList.remove("active");
+    openShop("keramik");
+    setTimeout(()=>{
+        const grid=document.getElementById("shop-grid");
+        if(!grid) return;
+        [...grid.children].forEach(section=>{
+            const heading=section.querySelector("h3");
+            section.style.display = heading && heading.textContent.trim()===category ? "" : "none";
+        });
+        const title=document.getElementById("shop-title");
+        if(title) title.textContent=category;
+    },0);
+}
+</script>
+
+
+<script>
+const ceramicTypeByFirstImage = {
+    "01":"Tasse","04":"Tasse","07":"Tasse","09":"Becher",
+    "012":"Set","014":"Tasse","016":"Tasse",
+    "017":"Schale","020":"Schale","022":"Krug","024":"Tasse",
+    "029":"Tasse","030":"Tasse","034":"Tasse","037":"Set","040":"Tasse",
+    "043":"Teelichthalter","044":"Teelichthalter","045":"Teelichthalter","046":"Teelichthalter",
+    "047":"Schale","049":"Teller","052":"Teller","055":"Teller","056":"Teller","058":"Schale"
+};
+
+function getCeramicType(product){
+    const first = (product.images && product.images[0] ? product.images[0] : "");
+    const match = String(first).match(/(\d{2,3})(?!.*\d)/);
+    const key = match ? match[1] : "";
+    return ceramicTypeByFirstImage[key] || "Sonstiges";
+}
+
+function categoryTypes(category){
+    const preferred = {
+        "Momente des Innehaltens":["Tasse","Becher","Teeschale","Krug","Set"],
+        "Gemeinsame Zeit":["Teller","Schale","Schüssel","Set"],
+        "Raum für Natur":["Vase","Blumentopf","Steckvase"],
+        "Kleine Schätze":["Teelichthalter","Seifenschale","Deko","Sonstiges"]
+    };
+    return preferred[category] || [];
+}
+
+function renderCeramicCategory(category, selectedType="Alle"){
+    const grid=document.getElementById("shop-grid");
+    if(!grid) return;
+    grid.innerHTML="";
+
+    const entries=shopProducts.keramik
+      .map((product,index)=>({product,index,type:getCeramicType(product)}))
+      .filter(x=>x.product.category===category);
+
+    const available = [...new Set(entries.map(x=>x.type))];
+    const ordered = categoryTypes(category).filter(x=>available.includes(x));
+    available.forEach(x=>{ if(!ordered.includes(x)) ordered.push(x); });
+
+    const filter=document.createElement("div");
+    filter.className="ceramic-type-filter";
+    ["Alle",...ordered].forEach(type=>{
+        const b=document.createElement("button");
+        b.type="button";
+        b.textContent=type;
+        if(type===selectedType) b.classList.add("active");
+        b.onclick=()=>renderCeramicCategory(category,type);
+        filter.appendChild(b);
+    });
+    grid.appendChild(filter);
+
+    const productsGrid=document.createElement("div");
+    productsGrid.className="collection-grid";
+    productsGrid.style.gridColumn="1 / -1";
+
+    entries
+      .filter(x=>selectedType==="Alle" || x.type===selectedType)
+      .forEach(({product,index})=>{
+        const card=document.createElement("article");
+        card.className="collection-grid-item product-card";
+        card.onclick=()=>openProduct("keramik",index);
+
+        const img=document.createElement("img");
+        img.src=product.images[0]; img.alt=product.name;
+        img.loading="lazy"; img.decoding="async";
+
+        const info=document.createElement("div");
+        info.className="product-card-info";
+        info.innerHTML=`<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+        card.append(img,info);
+        productsGrid.appendChild(card);
+      });
+
+    grid.appendChild(productsGrid);
+}
+
+const originalOpenShopCategory = window.openShopCategory;
+window.openShopCategory = function(category){
+    document.getElementById("shop-category-home").classList.remove("active");
+    openShop("keramik");
+    setTimeout(()=>{
+        const title=document.getElementById("shop-title");
+        if(title) title.textContent=category;
+        renderCeramicCategory(category,"Alle");
+    },0);
+};
+</script>
 </body>
 </html> 
