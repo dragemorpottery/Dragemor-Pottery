@@ -1959,6 +1959,71 @@
     #shop-grid .product-card-info p{font-size:.9rem}
 }
 </style>
+
+<style>
+/* ===== Hamburger-Menü auf ALLEN Bildschirmgrößen ===== */
+.menu-toggle{
+    display:block !important;
+    margin-left:0 !important;
+    margin-right:12px !important;
+    order:-1 !important;
+    flex:0 0 auto;
+}
+.main-nav{
+    display:none !important;
+    position:absolute !important;
+    top:100% !important;
+    left:0 !important;
+    right:auto !important;
+    width:min(360px,92vw) !important;
+    padding:14px 16px 20px !important;
+    background:rgba(12,10,8,.985) !important;
+    border-top:1px solid #4b3926 !important;
+    border-right:1px solid #4b3926 !important;
+    box-shadow:12px 16px 30px rgba(0,0,0,.28) !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:2px !important;
+    max-height:calc(100vh - 80px) !important;
+    overflow-y:auto !important;
+}
+.main-nav.active{display:flex !important}
+.main-nav .nav-direct,.main-nav .nav-parent{
+    width:100% !important;
+    text-align:left !important;
+    padding:13px 12px !important;
+}
+.nav-group{width:100% !important}
+.nav-submenu{
+    display:none !important;
+    position:static !important;
+    min-width:0 !important;
+    margin:0 0 7px 10px !important;
+    padding:5px !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    box-shadow:none !important;
+    background:#211a14 !important;
+    border-color:#493824 !important;
+}
+.nav-group.open .nav-submenu{display:block !important}
+
+/* Das zusätzliche runde Shop-Symbol wird nicht mehr gebraucht. */
+.shop-category-drawer-toggle,
+.shop-category-drawer{display:none !important}
+
+/* Produktliste auch auf Desktop sicher untereinander */
+#shop-grid .collection-grid{
+    display:flex !important;
+    flex-direction:column !important;
+    grid-template-columns:none !important;
+    gap:14px !important;
+    max-width:820px !important;
+    margin:0 auto !important;
+}
+</style>
+
 </head>
 
 
@@ -2057,10 +2122,14 @@
             <div class="nav-group">
                 <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Shop <span>⌄</span></button>
                 <div class="nav-submenu">
-                    <a href="#keramik" onclick="openCollection('keramik'); closeMainMenu(); return false;">Keramik</a>
-                    <a href="#leder" onclick="openCollection('leder'); closeMainMenu(); return false;">Lederarbeiten</a>
-                    <a href="#weihnachtswerkstatt" onclick="openCollection('weihnachten'); closeMainMenu(); return false;">Weihnachtswerkstatt ✦</a>
-                </div>
+
+<a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens</a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit</a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur</a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Kleine Schätze'); closeMainMenu()">Kleine Schätze</a>
+<a href="javascript:void(0)" onclick="chooseChristmas(); closeMainMenu()">Weihnachtswerkstatt</a>
+<a href="javascript:void(0)" onclick="chooseLeather(); closeMainMenu()">Leder</a>
+</div>
             </div>
 
             <div class="nav-group">
