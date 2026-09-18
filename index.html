@@ -1794,6 +1794,11 @@
 @media(max-width:850px){.ueber-mich-editorial{grid-template-columns:1fr;}.ueber-mich-bildspalte{position:static;display:grid;grid-template-columns:1fr 1fr;}.ueber-mich-kopf{grid-template-columns:1fr 240px;}}
 @media(max-width:620px){.ueber-mich-bildspalte{grid-template-columns:1fr;}.ueber-mich-kopf{grid-template-columns:1fr;padding:22px 22px 0;}.ueber-mich-portrait{max-width:280px;margin:0 auto;width:100%;}.ueber-mich-geschichte{padding:22px;}.ueber-mich-kopftext{text-align:center;}.ueber-mich-kopftext h3{font-size:1.7rem;}}
 
+
+/* PRODUKTBILD – VOLLBILDANSICHT */
+.lightbox { padding:0; background:rgba(0,0,0,.97); z-index:20000; }
+.lightbox img { width:100vw; height:100vh; max-width:100vw; max-height:100vh; object-fit:contain; border-radius:0; box-shadow:none; }
+.lightbox-close { position:fixed; top:14px; right:18px; z-index:20002; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:rgba(0,0,0,.62); color:#fff; font-size:2.5rem; line-height:1; cursor:pointer; }
 </style>
 
 <style>
@@ -3378,10 +3383,11 @@
 
         if (type === "keramik") {
             const categories = [
-                ["Momente des Innehaltens", "Tassen, Becher, Matchabowls, Teeschalen, Krüge & Sets"],
-                ["Gemeinsame Zeit", "Teller, Bowls, Schalen, Schüsseln & Sets"],
-                ["Raum für Natur", "Vasen, Blumentöpfe & Steckvasen"],
-                ["Kleine Schätze", "Teelichthalter, Seifenschalen, Deko & besondere Einzelstücke"]
+                ["Alle Keramik", "Alle handgefertigten Keramikstücke"],
+                ["Momente des Innehaltens", "Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält."],
+                ["Gemeinsame Zeit", "Teller, Servierschalen und Schüsseln, die den Tisch bereichern."],
+                ["Raum für Natur", "Vasen, Blumentöpfe und Steckvasen."],
+                ["Kleine Schätze", "Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte."]
             ];
             const choices = document.createElement("div");
             choices.className = "shop-category-choice-grid";
@@ -3391,7 +3397,7 @@
                 button.type = "button";
                 button.className = "shop-category-choice";
                 button.innerHTML = `<h3>${category}</h3><p>${description}</p>`;
-                button.onclick = () => openShopCategory(category);
+                button.onclick = () => category === "Alle Keramik" ? renderAllCeramics() : openShopCategory(category);
                 choices.appendChild(button);
             });
             grid.appendChild(choices);
@@ -3525,7 +3531,11 @@
         } else if (state.category && state.type === "keramik") {
             currentCollection = "keramik";
             currentShopCategory = state.category;
-            renderCeramicCategory(state.category, state.selectedType || "Alle");
+            if (state.category === "Alle Keramik") {
+                renderAllCeramics(false);
+            } else {
+                renderCeramicCategory(state.category);
+            }
         } else {
             currentShopCategory = null;
             renderCollection(state.type);
@@ -3698,111 +3708,115 @@ function showShopCategoryHome(pushHistory=true){
     if (pushHistory) history.pushState({shopHome:true}, "", "#shop");
 }
 
-const ceramicTypeByFirstImage = {
-    "01":"Tasse","04":"Tasse","07":"Tasse","09":"Becher",
-    "012":"Set","014":"Tasse","016":"Tasse",
-    "017":"Schale","020":"Schale","022":"Krug","024":"Tasse",
-    "029":"Tasse","030":"Tasse","034":"Tasse","037":"Set","040":"Tasse",
-    "043":"Teelichthalter","044":"Teelichthalter","045":"Teelichthalter","046":"Teelichthalter",
-    "047":"Schale","049":"Teller","052":"Teller","055":"Teller","056":"Teller","058":"Schale"
+const ceramicCategoriesByFirstImage = {
+    "01":["Gemeinsame Zeit"],
+    "07":["Momente des Innehaltens"],
+    "09":["Momente des Innehaltens"],
+    "012":["Momente des Innehaltens"],
+    "014":["Momente des Innehaltens"],
+    "017":["Gemeinsame Zeit"],
+    "020":["Gemeinsame Zeit"],
+    "022":["Gemeinsame Zeit"],
+    "024":["Gemeinsame Zeit"],
+    "029":["Momente des Innehaltens"],
+    "030":["Momente des Innehaltens"],
+    "034":["Momente des Innehaltens"],
+    "037":["Gemeinsame Zeit"],
+    "040":["Momente des Innehaltens"],
+    "043":["Kleine Schätze"],
+    "047":["Gemeinsame Zeit"],
+    "049":["Gemeinsame Zeit"],
+    "052":["Gemeinsame Zeit"],
+    "055":["Gemeinsame Zeit"],
+    "056":["Gemeinsame Zeit"],
+    "058":["Gemeinsame Zeit"]
 };
 
-function getCeramicType(product){
+function getCeramicCategories(product){
     const first = (product.images && product.images[0]) ? product.images[0] : "";
     const match = String(first).match(/Keramik(\d{2,3})/i) || String(first).match(/(\d{2,3})(?!.*\d)/);
     const key = match ? match[1] : "";
-    return ceramicTypeByFirstImage[key] || "Sonstiges";
+    return ceramicCategoriesByFirstImage[key] || [];
 }
 
-function categoryTypes(category){
-    const preferred = {
-        "Momente des Innehaltens":["Tasse","Becher","Matchabowl","Teeschale","Krug","Set"],
-        "Gemeinsame Zeit":["Teller","Schale","Schüssel","Set"],
-        "Raum für Natur":["Vase","Blumentopf","Steckvase"],
-        "Kleine Schätze":["Teelichthalter","Seifenschale","Deko","Sonstiges"]
-    };
-    return preferred[category] || [];
-}
-
-function renderCeramicCategory(category, selectedType="Alle"){
+function renderCeramicCategory(category){
     const grid = document.getElementById("collection-grid");
     const title = document.getElementById("collection-title");
     const detail = document.getElementById("product-detail");
     const tabs = document.getElementById("shop-tabs");
-
     if (!grid) return;
 
-    if (title) title.textContent = category;
+    if (title) title.textContent = `Keramik · ${category}`;
     if (detail) detail.classList.remove("active");
-    if (tabs) tabs.style.display = "flex";
+    if (tabs) tabs.style.display = "none";
     grid.style.display = "grid";
     grid.innerHTML = "";
 
     const entries = shopProducts.keramik
-        .map((product,index)=>({product,index,type:getCeramicType(product)}))
-        .filter(x => x.product.category === category);
+        .map((product,index)=>({product,index,categories:getCeramicCategories(product)}))
+        .filter(x => x.categories.includes(category));
 
-    const available = [...new Set(entries.map(x=>x.type))];
-    const ordered = categoryTypes(category).filter(x=>available.includes(x));
-    available.forEach(x=>{ if(!ordered.includes(x)) ordered.push(x); });
+    entries.forEach(({product,index})=>{
+        const card = document.createElement("article");
+        card.className = "collection-grid-item product-card";
+        card.onclick = ()=>openProduct("keramik", index);
 
-    const filter = document.createElement("div");
-    filter.className = "ceramic-type-filter";
-    filter.style.gridColumn = "1 / -1";
+        const img = document.createElement("img");
+        img.src = product.images[0];
+        img.alt = product.name;
+        img.loading = "lazy";
+        img.decoding = "async";
 
-    ["Alle", ...ordered].forEach(type=>{
-        const b = document.createElement("button");
-        b.type = "button";
-        b.textContent = type;
-        if(type === selectedType) b.classList.add("active");
-        b.onclick = ()=>{
-            renderCeramicCategory(category,type);
-            history.pushState({shop:true,type:"keramik",category,selectedType:type}, "", "#shop-" + encodeURIComponent(category) + "-" + encodeURIComponent(type));
-        };
-        filter.appendChild(b);
+        const info = document.createElement("div");
+        info.className = "product-card-info";
+        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+        card.append(img, info);
+        grid.appendChild(card);
     });
-    grid.appendChild(filter);
+}
 
-    const productsGrid = document.createElement("div");
-    productsGrid.className = "collection-grid";
-    productsGrid.style.cssText = "padding:0;grid-column:1 / -1;";
-
-    entries
-        .filter(x => selectedType === "Alle" || x.type === selectedType)
-        .forEach(({product,index})=>{
-            const card = document.createElement("article");
-            card.className = "collection-grid-item product-card";
-            card.onclick = ()=>openProduct("keramik", index);
-
-            const img = document.createElement("img");
-            img.src = product.images[0];
-            img.alt = product.name;
-            img.loading = "lazy";
-            img.decoding = "async";
-
-            const info = document.createElement("div");
-            info.className = "product-card-info";
-            info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
-
-            card.append(img, info);
-            productsGrid.appendChild(card);
-        });
-
-    grid.appendChild(productsGrid);
+function renderAllCeramics(pushHistory = true){
+    currentCollection = "keramik";
+    currentShopCategory = "Alle Keramik";
+    const grid = document.getElementById("collection-grid");
+    const title = document.getElementById("collection-title");
+    const detail = document.getElementById("product-detail");
+    const tabs = document.getElementById("shop-tabs");
+    if (!grid) return;
+    if (title) title.textContent = "Keramik · Alle Keramik";
+    if (detail) detail.classList.remove("active");
+    if (tabs) tabs.style.display = "none";
+    grid.style.display = "grid";
+    grid.innerHTML = "";
+    shopProducts.keramik.forEach((product,index)=>{
+        const card = document.createElement("article");
+        card.className = "collection-grid-item product-card";
+        card.onclick = ()=>openProduct("keramik", index);
+        const img = document.createElement("img");
+        img.src = product.images[0];
+        img.alt = product.name;
+        img.loading = "lazy";
+        img.decoding = "async";
+        const info = document.createElement("div");
+        info.className = "product-card-info";
+        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+        card.append(img, info);
+        grid.appendChild(card);
+    });
+    if (pushHistory) history.pushState({shop:true,type:"keramik",category:"Alle Keramik"}, "", "#shop-alle-keramik");
 }
 
 function openShopCategory(category){
     const home = document.getElementById("shop-category-home");
     if (home) home.classList.remove("active");
-
     const modal = document.getElementById("collection-modal");
     if (!modal) return;
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
     currentCollection = "keramik";
     currentShopCategory = category;
-    renderCeramicCategory(category, "Alle");
-    history.pushState({shop:true,type:"keramik",category,selectedType:"Alle"}, "", "#shop-" + encodeURIComponent(category));
+    renderCeramicCategory(category);
+    history.pushState({shop:true,type:"keramik",category}, "", "#shop-" + encodeURIComponent(category));
 }
 
 /* EINZIGE STEUERUNG FÜR ALLE SHOP-NAVIGATIONEN.
