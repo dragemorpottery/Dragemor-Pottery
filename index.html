@@ -1661,6 +1661,53 @@
     .collection-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 
+
+        /* ========================================
+           PROFESSIONELLE HAUPTNAVIGATION
+        ======================================== */
+        .menu-toggle { display:none; background:none; border:1px solid rgba(201,155,91,.65); border-radius:10px; padding:10px; cursor:pointer; }
+        .menu-toggle span { display:block; width:24px; height:2px; margin:5px 0; background:#c99b5b; }
+        .main-nav { display:flex; align-items:center; gap:5px; }
+        .main-nav .nav-direct, .nav-parent { padding:12px 13px; color:#e9dfd1; background:none; border:0; font:inherit; font-size:.94rem; cursor:pointer; white-space:nowrap; }
+        .main-nav .nav-direct:hover, .nav-parent:hover, .nav-group.open > .nav-parent { color:#c99b5b; }
+        .nav-parent span { margin-left:4px; font-size:.8em; }
+        .nav-group { position:relative; }
+        .nav-submenu { position:absolute; top:calc(100% + 8px); left:0; min-width:220px; padding:9px; background:#f3f5ef; border:1px solid rgba(178,138,75,.55); border-radius:14px; box-shadow:0 16px 35px rgba(18,15,12,.25); opacity:0; visibility:hidden; transform:translateY(-7px); transition:.2s ease; }
+        .nav-group:hover .nav-submenu, .nav-group:focus-within .nav-submenu, .nav-group.open .nav-submenu { opacity:1; visibility:visible; transform:translateY(0); }
+        .nav-submenu a { display:block; padding:10px 12px; border-radius:9px; color:#354333; font-size:.9rem; }
+        .nav-submenu a:hover { background:#dfe6da; color:#7d5d2e; }
+
+        @media (max-width:900px) {
+            .nav-container { flex-direction:row; min-height:78px; padding:10px 0; }
+            .menu-toggle { display:block; margin-left:0; margin-right:10px; order:-1; }
+            .main-nav { display:none; position:absolute; top:100%; left:0; right:0; padding:12px 5%; background:rgba(12,10,8,.985); border-top:1px solid #4b3926; box-shadow:0 16px 30px rgba(0,0,0,.28); flex-direction:column; align-items:stretch; gap:2px; max-height:calc(100vh - 80px); overflow-y:auto; }
+            .main-nav.active { display:flex; }
+            .main-nav .nav-direct, .nav-parent { width:100%; text-align:left; padding:13px 12px; font-size:1rem; }
+            .nav-parent { display:flex; justify-content:space-between; align-items:center; }
+            .nav-group { width:100%; }
+            .nav-submenu { display:none; position:static; min-width:0; margin:0 0 7px 10px; padding:5px; opacity:1; visibility:visible; transform:none; box-shadow:none; background:#211a14; border-color:#493824; }
+            .nav-group:hover .nav-submenu, .nav-group:focus-within .nav-submenu { display:none; }
+            .nav-group.open .nav-submenu { display:block; }
+            .nav-submenu a { color:#d8cbb9; padding:11px 12px; }
+            .nav-submenu a:hover { background:#30251b; color:#c99b5b; }
+        }
+
+
+        .christmas-intro { grid-column:1/-1; padding:28px; margin-bottom:8px; text-align:center; border-radius:18px; background:#e9eee5; border:1px solid rgba(178,138,75,.55); color:#354333; }
+        .christmas-intro h3 { margin:0 0 10px; font-size:1.55rem; color:#7d5d2e; }
+        .christmas-intro p { max-width:760px; margin:0 auto 18px; color:#465342; }
+        .christmas-categories { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+        .christmas-categories span { padding:7px 12px; border-radius:999px; background:#dfe6da; color:#52604f; font-size:.88rem; }
+
+
+        /* ÜBER UNS – neue vertikale Anordnung */
+        .ueber-uns-stapel { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 38px; }
+        .ueber-uns-stapel .ueber-uns-person { width: 100%; }
+        .ueber-uns-hauptperson img { height: auto; max-height: 720px; object-fit: cover; }
+        .geschichte-titel { color:#7d5d2e; font-size:1.2rem; font-weight:normal; margin:8px 0 24px; }
+        .ueber-uns-zitat { margin:28px 0; padding:20px 24px; border-left:3px solid #b28a4b; background:rgba(174,186,165,.35); color:#354333; font-size:1.12rem; font-style:italic; line-height:1.7; }
+        @media (max-width:700px) { .ueber-uns-hauptperson img { max-height:none; } .ueber-uns-zitat { padding:16px 18px; } }
+
 </style>
 </head>
 
@@ -1701,32 +1748,56 @@
         </a>
 
 
-        <nav>
+        <button class="menu-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" onclick="toggleMainMenu()">
+            <span></span><span></span><span></span>
+        </button>
 
-            <a href="#start">
-                Startseite
-            </a>
+        <nav id="main-nav" class="main-nav">
+            <a href="#start" class="nav-direct" onclick="closeMainMenu()">Startseite</a>
 
-            <a href="#keramik" onclick="openCollection('keramik'); return false;">
-                Keramik
-            </a>
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Shop <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#keramik" onclick="openCollection('keramik'); closeMainMenu(); return false;">Keramik</a>
+                    <a href="#leder" onclick="openCollection('leder'); closeMainMenu(); return false;">Lederarbeiten</a>
+                    <a href="#weihnachtswerkstatt" onclick="openCollection('weihnachten'); closeMainMenu(); return false;">Weihnachtswerkstatt ✦</a>
+                </div>
+            </div>
 
-            <a href="#leder" onclick="openCollection('leder'); return false;">
-                Leder
-            </a>
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Handwerk <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#herstellung" onclick="closeMainMenu()">Keramik · Herstellung</a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">Unsere Handarbeit</a>
+                </div>
+            </div>
 
-            <a href="#maerkte">
-                Märkte
-            </a>
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Märkte <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#maerkte" onclick="closeMainMenu()">Termine</a>
+                    <a href="#maerkte" onclick="closeMainMenu()">Markt-Eindrücke</a>
+                </div>
+            </div>
 
-            <a href="#ueber-uns">
-                Über uns
-            </a>
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Über uns <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#ueber-uns" onclick="closeMainMenu()">Franca · Keramik</a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">André · Leder</a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">Gemeinsam auf Märkten</a>
+                </div>
+            </div>
 
-            <a href="#kontakt">
-                Kontakt
-            </a>
-
+            <div class="nav-group">
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Kontakt <span>⌄</span></button>
+                <div class="nav-submenu">
+                    <a href="#kontakt" onclick="closeMainMenu()">Kontaktformular</a>
+                    <a href="https://www.instagram.com/dragemorpottery/" target="_blank" rel="noopener noreferrer" onclick="closeMainMenu()">Instagram</a>
+                    <a href="#impressum" onclick="closeMainMenu()">Impressum</a>
+                    <a href="#datenschutz" onclick="closeMainMenu()">Datenschutz</a>
+                </div>
+            </div>
         </nav>
 
     </div>
@@ -1942,16 +2013,23 @@
     <div class="container">
         <div class="section-title">
             <h2>Über uns</h2>
-            <p>Zwei Handwerke, die mit Leidenschaft, natürlichen Materialien und viel Handarbeit entstehen.</p>
+            <p>Dragemor Pottery – Keramik mit Seele, entstanden aus der Liebe zu natürlichen Materialien, echter Handarbeit und der Schönheit des Unvollkommenen.</p>
         </div>
 
-        <div class="ueber-uns-grid">
-            <article class="ueber-uns-person">
-                <img src="bilder/ueber-uns-franca.jpg" alt="Franca – Keramik bei Dragemor Pottery" loading="lazy" decoding="async">
+        <div class="ueber-uns-stapel">
+            <article class="ueber-uns-person ueber-uns-hauptperson">
+                <img src="bilder/ueber-uns-franca.jpg" alt="Franca – Gründerin von Dragemor Pottery" loading="lazy" decoding="async">
                 <div class="ueber-uns-person-text">
+                    <span class="kleine-ueberschrift">Gründerin von Dragemor Pottery</span>
                     <h3>Franca – Keramik mit Seele</h3>
-                    <p>Keramik ist für mich mehr als nur ein Handwerk. Die Arbeit mit Erde, Wasser, Luft und Feuer verbindet mich mit der Natur und macht die Entstehung jedes Stückes zu einem besonderen Prozess.</p>
-                    <p>Mit viel Ruhe, Leidenschaft und Liebe zum Detail entstehen Stücke, die ihren ganz eigenen Charakter tragen. Natürliche Formen, Strukturen und kleine Unregelmäßigkeiten machen jedes Werk zu einem echten Unikat.</p>
+                    <h4 class="geschichte-titel">Meine Geschichte – Von Stoff und Faden zu Erde und Feuer</h4>
+                    <p>Vielleicht kennst du das Gefühl, nach etwas zu suchen, das in unserer lauten, schnellen Welt oft verloren geht: Beständigkeit, Ruhe und echte, spürbare Seele.</p>
+                    <p>Meine kreative Reise begann mit Stoffen und Fäden. Ich habe mir das Nähen selbst beigebracht, Stich für Stich, getrieben von dem Wunsch, Dinge mit meinen eigenen Händen Form zu geben. Es war eine wunderbare Zeit des Lernens, doch tief in mir gab es eine Sehnsucht nach noch mehr Erdung, nach einem Material, das noch rauer, ursprünglicher und geduldiger ist. So fand ich zum Ton – und das Töpfern fand mich.</p>
+                    <p>Als Autodidaktin gehe ich diesen Weg ohne starre Schablonen oder vorgefertigte Regeln. Alles, was du auf dieser Seite siehst, ist das Ergebnis von unzähligen Stunden des Ausprobierens, des Scheiterns und des Neuanfangs. Wenn ich an der Töpferscheibe sitze, verfliegt die Zeit. Es ist ein Dialog zwischen meinen Händen und der Erde.</p>
+                    <p>Manchmal fragen mich Menschen, warum ich meine Website ganz alleine baue oder warum kein Stück dem anderen exakt gleicht. Die Antwort ist einfach: Weil Perfektion nicht mein Ziel ist. Wer makellose Symmetrie sucht, findet sie in Fabriken. Ich suche nach der Schönheit im Unvollkommenen – im Japanischen nennt man das <em>Wabi-Sabi</em>.</p>
+                    <blockquote class="ueber-uns-zitat">Eine kleine Wölbung in der Glasur, ein sanfter Abdruck des Daumens am Tassenrand, ein nicht ganz gerader Rand – das sind keine Fehler.</blockquote>
+                    <p>Es sind die Fingerabdrücke meiner Reise, die Geschichten des Materials und der Beweis dafür, dass dieses Stück exklusiv für dich von Hand geformt wurde.</p>
+                    <p>Wenn du ein Stück meiner Keramik in den Händen hältst, hoffe ich, dass du genau das spürst: Ein Stück Entschleunigung, ein bisschen Wärme und die Liebe zu einem Handwerk, das ganz ohne Eile entstanden ist. Danke, dass du mich auf diesem Weg begleitest.</p>
                 </div>
             </article>
 
@@ -1963,15 +2041,15 @@
                     <p>Dabei steht nicht die Perfektion einer Maschine im Vordergrund, sondern echtes Handwerk – jedes Stück darf seine eigene Geschichte erzählen.</p>
                 </div>
             </article>
-        </div>
 
-        <div class="ueber-uns-gemeinsam">
-            <img src="bilder/ueber-uns-gemeinsam.jpg" alt="Franca und André – gemeinsamer Marktauftritt" loading="lazy" decoding="async">
-            <div class="ueber-uns-gemeinsam-text">
-                <h3>Zwei Handwerke. Eine gemeinsame Leidenschaft.</h3>
-                <p>Keramik und Leder sind zwei unterschiedliche Handwerke, doch uns verbindet die Freude am kreativen Arbeiten, an natürlichen Materialien und daran, mit den eigenen Händen etwas Besonderes entstehen zu lassen.</p>
-                <p><strong>Gemeinsam findet ihr uns auf Märkten unter dem Namen „Drachenfeuer und Lederwind“.</strong></p>
-                <div class="zitat">„Handgemacht bedeutet, dass kein Stück dem anderen gleicht.“</div>
+            <div class="ueber-uns-gemeinsam">
+                <img src="bilder/ueber-uns-gemeinsam.jpg" alt="Franca und André – gemeinsamer Marktauftritt" loading="lazy" decoding="async">
+                <div class="ueber-uns-gemeinsam-text">
+                    <h3>Gemeinsam auf Märkten</h3>
+                    <p>Keramik und Leder sind zwei unterschiedliche Handwerke, doch uns verbindet die Freude am kreativen Arbeiten, an natürlichen Materialien und daran, mit den eigenen Händen etwas Besonderes entstehen zu lassen.</p>
+                    <p><strong>Gemeinsam findet ihr uns auf Märkten unter dem Namen „Drachenfeuer und Lederwind“.</strong></p>
+                    <div class="zitat">„Handgemacht bedeutet, dass kein Stück dem anderen gleicht.“</div>
+                </div>
             </div>
         </div>
     </div>
@@ -2449,6 +2527,7 @@
         <div id="shop-tabs" class="shop-tabs">
             <button class="shop-tab" id="tab-keramik" onclick="renderCollection('keramik')">Keramik</button>
             <button class="shop-tab" id="tab-leder" onclick="renderCollection('leder')">Lederarbeiten</button>
+            <button class="shop-tab" id="tab-weihnachten" onclick="renderCollection('weihnachten')">Weihnachtswerkstatt ✦</button>
         </div>
 
         <div id="collection-grid" class="collection-grid"></div>
@@ -2516,35 +2595,37 @@
 
     const shopProducts = {
         keramik: [
-            ["01","02","03"],
-            ["04","05","06"],
-            ["08","07"],
-            ["09","010","011"],
-            ["013","012"],
-            ["014","016"],
-            ["017","018","019"],
-            ["020","021"],
-            ["022","023"],
-            ["024","025"],
-            ["029","027","026","028"],
-            ["030","031","032"],
-            ["033","034","035","036"],
-            ["037","038","039"],
-            ["040","041","042"],
-            ["043","044","045","046"],
-            ["047","048"],
-            ["050","049","051"],
-            ["052","053"],
-            ["054","055"],
-            ["056","057"],
-            ["058","059"]
-        ].map((nums, i) => ({
+            { category: "Momente des Innehaltens", name: "Nordmeer", images: ["01","02","03"], measure: "ca. 400 ml", price: "18 €" },
+            { category: "Momente des Innehaltens", name: "Waldfeuer", images: ["04","05","06"], measure: "ca. 500 ml", price: "18 €" },
+            { category: "Momente des Innehaltens", name: "Drachensee", images: ["07","08"], measure: "ca. 350 ml", price: "18 €" },
+            { category: "Momente des Innehaltens", name: "Mooslicht", images: ["09","010","011"], measure: "ca. 200 ml", price: "15 €" },
+            { category: "Momente des Innehaltens", name: "Waldritual – Keramikset", images: ["012","013"], measure: "Krug ca. 500 ml · Becher ca. 200 ml · Kännchen ca. 50 ml", price: "35 €" },
+            { category: "Momente des Innehaltens", name: "Nebelwald", images: ["014","015"], measure: "ca. 200 ml", price: "15 €" },
+            { category: "Momente des Innehaltens", name: "Nebelwald II", images: ["016"], measure: "ca. 200 ml", price: "15 €" },
+            { category: "Gemeinsame Zeit", name: "Wilde Küste", images: ["017","018","019"], measure: "Große Schale · kleine Schale", price: "groß 18 € · klein 15 €" },
+            { category: "Momente des Innehaltens", name: "Wilde Küste II", images: ["020","021"], measure: "ca. 250–400 ml", price: "15 €" },
+            { category: "Momente des Innehaltens", name: "Drachenquell", images: ["022","023"], measure: "ca. 500 ml", price: "19 €" },
+            { category: "Momente des Innehaltens", name: "Waldsee", images: ["024","025","026","027","028"], measure: "ca. 200 ml", price: "15 €" },
+            { category: "Momente des Innehaltens", name: "Erdenfeuer", images: ["029"], measure: "ca. 200 ml", price: "10 €" },
+            { category: "Momente des Innehaltens", name: "Nordlicht", images: ["030","031","032","033"], measure: "ca. 400 ml", price: "19 €" },
+            { category: "Momente des Innehaltens", name: "Moosgrund", images: ["034","035","036"], measure: "ca. 200 ml", price: "15 €" },
+            { category: "Momente des Innehaltens", name: "Waldgeflüster – Set", images: ["037","038","039"], measure: "ca. 250 ml + 150 ml", price: "15 €" },
+            { category: "Momente des Innehaltens", name: "Dämmerwald", images: ["040","041","042"], measure: "ca. 200 ml", price: "10 €" },
+            { category: "Kleine Schätze", name: "Feuerlicht – Teelichthalter", images: ["043","044","045","046"], measure: "Teelichthalter", price: "5 €" },
+            { category: "Gemeinsame Zeit", name: "Waldgrund", images: ["047","048"], measure: "Ø ca. 18 cm", price: "18 €" },
+            { category: "Gemeinsame Zeit", name: "Meeresgrund", images: ["049","050","051"], measure: "Ø ca. 19 cm", price: "18 €" },
+            { category: "Gemeinsame Zeit", name: "Drachenfels", images: ["052","053","054"], measure: "Ø ca. 19 cm", price: "18 €" },
+            { category: "Gemeinsame Zeit", name: "Nordküste", images: ["055"], measure: "Ø ca. 21 cm", price: "18 €" },
+            { category: "Gemeinsame Zeit", name: "Steinsee", images: ["056","057"], measure: "Ø ca. 19 cm", price: "18 €" },
+            { category: "Gemeinsame Zeit", name: "Moorschale", images: ["058","059"], measure: "Ø ca. 17 cm", price: "15 €" }
+        ].map((product, i) => ({
             id: `keramik-${i + 1}`,
-            name: `Keramikstück ${i + 1}`,
-            images: nums.map(n => `bilder/Keramik${n}.jpg`),
-            description: "Beschreibung folgt.",
-            measure: "Volumen / Durchmesser: wird ergänzt",
-            price: "Preis: wird ergänzt"
+            name: product.name,
+            category: product.category,
+            images: product.images.map(n => `bilder/Keramik${n}.jpg`),
+            description: "Handgefertigtes Einzelstück von Dragemor Pottery.",
+            measure: product.measure,
+            price: product.price
         })),
         leder: Array.from({length:14}, (_, i) => {
             const n = String(i + 1).padStart(2, "0");
@@ -2556,7 +2637,18 @@
                 measure: "Breite / Länge: wird ergänzt",
                 price: "Preis: wird ergänzt"
             };
-        })
+        }),
+        weihnachten: [
+            {
+                id: "weihnachten-feuerlicht",
+                category: "Licht & Geborgenheit",
+                name: "Feuerlicht – Teelichthalter",
+                images: ["bilder/Keramik043.jpg", "bilder/Keramik044.jpg", "bilder/Keramik045.jpg", "bilder/Keramik046.jpg"],
+                description: "Handgefertigte Teelichthalter aus unserer Weihnachtswerkstatt – stimmungsvolle Keramik für die Advents- und Weihnachtszeit.",
+                measure: "Teelichthalter",
+                price: "5 €"
+            }
+        ]
     };
 
     let currentCollection = "keramik";
@@ -2578,13 +2670,27 @@
         const tabs = document.getElementById("shop-tabs");
         if (!grid || !detail) return;
 
-        title.textContent = type === "keramik" ? "Shop · Keramik" : "Shop · Lederarbeiten";
+        title.textContent = type === "keramik" ? "Shop · Keramik" : type === "leder" ? "Shop · Lederarbeiten" : "Weihnachtswerkstatt ✦";
         document.getElementById("tab-keramik")?.classList.toggle("active", type === "keramik");
         document.getElementById("tab-leder")?.classList.toggle("active", type === "leder");
+        document.getElementById("tab-weihnachten")?.classList.toggle("active", type === "weihnachten");
         tabs.style.display = "flex";
         detail.classList.remove("active");
         grid.style.display = "grid";
         grid.innerHTML = "";
+
+        if (type === "keramik") {
+            const intro = document.createElement("div");
+            intro.className = "christmas-intro";
+            intro.innerHTML = `<h3>Keramik nach Momenten entdecken</h3><div class="christmas-categories"><span><strong>Momente des Innehaltens</strong><br>Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält.</span><span><strong>Gemeinsame Zeit</strong><br>Teller, Servierschalen und Schüsseln, die den Tisch bereichern.</span><span><strong>Raum für Natur</strong><br>Vasen, Blumentöpfe und Steckvasen.</span><span><strong>Kleine Schätze</strong><br>Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte.</span></div>`;
+            grid.appendChild(intro);
+        }
+        if (type === "weihnachten") {
+            const intro = document.createElement("div");
+            intro.className = "christmas-intro";
+            intro.innerHTML = `<h3>Willkommen in unserer Weihnachtswerkstatt</h3><p>Hier ziehen nach und nach handgefertigte Stücke für die Advents- und Weihnachtszeit ein.</p><div class="christmas-categories"><span><strong>Licht &amp; Geborgenheit</strong><br>Adventsgestecke, Kerzenhalter und Windlichter aus Ton.</span><span><strong>Festliche Unikate</strong><br>Weihnachtsbaumschmuck, Anhänger und kleine Deko-Objekte.</span><span><strong>Wärmende Momente</strong><br>Kleinere Tassen – perfekt für Espresso, feinen Tee oder den ersten Schluck Glühwein am Kamin.</span></div>`;
+            grid.appendChild(intro);
+        }
 
         shopProducts[type].forEach((product, index) => {
             const card = document.createElement("article");
@@ -2599,7 +2705,7 @@
 
             const info = document.createElement("div");
             info.className = "product-card-info";
-            info.innerHTML = `<h3>${product.name}</h3><p>Details ansehen →</p>`;
+            info.innerHTML = `<h3>${product.name}</h3>${product.category ? `<p><strong>${product.category}</strong></p>` : ""}<p>${product.measure}</p><p>Details ansehen →</p>`;
 
             card.append(img, info);
             grid.appendChild(card);
@@ -2618,7 +2724,7 @@
         detail.classList.add("active");
 
         document.getElementById("collection-title").textContent =
-            type === "keramik" ? "Keramik" : "Lederarbeiten";
+            type === "keramik" ? "Keramik" : type === "leder" ? "Lederarbeiten" : "Weihnachtswerkstatt ✦";
         document.getElementById("product-name").textContent = product.name;
         document.getElementById("product-description").textContent = product.description;
         document.getElementById("product-measure").textContent = product.measure;
@@ -2797,6 +2903,36 @@
             button.textContent = "Nachricht senden";
         }
     }
+
+
+    /* Hauptmenü & Untermenüs */
+    function toggleMainMenu() {
+        const nav = document.getElementById('main-nav');
+        const button = document.querySelector('.menu-toggle');
+        const open = nav.classList.toggle('active');
+        button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function closeMainMenu() {
+        const nav = document.getElementById('main-nav');
+        const button = document.querySelector('.menu-toggle');
+        if (nav) nav.classList.remove('active');
+        if (button) button.setAttribute('aria-expanded', 'false');
+        document.querySelectorAll('.nav-group.open').forEach(el => el.classList.remove('open'));
+    }
+
+    function toggleSubmenu(button) {
+        const group = button.closest('.nav-group');
+        const wasOpen = group.classList.contains('open');
+        document.querySelectorAll('.nav-group.open').forEach(el => el.classList.remove('open'));
+        if (!wasOpen) group.classList.add('open');
+    }
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.nav-group') && !event.target.closest('.menu-toggle')) {
+            document.querySelectorAll('.nav-group.open').forEach(el => el.classList.remove('open'));
+        }
+    });
 
 </script>
 
