@@ -2155,6 +2155,22 @@
 }
 </style>
 
+<style>
+/* ===== SHOP-UNTERKATEGORIEN – SICHTBARKEITS-FIX ===== */
+.shop-nav-group > .nav-submenu::before{
+    content:"Shop-Kategorien";
+    display:block;
+    padding:8px 12px 6px;
+    color:#c99b5b;
+    font-size:.78rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+.shop-overview-link{
+    border-bottom:1px solid rgba(201,155,91,.25);
+    margin-bottom:4px;
+}
+</style>
 </head>
 
 
@@ -2250,10 +2266,10 @@
         <nav id="main-nav" class="main-nav">
             <a href="#start" class="nav-direct" onclick="closeMainMenu()">Startseite</a>
 
-            <div class="nav-group">
-                <button class="nav-parent" type="button" onclick="toggleSubmenu(this); return false;">Shop <span>⌄</span></button>
+            <div class="nav-group shop-nav-group">
+                <button class="nav-parent" type="button" aria-expanded="false" onclick="toggleSubmenu(this); return false;">Shop <span>⌄</span></button>
                 <div class="nav-submenu">
-
+<a href="javascript:void(0)" class="shop-overview-link" onclick="showShopCategoryHome(); closeMainMenu()"><strong>Alle Shop-Kategorien anzeigen</strong><span class="menu-category-desc">Übersicht über Keramik, Weihnachtswerkstatt und Leder</span></a>
 <a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
 <a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
 <a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
@@ -3516,6 +3532,14 @@
         const button = document.querySelector('.menu-toggle');
         const open = nav.classList.toggle('active');
         button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+            const shopGroup = nav.querySelector('.shop-nav-group');
+            if (shopGroup) {
+                shopGroup.classList.add('open');
+                const shopButton = shopGroup.querySelector('.nav-parent');
+                if (shopButton) shopButton.setAttribute('aria-expanded', 'true');
+            }
+        }
     }
 
     function closeMainMenu() {
@@ -3534,6 +3558,7 @@
             if (el !== group) el.classList.remove('open');
         });
         group.classList.toggle('open', !wasOpen);
+        button.setAttribute('aria-expanded', String(!wasOpen));
     }
 
     document.addEventListener('click', function(event) {
