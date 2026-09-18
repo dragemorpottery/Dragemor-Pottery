@@ -2046,6 +2046,115 @@
 }
 </style>
 
+
+<style>
+/* ===== HANDY-MENÜ FIX: Hoch- und Querformat ===== */
+@media (max-width: 1100px), (max-height: 650px) {
+    .menu-toggle{
+        display:block !important;
+        position:relative !important;
+        z-index:10020 !important;
+    }
+    #main-nav.main-nav{
+        position:fixed !important;
+        top:0 !important;
+        left:0 !important;
+        right:auto !important;
+        width:min(360px,88vw) !important;
+        height:100dvh !important;
+        max-height:100dvh !important;
+        padding:88px 16px 24px !important;
+        overflow-y:auto !important;
+        -webkit-overflow-scrolling:touch;
+        background:#17130f !important;
+        border-right:1px solid #4b3926 !important;
+        box-shadow:12px 0 30px rgba(0,0,0,.35) !important;
+        z-index:10010 !important;
+    }
+    #main-nav.main-nav:not(.active){
+        display:none !important;
+    }
+    #main-nav.main-nav.active{
+        display:flex !important;
+        flex-direction:column !important;
+        align-items:stretch !important;
+    }
+    #main-nav .nav-direct,
+    #main-nav .nav-parent{
+        display:flex !important;
+        align-items:center !important;
+        justify-content:space-between !important;
+        width:100% !important;
+        min-height:46px !important;
+        padding:11px 12px !important;
+        color:#f3eadf !important;
+        background:transparent !important;
+        opacity:1 !important;
+        visibility:visible !important;
+        font-size:1rem !important;
+        line-height:1.3 !important;
+    }
+    #main-nav .nav-parent span{
+        color:#c99b5b !important;
+    }
+    #main-nav .nav-submenu{
+        background:#241d16 !important;
+        margin:2px 0 8px 8px !important;
+    }
+    #main-nav .nav-group.open > .nav-submenu{
+        display:block !important;
+    }
+    #main-nav .nav-submenu a{
+        display:block !important;
+        color:#e8dccd !important;
+        opacity:1 !important;
+        visibility:visible !important;
+        padding:11px 12px !important;
+        font-size:.95rem !important;
+    }
+}
+/* Querformat: etwas kompakter, damit alle Menüpunkte erreichbar bleiben */
+@media (orientation:landscape) and (max-height:650px){
+    #main-nav.main-nav{
+        padding-top:58px !important;
+    }
+    #main-nav .nav-direct,
+    #main-nav .nav-parent{
+        min-height:38px !important;
+        padding:8px 11px !important;
+        font-size:.94rem !important;
+    }
+    #main-nav .nav-submenu a{
+        padding:8px 11px !important;
+        font-size:.9rem !important;
+    }
+}
+</style>
+
+
+<style>
+/* Kurze Inhaltsbeschreibung unter den Shop-Kategorien */
+#main-nav .nav-submenu a .menu-category-desc{
+    display:block !important;
+    margin-top:4px !important;
+    color:#b9aa98 !important;
+    font-size:.78rem !important;
+    font-weight:400 !important;
+    line-height:1.35 !important;
+    letter-spacing:.01em !important;
+    white-space:normal !important;
+}
+#main-nav .nav-submenu a:hover .menu-category-desc{
+    color:#d2c3b0 !important;
+}
+@media(max-width:700px), (max-height:650px){
+    #main-nav .nav-submenu a .menu-category-desc{
+        font-size:.75rem !important;
+        margin-top:3px !important;
+    }
+}
+</style>
+
 </head>
 
 
@@ -2142,15 +2251,15 @@
             <a href="#start" class="nav-direct" onclick="closeMainMenu()">Startseite</a>
 
             <div class="nav-group">
-                <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Shop <span>⌄</span></button>
+                <button class="nav-parent" type="button" onclick="toggleSubmenu(this); return false;">Shop <span>⌄</span></button>
                 <div class="nav-submenu">
 
-<a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens</a>
-<a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit</a>
-<a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur</a>
-<a href="javascript:void(0)" onclick="chooseShopCategory('Kleine Schätze'); closeMainMenu()">Kleine Schätze</a>
-<a href="javascript:void(0)" onclick="chooseChristmas(); closeMainMenu()">Weihnachtswerkstatt</a>
-<a href="javascript:void(0)" onclick="chooseLeather(); closeMainMenu()">Leder</a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Momente des Innehaltens'); closeMainMenu()">Momente des Innehaltens<span class="menu-category-desc">Tassen · Becher · Matchabowls · Teeschalen · Krüge · Sets</span></a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Gemeinsame Zeit'); closeMainMenu()">Gemeinsame Zeit<span class="menu-category-desc">Teller · Bowls · Schalen · Schüsseln · Sets</span></a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Raum für Natur'); closeMainMenu()">Raum für Natur<span class="menu-category-desc">Vasen · Blumentöpfe · Steckvasen</span></a>
+<a href="javascript:void(0)" onclick="chooseShopCategory('Kleine Schätze'); closeMainMenu()">Kleine Schätze<span class="menu-category-desc">Teelichthalter · Seifenschalen · Deko · besondere Einzelstücke</span></a>
+<a href="javascript:void(0)" onclick="chooseChristmas(); closeMainMenu()">Weihnachtswerkstatt<span class="menu-category-desc">Weihnachtliche Keramik · Licht &amp; Geborgenheit · festliche Unikate</span></a>
+<a href="javascript:void(0)" onclick="chooseLeather(); closeMainMenu()">Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
 </div>
             </div>
 
@@ -2174,7 +2283,7 @@
                 <button class="nav-parent" type="button" onclick="toggleSubmenu(this)">Über uns <span>⌄</span></button>
                 <div class="nav-submenu">
                     <a href="#ueber-uns" onclick="closeMainMenu()">Franca · Keramik</a>
-                    <a href="#ueber-uns" onclick="closeMainMenu()">André · Leder</a>
+                    <a href="#ueber-uns" onclick="closeMainMenu()">André · Leder<span class="menu-category-desc">Lederarmbänder · handgefertigte Lederarbeiten</span></a>
                     <a href="#ueber-uns" onclick="closeMainMenu()">Gemeinsam auf Märkten</a>
                 </div>
             </div>
@@ -3419,9 +3528,12 @@
 
     function toggleSubmenu(button) {
         const group = button.closest('.nav-group');
+        if (!group) return;
         const wasOpen = group.classList.contains('open');
-        document.querySelectorAll('.nav-group.open').forEach(el => el.classList.remove('open'));
-        if (!wasOpen) group.classList.add('open');
+        document.querySelectorAll('.nav-group.open').forEach(el => {
+            if (el !== group) el.classList.remove('open');
+        });
+        group.classList.toggle('open', !wasOpen);
     }
 
     document.addEventListener('click', function(event) {
