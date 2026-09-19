@@ -41,7 +41,6 @@ export default async function handler(req, res) {
   params.set('cancel_url', `${origin}/?checkout=cancel#shop`);
   params.set('billing_address_collection', 'auto');
   params.set('shipping_address_collection[allowed_countries][0]', 'DE');
-  params.set('automatic_payment_methods[enabled]', 'true');
   params.set('customer_creation', 'always');
   params.set('allow_promotion_codes', 'false');
 
