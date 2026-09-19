@@ -42,10 +42,8 @@ export default async function handler(req, res) {
   params.set('billing_address_collection', 'auto');
   params.set('shipping_address_collection[allowed_countries][0]', 'DE');
   
-F B <f.bennin@gmail.com>
-12:30 (vor 0 Minuten)
-an mich
 
+  
 params.set('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
 params.set('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '699');
 params.set('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'eur');
