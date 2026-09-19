@@ -50,6 +50,10 @@ params.set('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'e
 params.set('shipping_options[0][shipping_rate_data][display_name]', 'DHL Paket – versicherter Versand'); 
   params.set('customer_creation', 'always');
   params.set('allow_promotion_codes', 'false');
+  params.set(
+  'metadata[dragemor_product_ids]',
+  selected.map(({ id }) => id).join(',')
+);
 
   selected.forEach(({id, product}, i) => {
     params.set(`line_items[${i}][quantity]`, '1');
