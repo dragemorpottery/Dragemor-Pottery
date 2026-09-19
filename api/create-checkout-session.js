@@ -1,3 +1,4 @@
+// Stripe Previe-Test
 const catalog = {
   "keramik-1": { name: "WaterDragon", amount: 1800 },
   "keramik-2": { name: "WaterDragon", amount: 1800 },
