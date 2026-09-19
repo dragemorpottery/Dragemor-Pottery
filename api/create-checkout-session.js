@@ -25,8 +25,18 @@ const catalog = {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Methode nicht erlaubt.' });
-  if (!process.env.STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe ist noch nicht vollständig eingerichtet.' });
+  const isPreview = process.env.VERCEL_ENV === 'preview';
 
+const stripeSecretKey = isPreview
+  ? process.env.STRIPE_TEST_SECRET_KEY
+  : process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey) {
+  return res.status(500).json({
+    error: 'Stripe ist noch nicht vollständig eingerichtet.'
+  });
+} 
+  
   const items = Array.isArray(req.body?.items) ? req.body.items : [];
   if (!items.length) return res.status(400).json({ error: 'Der Warenkorb ist leer.' });
   if (items.length > 20) return res.status(400).json({ error: 'Zu viele Artikel im Warenkorb.' });
@@ -67,7 +77,7 @@ params.set('shipping_options[0][shipping_rate_data][display_name]', 'DHL Paket �
     const stripeResponse = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+        'Authorization': `Bearer ${stripeSecretKey}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: params.toString()
