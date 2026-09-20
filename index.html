@@ -4052,9 +4052,23 @@ function handleCheckoutReturn(){
   const params=new URLSearchParams(window.location.search);
   const checkoutResult=params.get('checkout');
   if(checkoutResult==='success'){
-    dragemorCart=[];
+    // Bezahlte Bestellung: Warenkorb vollständig zurücksetzen.
     localStorage.removeItem('dragemorCart');
+    dragemorCart=[];
     renderCart();
+
+    // Den sichtbaren Zähler zusätzlich direkt auf 0 setzen.
+    const count=document.getElementById('cartCount');
+    if(count) count.textContent='0';
+
+    // Warenkorb-Anzeige sicher leeren, auch wenn der Browser die Seite aus dem Cache lädt.
+    const box=document.getElementById('cartItems');
+    if(box) box.innerHTML='<div class="cart-empty">Dein Warenkorb ist noch leer.</div>';
+    const total=document.getElementById('cartTotal');
+    if(total) total.textContent=(0).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+    const checkout=document.getElementById('cartCheckout');
+    if(checkout){checkout.disabled=true; checkout.textContent='Zur Kasse';}
+
     closeCart();
     const overlay=document.getElementById('orderSuccessOverlay');
     if(overlay){overlay.classList.add('active');overlay.setAttribute('aria-hidden','false');}
@@ -4065,6 +4079,7 @@ function handleCheckoutReturn(){
   }
 }
 document.addEventListener('DOMContentLoaded',handleCheckoutReturn);
+window.addEventListener('pageshow',handleCheckoutReturn);
 </script>
 </body>
 </html> 
