@@ -320,7 +320,8 @@ Genieße deinen Tag und danke, dass du Teil meiner Reise bist.
 
 Alles Liebe
 
-Dragemor Pottery
+Franca und André
+von Dragemor Pottery
 `.trim();
 
   const html = `
@@ -506,7 +507,7 @@ Dragemor Pottery
       ">
         Alles Liebe<br>
         <strong style="color:#7d5d2e;">
-          Dragemor Pottery
+          Franca und André von Dragemor Pottery
         </strong>
       </p>
 
