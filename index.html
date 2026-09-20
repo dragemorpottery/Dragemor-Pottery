@@ -4060,10 +4060,16 @@ function handleCheckoutReturn(){
   const params=new URLSearchParams(window.location.search);
   const checkoutResult=params.get('checkout');
   if(checkoutResult==='success'){
-    dragemorCart=[];
-    localStorage.removeItem('dragemorCart');
-    renderCart();
-    closeCart();
+    // Each optional cart operation must leave the confirmation usable on failure.
+    try { localStorage.removeItem('dragemorCart'); } catch(e) {}
+    // A top-level let is not a window property and may still be uninitialized.
+    try {
+      if(typeof dragemorCart !== 'undefined') dragemorCart=[];
+    } catch(e) {}
+    try { if(typeof renderCart === 'function') renderCart(); } catch(e) {}
+    try { if(typeof closeCart === 'function') closeCart(); } catch(e) {}
+    const count=document.getElementById('cartCount');
+    if(count) count.textContent='0';
     const overlay=document.getElementById('orderSuccessOverlay');
     if(overlay){
       overlay.classList.add('active');
@@ -4080,7 +4086,26 @@ function handleCheckoutReturn(){
     openCart();
   }
 }
-document.addEventListener('DOMContentLoaded',handleCheckoutReturn);
+// Clear stored items immediately, even if the cart script has not run yet.
+if(new URLSearchParams(window.location.search).get('checkout')==='success'){
+  handleCheckoutReturn();
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',function(){
+    // Run after other DOMContentLoaded listeners have initialized the cart.
+    setTimeout(handleCheckoutReturn,0);
+  },{once:true});
+} else {
+  handleCheckoutReturn();
+}
+// Reconcile late script initialization without reopening a dismissed confirmation.
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    if(new URLSearchParams(window.location.search).get('checkout')==='success'){
+      handleCheckoutReturn();
+    }
+  },0);
+},{once:true});
 </script>
 </body>
 </html> 
