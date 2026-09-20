@@ -4040,7 +4040,15 @@ document.addEventListener('DOMContentLoaded', renderCart);
 <script>
 function closeOrderSuccess(){
   const overlay=document.getElementById('orderSuccessOverlay');
-  if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+    overlay.style.removeProperty('display');
+    overlay.style.removeProperty('visibility');
+    overlay.style.removeProperty('opacity');
+    overlay.style.removeProperty('z-index');
+  }
+  document.body.style.overflow='';
   const cleanUrl=window.location.pathname + window.location.hash;
   history.replaceState(history.state,'',cleanUrl);
   if(window.location.hash==='#shop'){
@@ -4052,26 +4060,20 @@ function handleCheckoutReturn(){
   const params=new URLSearchParams(window.location.search);
   const checkoutResult=params.get('checkout');
   if(checkoutResult==='success'){
-    // Bezahlte Bestellung: Warenkorb vollständig zurücksetzen.
-    localStorage.removeItem('dragemorCart');
     dragemorCart=[];
+    localStorage.removeItem('dragemorCart');
     renderCart();
-
-    // Den sichtbaren Zähler zusätzlich direkt auf 0 setzen.
-    const count=document.getElementById('cartCount');
-    if(count) count.textContent='0';
-
-    // Warenkorb-Anzeige sicher leeren, auch wenn der Browser die Seite aus dem Cache lädt.
-    const box=document.getElementById('cartItems');
-    if(box) box.innerHTML='<div class="cart-empty">Dein Warenkorb ist noch leer.</div>';
-    const total=document.getElementById('cartTotal');
-    if(total) total.textContent=(0).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-    const checkout=document.getElementById('cartCheckout');
-    if(checkout){checkout.disabled=true; checkout.textContent='Zur Kasse';}
-
     closeCart();
     const overlay=document.getElementById('orderSuccessOverlay');
-    if(overlay){overlay.classList.add('active');overlay.setAttribute('aria-hidden','false');}
+    if(overlay){
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden','false');
+      overlay.style.setProperty('display','flex','important');
+      overlay.style.setProperty('visibility','visible','important');
+      overlay.style.setProperty('opacity','1','important');
+      overlay.style.setProperty('z-index','2147483647','important');
+      document.body.style.overflow='hidden';
+    }
   } else if(checkoutResult==='cancel'){
     const status=document.getElementById('checkoutStatus');
     if(status) status.textContent='Die Zahlung wurde abgebrochen. Deine Artikel bleiben im Warenkorb.';
@@ -4079,7 +4081,6 @@ function handleCheckoutReturn(){
   }
 }
 document.addEventListener('DOMContentLoaded',handleCheckoutReturn);
-window.addEventListener('pageshow',handleCheckoutReturn);
 </script>
 </body>
 </html> 
