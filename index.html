@@ -4011,5 +4011,101 @@ document.addEventListener('DOMContentLoaded', renderCart);
 })();
 </script>
 
+
+
+<!-- ===== BESTELLUNG ERFOLGREICH ===== -->
+<div id="orderSuccessOverlay" class="order-success-overlay" aria-hidden="true">
+  <div class="order-success-card" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle">
+    <div class="order-success-mark">✓</div>
+    <p class="order-success-kicker">DRAGEMOR POTTERY</p>
+    <h2 id="orderSuccessTitle">Vielen Dank für deine Bestellung ♡</h2>
+    <p>Deine Zahlung war erfolgreich und deine Bestellung ist bei Dragemor Pottery eingegangen.</p>
+    <p>Eine Bestellbestätigung wird an die beim Bezahlen angegebene E-Mail-Adresse gesendet.</p>
+    <p>Ich mache dein neues Lieblingsstück nun mit großer Sorgfalt für den Versand bereit.</p>
+    <button type="button" class="order-success-button" onclick="closeOrderSuccess()">Zurück zum Shop</button>
+  </div>
+</div>
+<style>
+.order-success-overlay{position:fixed;inset:0;z-index:30000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(18,25,17,.82);backdrop-filter:blur(7px)}
+.order-success-overlay.active{display:flex}
+.order-success-card{width:min(620px,94vw);padding:46px 38px;text-align:center;border:2px solid rgba(201,155,91,.9);border-radius:24px;background:#e9eee5;color:#354333;box-shadow:0 24px 70px rgba(0,0,0,.32)}
+.order-success-mark{width:70px;height:70px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;border:2px solid #b28a4b;border-radius:50%;font-size:2rem;color:#7d5d2e;background:#f4f6f1}
+.order-success-kicker{margin:0 0 10px;color:#8a6937;font-size:.78rem;font-weight:700;letter-spacing:.16em}
+.order-success-card h2{margin:0 0 22px;color:#354333;font-family:Georgia,serif;font-size:clamp(1.8rem,5vw,2.7rem);line-height:1.2}
+.order-success-card p{margin:0 auto 14px;max-width:510px;color:#465342;line-height:1.7}
+.order-success-button{margin-top:18px;padding:13px 24px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}
+.order-success-button:hover{background:#4b6048}
+@media(max-width:600px){.order-success-card{padding:36px 22px}.order-success-mark{width:60px;height:60px}}
+</style>
+<script>
+function closeOrderSuccess(){
+  const overlay=document.getElementById('orderSuccessOverlay');
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+    overlay.style.removeProperty('display');
+    overlay.style.removeProperty('visibility');
+    overlay.style.removeProperty('opacity');
+    overlay.style.removeProperty('z-index');
+  }
+  document.body.style.overflow='';
+  const cleanUrl=window.location.pathname + window.location.hash;
+  history.replaceState(history.state,'',cleanUrl);
+  if(window.location.hash==='#shop'){
+    const shop=document.getElementById('shop');
+    if(shop) shop.scrollIntoView({behavior:'smooth'});
+  }
+}
+function handleCheckoutReturn(){
+  const params=new URLSearchParams(window.location.search);
+  const checkoutResult=params.get('checkout');
+  if(checkoutResult==='success'){
+    // Each optional cart operation must leave the confirmation usable on failure.
+    try { localStorage.removeItem('dragemorCart'); } catch(e) {}
+    // A top-level let is not a window property and may still be uninitialized.
+    try {
+      if(typeof dragemorCart !== 'undefined') dragemorCart=[];
+    } catch(e) {}
+    try { if(typeof renderCart === 'function') renderCart(); } catch(e) {}
+    try { if(typeof closeCart === 'function') closeCart(); } catch(e) {}
+    const count=document.getElementById('cartCount');
+    if(count) count.textContent='0';
+    const overlay=document.getElementById('orderSuccessOverlay');
+    if(overlay){
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden','false');
+      overlay.style.setProperty('display','flex','important');
+      overlay.style.setProperty('visibility','visible','important');
+      overlay.style.setProperty('opacity','1','important');
+      overlay.style.setProperty('z-index','2147483647','important');
+      document.body.style.overflow='hidden';
+    }
+  } else if(checkoutResult==='cancel'){
+    const status=document.getElementById('checkoutStatus');
+    if(status) status.textContent='Die Zahlung wurde abgebrochen. Deine Artikel bleiben im Warenkorb.';
+    openCart();
+  }
+}
+// Clear stored items immediately, even if the cart script has not run yet.
+if(new URLSearchParams(window.location.search).get('checkout')==='success'){
+  handleCheckoutReturn();
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',function(){
+    // Run after other DOMContentLoaded listeners have initialized the cart.
+    setTimeout(handleCheckoutReturn,0);
+  },{once:true});
+} else {
+  handleCheckoutReturn();
+}
+// Reconcile late script initialization without reopening a dismissed confirmation.
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    if(new URLSearchParams(window.location.search).get('checkout')==='success'){
+      handleCheckoutReturn();
+    }
+  },0);
+},{once:true});
+</script>
 </body>
 </html> 
