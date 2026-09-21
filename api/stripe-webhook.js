@@ -104,6 +104,27 @@ async function getStripeLineItems(sessionId) {
   return Array.isArray(data?.data) ? data.data : [];
 }
 
+async function markProductsAsSold(productIds) {
+if (!productIds?.length) return;
+
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    throw new Error('DATABASE_URL ist nicht eingerichtet.');
+  }
+
+  const { neon } = await import('@neondatabase/serverless');
+  const sql = neon(databaseUrl);
+
+  await sql`
+    UPDATE products
+    SET
+      status = 'sold',
+      updated_at = NOW()
+    WHERE product_id = ANY(${productIds})
+  `;
+} 
+
 async function sendResendEmail({
   to,
   subject,
