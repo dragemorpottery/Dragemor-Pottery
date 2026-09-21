@@ -2196,6 +2196,7 @@
 .cart-footer{padding:20px 22px 26px;border-top:1px solid rgba(138,105,55,.25);background:#e9eee5}.cart-total{display:flex;justify-content:space-between;font-size:1.12rem;font-weight:700;margin-bottom:14px}.cart-checkout{width:100%;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.cart-checkout:disabled{opacity:.5;cursor:not-allowed}
 .add-to-cart{width:100%;margin-top:20px;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.add-to-cart:disabled{opacity:.55;cursor:not-allowed}.cart-note{margin-top:9px;color:#657060;font-size:.86rem;line-height:1.45}
 .cart-backdrop{position:fixed;z-index:12999;inset:0;background:rgba(0,0,0,.45);display:none}.cart-backdrop.open{display:block}
+.product-card.coming-soon{position:relative}.product-card.coming-soon>img{opacity:.42;filter:saturate(.65)}.product-card.coming-soon::after{content:"Kommt bald wieder ♡";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);padding:8px 14px;border-radius:999px;background:rgba(53,67,51,.92);color:#f4ead8;font-weight:700;font-size:.9rem;box-shadow:0 5px 18px rgba(0,0,0,.18);pointer-events:none}.product-card.coming-soon .shop-card-price{display:none}.cart-item.coming-soon img{opacity:.42}.cart-item-coming{display:block;margin-top:4px;color:#7d5d2e;font-size:.82rem;font-weight:700}.cart-warning{margin:0 0 12px;padding:11px 12px;border-radius:12px;background:#f4ead8;color:#6a4d28;font-size:.9rem;line-height:1.45}
 @media(max-width:700px){.cart-open-button{top:88px;right:10px;padding:9px 12px}.cart-drawer{width:94vw}}
 </style>
 
@@ -3279,7 +3280,7 @@
 
     const shopProducts = {
         keramik: [
-            { category: "Momente des Innehaltens", name: "WaterDragon", images: ["01","02","03"], measure: "ca. 400 ml", price: "18 €" },
+            { category: "Momente des Innehaltens", name: "WaterDragon", images: ["01","02","03"], measure: "ca. 400 ml", price: "18 €", available: false },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["04","05","06"], measure: "ca. 500 ml", price: "18 €" },
             { category: "Momente des Innehaltens", name: "Erdtanz", images: ["07","08"], measure: "ca. 350 ml", price: "18 €" },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["09","010","011"], measure: "ca. 200 ml", price: "15 €" },
@@ -3308,7 +3309,8 @@
             images: product.images.map(n => `bilder/Keramik${n}.jpg`),
             description: ceramicDescriptions[product.name] || "Handgefertigtes Einzelstück von Dragemor Pottery.",
             measure: product.measure,
-            price: product.price
+            price: product.price,
+            available: product.available !== false
         })),
         leder: Array.from({length:14}, (_, i) => {
             const n = String(i + 1).padStart(2, "0");
@@ -3380,6 +3382,7 @@
         const addProductCard = (product, index, target = grid) => {
             const card = document.createElement("article");
             card.className = "collection-grid-item product-card";
+            if (product.available === false) card.classList.add("coming-soon");
             card.onclick = () => openProduct(type, index);
 
             const img = document.createElement("img");
@@ -3774,6 +3777,7 @@ function renderCeramicCategory(category){
     entries.forEach(({product,index})=>{
         const card = document.createElement("article");
         card.className = "collection-grid-item product-card";
+        if (product.available === false) card.classList.add("coming-soon");
         card.onclick = ()=>openProduct("keramik", index);
 
         const img = document.createElement("img");
@@ -3806,6 +3810,7 @@ function renderAllCeramics(pushHistory = true){
     shopProducts.keramik.forEach((product,index)=>{
         const card = document.createElement("article");
         card.className = "collection-grid-item product-card";
+        if (product.available === false) card.classList.add("coming-soon");
         card.onclick = ()=>openProduct("keramik", index);
         const img = document.createElement("img");
         img.src = product.images[0];
@@ -3889,7 +3894,7 @@ function addCurrentProductToCart(){
   const type = currentCollection;
   const id = document.getElementById('product-detail')?.dataset.productId;
   const product = (shopProducts[type] || []).find(p => p.id === id);
-  if(!product) return;
+  if(!product || product.available === false) return;
   const value = numericEuroPrice(product.price);
   if(value === null) return;
   if(!dragemorCart.some(x => x.id === product.id)){
@@ -3899,6 +3904,8 @@ function addCurrentProductToCart(){
   openCart();
 }
 function removeCartItem(id){ dragemorCart = dragemorCart.filter(x => x.id !== id); saveCart(); }
+function getLiveProduct(item){ return (shopProducts[item.type] || []).find(p => p.id === item.id); }
+function cartHasComingSoon(){ return dragemorCart.some(item => getLiveProduct(item)?.available === false); }
 function renderCart(){
   const box=document.getElementById('cartItems'), count=document.getElementById('cartCount'), total=document.getElementById('cartTotal'), checkout=document.getElementById('cartCheckout');
   if(!box) return;
@@ -3907,17 +3914,23 @@ function renderCart(){
   if(!dragemorCart.length){ box.innerHTML='<div class="cart-empty">Dein Warenkorb ist noch leer.</div>'; }
   dragemorCart.forEach(item=>{
     const row=document.createElement('div'); row.className='cart-item';
-    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${item.name}</h3><p>${item.priceText}</p></div><button class="cart-remove" type="button">Entfernen</button>`;
+    const liveProduct=getLiveProduct(item); const comingSoon=liveProduct?.available === false;
+    if(comingSoon) row.classList.add("coming-soon");
+    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${item.name}</h3><p>${comingSoon ? "" : item.priceText}</p>${comingSoon ? '<span class="cart-item-coming">Kommt bald wieder ♡</span>' : ''}</div><button class="cart-remove" type="button">Entfernen</button>`;
     row.querySelector('button').onclick=()=>removeCartItem(item.id); box.appendChild(row);
   });
   const sum=dragemorCart.reduce((a,x)=>a+Number(x.price||0),0);
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-  checkout.disabled=!dragemorCart.length;
+  const hasComingSoon=cartHasComingSoon();
+  checkout.disabled=!dragemorCart.length || hasComingSoon;
+  const status=document.getElementById("checkoutStatus");
+  if(status) status.innerHTML=hasComingSoon ? '<span class="cart-warning">Ein Stück in deinem Warenkorb kommt bald wieder ♡ Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : 'Sichere Bezahlung über Stripe.';
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
   if(!dragemorCart.length) return;
+  if(cartHasComingSoon()){ if(status) status.innerHTML='<span class="cart-warning">Ein Stück in deinem Warenkorb kommt bald wieder ♡ Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>'; return; }
   checkout.disabled=true;
   checkout.textContent='Checkout wird geöffnet …';
   if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
@@ -3950,7 +3963,8 @@ function prepareCartButton(product){
   }
   const price=numericEuroPrice(product.price);
   const already=dragemorCart.some(x=>x.id===product.id);
-  if(price===null){ btn.disabled=true; btn.textContent='Variante / Preis noch auswählen'; note.textContent='Dieses Produkt hat noch keinen eindeutigen Einzelpreis und kann deshalb noch nicht in den Warenkorb gelegt werden.'; }
+  if(product.available === false){ btn.disabled=true; btn.textContent='Kommt bald wieder ♡'; note.textContent='Ein ähnliches Stück kommt bald wieder.'; }
+  else if(price===null){ btn.disabled=true; btn.textContent='Variante / Preis noch auswählen'; note.textContent='Dieses Produkt hat noch keinen eindeutigen Einzelpreis und kann deshalb noch nicht in den Warenkorb gelegt werden.'; }
   else if(already){ btn.disabled=true; btn.textContent='Bereits im Warenkorb'; note.textContent='Dieses handgefertigte Einzelstück ist bereits für deinen Warenkorb vorgemerkt.'; }
   else { btn.disabled=false; btn.textContent='In den Warenkorb'; note.textContent='Einzelstück – daher maximal 1 Stück verfügbar.'; }
 }
