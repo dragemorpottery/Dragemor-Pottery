@@ -2196,7 +2196,7 @@
 .cart-footer{padding:20px 22px 26px;border-top:1px solid rgba(138,105,55,.25);background:#e9eee5}.cart-total{display:flex;justify-content:space-between;font-size:1.12rem;font-weight:700;margin-bottom:14px}.cart-checkout{width:100%;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.cart-checkout:disabled{opacity:.5;cursor:not-allowed}
 .add-to-cart{width:100%;margin-top:20px;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.add-to-cart:disabled{opacity:.55;cursor:not-allowed}.cart-note{margin-top:9px;color:#657060;font-size:.86rem;line-height:1.45}
 .cart-backdrop{position:fixed;z-index:12999;inset:0;background:rgba(0,0,0,.45);display:none}.cart-backdrop.open{display:block}
-.product-card.coming-soon{position:relative}.product-card.coming-soon>img{opacity:.42;filter:saturate(.65)}.product-card.coming-soon::after{content:"Kommt bald wieder ♡";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);padding:8px 14px;border-radius:999px;background:rgba(53,67,51,.92);color:#f4ead8;font-weight:700;font-size:.9rem;box-shadow:0 5px 18px rgba(0,0,0,.18);pointer-events:none}.product-card.coming-soon .shop-card-price{display:none}.cart-item.coming-soon img{opacity:.42}.cart-item-coming{display:block;margin-top:4px;color:#7d5d2e;font-size:.82rem;font-weight:700}.cart-warning{margin:0 0 12px;padding:11px 12px;border-radius:12px;background:#f4ead8;color:#6a4d28;font-size:.9rem;line-height:1.45}
+.product-card.coming-soon{position:relative}.product-card.coming-soon>img{opacity:.42;filter:saturate(.65)}.product-card.coming-soon::after{content:"Kommt bald wieder ♡";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);padding:8px 14px;border-radius:999px;background:rgba(53,67,51,.92);color:#f4ead8;font-weight:700;font-size:.9rem;box-shadow:0 5px 18px rgba(0,0,0,.18);pointer-events:none}.product-card.coming-soon .shop-card-price{display:none}.cart-item.coming-soon img{opacity:.42}.cart-item-coming{display:block;margin-top:4px;color:#7d5d2e;font-size:.82rem;font-weight:700}.cart-warning{display:block;margin:16px 0 0;padding:15px 16px;border:1px solid rgba(138,105,55,.28);border-radius:14px;background:#f8f6ef;color:#354333;font-size:.92rem;line-height:1.55;text-align:center}.cart-warning strong{display:block;margin-bottom:4px;color:#354333;font-size:1rem}
 @media(max-width:700px){.cart-open-button{top:88px;right:10px;padding:9px 12px}.cart-drawer{width:94vw}}
 </style>
 
@@ -3919,18 +3919,19 @@ function renderCart(){
     row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${item.name}</h3><p>${comingSoon ? "" : item.priceText}</p>${comingSoon ? '<span class="cart-item-coming">Kommt bald wieder ♡</span>' : ''}</div><button class="cart-remove" type="button">Entfernen</button>`;
     row.querySelector('button').onclick=()=>removeCartItem(item.id); box.appendChild(row);
   });
-  const sum=dragemorCart.reduce((a,x)=>a+Number(x.price||0),0);
-  total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
   const hasComingSoon=cartHasComingSoon();
+  const purchasableItems=dragemorCart.filter(item => getLiveProduct(item)?.available !== false);
+  const sum=purchasableItems.reduce((a,x)=>a+Number(x.price||0),0);
+  total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
   checkout.disabled=!dragemorCart.length || hasComingSoon;
   const status=document.getElementById("checkoutStatus");
-  if(status) status.innerHTML=hasComingSoon ? '<span class="cart-warning">Ein Stück in deinem Warenkorb kommt bald wieder ♡ Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : 'Sichere Bezahlung über Stripe.';
+  if(status) status.innerHTML=hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : 'Sichere Bezahlung über Stripe.';
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
   if(!dragemorCart.length) return;
-  if(cartHasComingSoon()){ if(status) status.innerHTML='<span class="cart-warning">Ein Stück in deinem Warenkorb kommt bald wieder ♡ Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>'; return; }
+  if(cartHasComingSoon()){ if(status) status.innerHTML='<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>'; return; }
   checkout.disabled=true;
   checkout.textContent='Checkout wird geöffnet …';
   if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
