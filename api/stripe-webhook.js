@@ -621,7 +621,15 @@ export default async function handler(req, res) {
           await getStripeLineItems(
             session.id
           );
+        
+const productIds = (
+  session?.metadata?.dragemor_product_ids || ''
+)
+  .split(',')
+  .map(id => id.trim())
+  .filter(Boolean);
 
+await markProductsAsSold(productIds); 
         await sendInternalOrderEmail(
           session,
           lineItems
