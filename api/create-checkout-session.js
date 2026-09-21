@@ -43,6 +43,39 @@ if (!stripeSecretKey) {
 
   const selected = items.map(item => ({ id: String(item.id || ''), product: catalog[String(item.id || '')] }));
   if (selected.some(x => !x.product)) return res.status(400).json({ error: 'Mindestens ein Artikel kann derzeit nicht bezahlt werden.' });
+   const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    return res.status(500).json({
+      error: 'Datenbank ist noch nicht vollständig eingerichtet.'
+    });
+  }
+
+  try {
+    const { neon } = await import('@neondatabase/serverless');
+    const sql = neon(databaseUrl);
+
+    const productIds = selected.map(({ id }) => id);
+
+    const unavailableProducts = await sql`
+      SELECT product_id
+      FROM products
+      WHERE product_id = ANY(${productIds})
+        AND status <> 'available'
+    `;
+
+    if (unavailableProducts.length > 0) {
+      return res.status(409).json({
+        error: 'Mindestens ein Artikel wurde leider bereits verkauft.'
+      });
+    }
+  } catch (error) {
+    console.error('Bestandsprüfung fehlgeschlagen:', error);
+
+    return res.status(500).json({
+      error: 'Der Warenbestand konnte nicht geprüft werden.'
+    });
+  } 
 
   const origin = `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}`;
   const params = new URLSearchParams();
