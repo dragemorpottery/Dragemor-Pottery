@@ -27,16 +27,9 @@ function isAdmin(req) {
 }
 
 export default async function handler(req, res) {
-
   if (!isAdmin(req)) {
     return res.status(401).json({
       error: "Nicht angemeldet."
-    });
-  }
-
-  if (req.method !== "GET") {
-    return res.status(405).json({
-      error: "Methode nicht erlaubt."
     });
   }
 
@@ -52,24 +45,66 @@ export default async function handler(req, res) {
     const { neon } = await import("@neondatabase/serverless");
     const sql = neon(databaseUrl);
 
-    const products = await sql`
-      SELECT product_id, status, updated_at
-      FROM products
-      ORDER BY product_id
-    `;
+    if (req.method === "GET") {
+      const products = await sql`
+        SELECT product_id, status, updated_at
+        FROM products
+        ORDER BY product_id
+      `;
 
-    return res.status(200).json({
-      products
+      return res.status(200).json({
+        products
+      });
+    }
+
+    if (req.method === "POST") {
+      const { product_id, status } = req.body || {};
+
+      if (!product_id) {
+        return res.status(400).json({
+          error: "Produkt-ID fehlt."
+        });
+      }
+
+      if (!["available", "sold"].includes(status)) {
+        return res.status(400).json({
+          error: "Ungültiger Status."
+        });
+      }
+
+      const updated = await sql`
+        UPDATE products
+        SET
+          status = ${status},
+          updated_at = NOW()
+        WHERE product_id = ${product_id}
+        RETURNING product_id, status, updated_at
+      `;
+
+      if (updated.length === 0) {
+        return res.status(404).json({
+          error: "Produkt wurde nicht gefunden."
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        product: updated[0]
+      });
+    }
+
+    return res.status(405).json({
+      error: "Methode nicht erlaubt."
     });
 
   } catch (error) {
     console.error(
-      "Admin-Produkte konnten nicht geladen werden:",
+      "Admin-Produkte Fehler:",
       error
     );
 
     return res.status(500).json({
-      error: "Produkte konnten nicht geladen werden."
+      error: "Produkte konnten nicht verarbeitet werden."
     });
   }
 } 
