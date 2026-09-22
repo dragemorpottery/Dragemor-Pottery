@@ -38,4 +38,98 @@
       font-weight: normal;
     }
 
-    . 
+    .subtitle {
+      margin: 0 0 28px;
+      opacity: .7;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 14px;
+      border: 1px solid #b8b8ad;
+      border-radius: 10px;
+      background: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 10px;
+      background: #292a26;
+      color: white;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #message {
+      min-height: 22px;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login">
+    <h1>Dragemor Pottery</h1>
+    <p class="subtitle">Geschützte Verwaltung ♡</p>
+
+    <form id="loginForm">
+      <input
+        id="password"
+        type="password"
+        placeholder="Passwort"
+        autocomplete="current-password"
+        required
+      >
+
+      <button type="submit">
+        Verwaltung öffnen
+      </button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const password = document.getElementById("password").value;
+
+      message.textContent = "Anmeldung wird geprüft …";
+
+      try {
+        const response = await fetch("/api/admin-login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.ok) {
+          message.textContent = "Anmeldung erfolgreich ♡";
+        } else {
+          message.textContent =
+            data.message || "Passwort ist nicht korrekt.";
+        }
+      } catch (error) {
+        message.textContent =
+          "Die Anmeldung konnte nicht geprüft werden.";
+      }
+    });
+  </script>
+
+</body>
+</html> 
