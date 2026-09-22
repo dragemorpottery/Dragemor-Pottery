@@ -136,18 +136,76 @@ async function ladeProdukte() {
       card.style.marginBottom = "12px";
       card.style.borderRadius = "14px";
 
-      const statusText =
-        product.status === "available"
-          ? "Verfügbar ♡"
-          : "Mitgenommen ♡";
+      const istVerfuegbar = product.status === "available";
 
-      card.innerHTML = `
-        <strong>${product.product_id}</strong>
-        <br>
-        ${statusText}
-      `;
+const statusText = istVerfuegbar
+  ? "Verfügbar ♡"
+  : "Mitgenommen ♡";
 
-      produktListe.appendChild(card);
+const buttonText = istVerfuegbar
+  ? "Mitgenommen ♡"
+  : "Wieder verfügbar";
+
+card.innerHTML = `
+  <strong>${product.product_id}</strong>
+  <br>
+  <span>${statusText}</span>
+
+  <button
+    type="button"
+    style="margin-top:14px;"
+    data-product-id="${product.product_id}"
+    data-new-status="${istVerfuegbar ? "sold" : "available"}"
+  >
+    ${buttonText}
+  </button>
+`;
+
+const button = card.querySelector("button");
+
+button.addEventListener("click", async () => {
+  const productId = button.dataset.productId;
+  const newStatus = button.dataset.newStatus;
+
+  const frage = newStatus === "sold"
+    ? `${productId} wirklich als mitgenommen markieren?`
+    : `${productId} wieder verfügbar machen?`;
+
+  if (!confirm(frage)) {
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Wird gespeichert …";
+
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        status: newStatus
+      })
+    });
+
+    if (!response.ok) {
+      alert("Der Status konnte nicht gespeichert werden.");
+      button.disabled = false;
+      return;
+    }
+
+    await ladeProdukte();
+
+  } catch (error) {
+    alert("Der Status konnte nicht gespeichert werden.");
+    button.disabled = false;
+  }
+});
+
+produktListe.appendChild(card); 
+
     });
 
   } catch (error) {
