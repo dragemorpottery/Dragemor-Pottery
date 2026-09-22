@@ -86,7 +86,7 @@ if (req.method === "POST" && req.body?.action === "setup-products") {
 
     if (req.method === "GET") {
       const products = await sql`
-        SELECT product_id, status, updated_at
+        SELECT product_id, status, updated_at, name, category, price, measure, description, images 
         FROM products
         ORDER BY product_id
       `;
