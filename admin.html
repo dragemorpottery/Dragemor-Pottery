@@ -146,11 +146,25 @@ const keramikProdukte = [
   "keramik-56",
   "keramik-58"
 ];
-
+    const lederProdukte = [
+"leder-1",
+  "leder-2",
+  "leder-3",
+  "leder-4",
+  "leder-5",
+  "leder-6",
+  "leder-7",
+  "leder-8",
+  "leder-9",
+  "leder-10",
+  "leder-11",
+  "leder-12" 
+    ];
+    
 const sichtbareProdukte = data.products.filter(product =>
-  keramikProdukte.includes(product.product_id)
+  keramikProdukte.includes(product.product_id) ||
+  lederProdukte.includes(product.product_id)
 ); 
-
     
     sichtbareProdukte.forEach(product => {
       const card = document.createElement("div");
