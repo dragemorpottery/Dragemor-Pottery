@@ -95,7 +95,53 @@ if (req.method === "POST" && req.body?.action === "setup-products") {
         products
       });
     }
+if (req.method === "POST" && req.body?.action === "create-product") {
+  const {
+    product_id,
+    name,
+    category,
+    price,
+    measure,
+    description,
+    images
+  } = req.body;
 
+  if (!product_id || !name || !category || price === undefined) {
+    return res.status(400).json({
+      error: "Bitte alle Pflichtfelder ausfüllen."
+    });
+  }
+
+  const created = await sql`
+    INSERT INTO products (
+      product_id,
+      status,
+      name,
+      category,
+      price,
+      measure,
+      description,
+      images
+    )
+    VALUES (
+      ${product_id},
+      'available',
+      ${name},
+      ${category},
+      ${price},
+      ${measure || null},
+      ${description || null},
+      ${images || []}
+    )
+    RETURNING *
+  `;
+
+  return res.status(201).json({
+    ok: true,
+    product: created[0]
+  });
+} 
+    
     if (req.method === "POST") {
       const { product_id, status } = req.body || {};
 
