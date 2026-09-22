@@ -99,7 +99,13 @@
 <div id="verwaltung" style="display:none; width:100%; max-width:700px;">
     <h1>Produktverwaltung</h1>
     <p class="subtitle">Dragemor Pottery ♡</p>
-
+<button
+  id="setupProdukte"
+  type="button"
+  style="margin-bottom:20px;"
+>
+  Fehlende Keramikprodukte einmalig anlegen
+</button> 
     <div id="produktListe">
       Produkte werden geladen …
     </div>
@@ -112,6 +118,48 @@
 const loginBox = document.querySelector(".login");
 const verwaltung = document.getElementById("verwaltung");
 const produktListe = document.getElementById("produktListe");
+
+    const setupProdukte = document.getElementById("setupProdukte");
+
+setupProdukte.addEventListener("click", async () => {
+  setupProdukte.disabled = true;
+  setupProdukte.textContent = "Produkte werden angelegt …";
+
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "setup-products"
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Produkte konnten nicht angelegt werden.");
+      setupProdukte.disabled = false;
+      setupProdukte.textContent =
+        "Fehlende Keramikprodukte einmalig anlegen";
+      return;
+    }
+
+    alert("Fehlende Keramikprodukte wurden angelegt ♡");
+
+    setupProdukte.style.display = "none";
+
+    await ladeProdukte();
+
+  } catch (error) {
+    alert("Produkte konnten nicht angelegt werden.");
+
+    setupProdukte.disabled = false;
+    setupProdukte.textContent =
+      "Fehlende Keramikprodukte einmalig anlegen";
+  }
+}); 
 
 async function ladeProdukte() {
   produktListe.innerHTML = "Produkte werden geladen …";
