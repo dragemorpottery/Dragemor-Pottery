@@ -284,7 +284,7 @@ const buttonText = istVerfuegbar
   : "Wieder verfügbar";
 
 card.innerHTML = `
-  <strong>${product.product_id}</strong>
+ <strong>${product.name || product.product_id}</strong> 
   <br>
   <span>${statusText}</span>
 
