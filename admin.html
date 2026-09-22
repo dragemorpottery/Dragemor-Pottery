@@ -97,39 +97,69 @@
   </div>
 
   <script>
-    const form = document.getElementById("loginForm");
-    const message = document.getElementById("message");
+  const form = document.getElementById("loginForm");
+  const message = document.getElementById("message");
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  async function checkLogin() {
+    try {
+      const response = await fetch("/api/admin-check");
 
-      const password = document.getElementById("password").value;
-
-      message.textContent = "Anmeldung wird geprüft …";
-
-      try {
-        const response = await fetch("/api/admin-login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ password })
-        });
-
+      if (response.ok) {
         const data = await response.json();
 
-        if (response.ok && data.ok) {
-          message.textContent = "Anmeldung erfolgreich ♡";
+        if (data.authenticated) {
+          message.textContent = "Geschützte Sitzung aktiv ♡";
+          return true;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return false;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const password = document.getElementById("password").value;
+
+    message.textContent = "Anmeldung wird geprüft …";
+
+    try {
+      const response = await fetch("/api/admin-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.ok) {
+        document.getElementById("password").value = "";
+
+        const authenticated = await checkLogin();
+
+        if (authenticated) {
+          message.textContent = "Geschützte Anmeldung erfolgreich ♡";
         } else {
           message.textContent =
-            data.message || "Passwort ist nicht korrekt.";
+            "Anmeldung war erfolgreich, Sitzung konnte aber nicht bestätigt werden.";
         }
-      } catch (error) {
+      } else {
         message.textContent =
-          "Die Anmeldung konnte nicht geprüft werden.";
+          data.message || "Passwort ist nicht korrekt.";
       }
-    });
-  </script>
+    } catch (error) {
+      message.textContent =
+        "Die Anmeldung konnte nicht geprüft werden.";
+    }
+  });
+
+  checkLogin();
+</script> 
 
 </body>
 </html> 
