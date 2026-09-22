@@ -44,6 +44,33 @@ export default async function handler(req, res) {
   try {
     const { neon } = await import("@neondatabase/serverless");
     const sql = neon(databaseUrl);
+if (req.method === "POST" && req.body?.action === "setup-products") {
+  const productIds = [
+    "keramik-24",
+    "keramik-26",
+    "keramik-30",
+    "keramik-33",
+    "keramik-37",
+    "keramik-40",
+    "keramik-49",
+    "keramik-53",
+    "keramik-56",
+    "keramik-58"
+  ];
+
+  for (const productId of productIds) {
+    await sql`
+      INSERT INTO products (product_id, status)
+      VALUES (${productId}, 'available')
+      ON CONFLICT (product_id) DO NOTHING
+    `;
+  }
+
+  return res.status(200).json({
+    ok: true,
+    message: "Fehlende Keramikprodukte wurden angelegt."
+  });
+} 
 
     if (req.method === "GET") {
       const products = await sql`
