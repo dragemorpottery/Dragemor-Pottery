@@ -99,6 +99,41 @@
 <div id="verwaltung" style="display:none; width:100%; max-width:700px;">
     <h1>Produktverwaltung</h1>
     <p class="subtitle">Dragemor Pottery ♡</p>
+
+<div id="neuesProduktBereich" style="margin: 24px 0;">
+    <button type="button" id="neuesProduktButton">
+        + Neues Produkt anlegen
+    </button>
+  <div id="neuesProduktFormular" style="display:none; margin-top:20px;">
+    <h2>Neues Produkt</h2>
+
+    <input type="text" id="produktName" placeholder="Name / Serie">
+
+    <select id="produktKategorie">
+        <option value="">Kategorie auswählen</option>
+        <option value="Momente des Innehaltens">Momente des Innehaltens</option>
+        <option value="Gemeinsame Zeit">Gemeinsame Zeit</option>
+        <option value="Raum für Natur">Raum für Natur</option>
+        <option value="Kleine Schätze">Kleine Schätze</option>
+        <option value="Weihnachtswerkstatt">Weihnachtswerkstatt</option>
+        <option value="Leder">Leder</option>
+    </select>
+
+    <input type="number" id="produktPreis" placeholder="Preis in €" step="0.01">
+
+    <input type="text" id="produktMass" placeholder="Volumen / Durchmesser / Größe">
+
+    <textarea id="produktBeschreibung" placeholder="Beschreibung"></textarea>
+
+<label for="produktBilder">Produktbilder auswählen:</label>
+<input type="file" id="produktBilder" accept="image/*" multiple>
+<button type="button" id="produktSpeichernButton" style="margin-top:16px;">
+    Produkt speichern ♡
+</button>
+
+<div id="produktSpeichernStatus" style="margin-top:10px;"></div> 
+</div> 
+</div> 
   
     <div id="produktListe">
       Produkte werden geladen …
@@ -106,6 +141,67 @@
   </div> 
   
   <script>
+    
+    document.getElementById("neuesProduktButton").addEventListener("click", () => {
+    const formular = document.getElementById("neuesProduktFormular");
+
+    if (formular.style.display === "none") {
+        formular.style.display = "block";
+    } else {
+        formular.style.display = "none";
+    }
+}); 
+
+document.getElementById("produktSpeichernButton").addEventListener("click", async () => {
+  const status = document.getElementById("produktSpeichernStatus");
+
+  const name = document.getElementById("produktName").value.trim();
+  const category = document.getElementById("produktKategorie").value;
+  const priceEuro = document.getElementById("produktPreis").value;
+  const measure = document.getElementById("produktMass").value.trim();
+  const description = document.getElementById("produktBeschreibung").value.trim();
+
+  if (!name || !category || !priceEuro) {
+    status.textContent = "Bitte Name, Kategorie und Preis ausfüllen.";
+    return;
+  }
+
+  status.textContent = "Produkt wird gespeichert …";
+  const price = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
+
+try {
+    const response = await fetch("/api/admin-products", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            action: "create-product",
+            name,
+            category,
+            price,
+            measure,
+            description,
+            images: []
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        status.textContent = data.error || "Produkt konnte nicht gespeichert werden.";
+        return;
+    }
+
+    status.textContent = "Produkt wurde gespeichert ♡";
+    await ladeProdukte();
+
+} catch (error) {
+    console.error(error);
+    status.textContent = "Produkt konnte nicht gespeichert werden.";
+} 
+}); 
+    
   const form = document.getElementById("loginForm");
   const message = document.getElementById("message");
 
