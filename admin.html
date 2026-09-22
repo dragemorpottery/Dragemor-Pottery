@@ -260,8 +260,9 @@ const keramikProdukte = [
     ];
     
 const sichtbareProdukte = data.products.filter(product =>
-  keramikProdukte.includes(product.product_id) ||
-  lederProdukte.includes(product.product_id)
+    keramikProdukte.includes(product.product_id) ||
+    lederProdukte.includes(product.product_id) ||
+    product.product_id.startsWith("produkt-")
 ); 
     
     sichtbareProdukte.forEach(product => {
