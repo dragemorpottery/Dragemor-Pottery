@@ -55,7 +55,19 @@ if (req.method === "POST" && req.body?.action === "setup-products") {
     "keramik-49",
     "keramik-53",
     "keramik-56",
-    "keramik-58"
+    "keramik-58",
+    "leder-1",
+  "leder-2",
+  "leder-3",
+  "leder-4",
+  "leder-5",
+  "leder-6",
+  "leder-7",
+  "leder-8",
+  "leder-9",
+  "leder-10",
+  "leder-11",
+  "leder-12" 
   ];
 
   for (const productId of productIds) {
