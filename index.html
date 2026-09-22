@@ -3337,7 +3337,7 @@
     };
 async function syncProductAvailability() {
     try {
-        const response = await fetch('/api/product-status');
+        const response = await fetch('/api/produkt-status');
         if (!response.ok) return;
 
         const products = await response.json();
