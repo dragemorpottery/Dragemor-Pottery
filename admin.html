@@ -109,6 +109,59 @@
   const form = document.getElementById("loginForm");
   const message = document.getElementById("message");
 
+const loginBox = document.querySelector(".login");
+const verwaltung = document.getElementById("verwaltung");
+const produktListe = document.getElementById("produktListe");
+
+async function ladeProdukte() {
+  produktListe.innerHTML = "Produkte werden geladen …";
+
+  try {
+    const response = await fetch("/api/admin-products");
+
+    if (!response.ok) {
+      produktListe.innerHTML = "Produkte konnten nicht geladen werden.";
+      return;
+    }
+
+    const data = await response.json();
+
+    produktListe.innerHTML = "";
+
+    data.products.forEach(product => {
+      const card = document.createElement("div");
+
+      card.style.background = "#f4f0e7";
+      card.style.padding = "18px";
+      card.style.marginBottom = "12px";
+      card.style.borderRadius = "14px";
+
+      const statusText =
+        product.status === "available"
+          ? "Verfügbar ♡"
+          : "Mitgenommen ♡";
+
+      card.innerHTML = `
+        <strong>${product.product_id}</strong>
+        <br>
+        ${statusText}
+      `;
+
+      produktListe.appendChild(card);
+    });
+
+  } catch (error) {
+    produktListe.innerHTML =
+      "Produkte konnten nicht geladen werden.";
+  }
+}
+
+function zeigeVerwaltung() {
+  loginBox.style.display = "none";
+  verwaltung.style.display = "block";
+  ladeProdukte();
+} 
+    
   async function checkLogin() {
     try {
       const response = await fetch("/api/admin-check");
@@ -118,6 +171,7 @@
 
         if (data.authenticated) {
           message.textContent = "Geschützte Sitzung aktiv ♡";
+          zeigeVerwaltung();
           return true;
         }
       }
