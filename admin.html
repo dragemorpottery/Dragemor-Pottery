@@ -167,6 +167,7 @@ document.getElementById("produktSpeichernButton").addEventListener("click", asyn
   }
 
   status.textContent = "Produkt wird gespeichert …";
+  const productId = `produkt-${Date.now()}`; 
   const price = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
 
 try {
@@ -177,6 +178,7 @@ try {
         },
         body: JSON.stringify({
             action: "create-product",
+            product_id: productId,
             name,
             category,
             price,
