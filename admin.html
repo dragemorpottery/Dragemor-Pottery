@@ -128,7 +128,31 @@ async function ladeProdukte() {
 
     produktListe.innerHTML = "";
 
-    data.products.forEach(product => {
+const keramikProdukte = [
+  "keramik-1",
+  "keramik-4",
+  "keramik-7",
+  "keramik-9",
+  "keramik-12",
+  "keramik-14",
+  "keramik-24",
+  "keramik-26",
+  "keramik-30",
+  "keramik-33",
+  "keramik-37",
+  "keramik-40",
+  "keramik-49",
+  "keramik-53",
+  "keramik-56",
+  "keramik-58"
+];
+
+const sichtbareProdukte = data.products.filter(product =>
+  keramikProdukte.includes(product.product_id)
+); 
+
+    
+    sichtbareProdukte.forEach(product => {
       const card = document.createElement("div");
 
       card.style.background = "#f4f0e7";
