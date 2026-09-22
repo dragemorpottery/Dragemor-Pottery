@@ -100,6 +100,14 @@
     <h1>Produktverwaltung</h1>
     <p class="subtitle">Dragemor Pottery ♡</p>
 
+<button
+  id="setupLeder"
+  type="button"
+  style="margin-bottom:20px;"
+>
+  Lederprodukte einmalig anlegen
+</button> 
+  
     <div id="produktListe">
       Produkte werden geladen …
     </div>
@@ -112,6 +120,44 @@
 const loginBox = document.querySelector(".login");
 const verwaltung = document.getElementById("verwaltung");
 const produktListe = document.getElementById("produktListe");
+
+    const setupLeder = document.getElementById("setupLeder");
+
+setupLeder.addEventListener("click", async () => {
+  setupLeder.disabled = true;
+  setupLeder.textContent = "Lederprodukte werden angelegt …";
+
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "setup-products"
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Lederprodukte konnten nicht angelegt werden.");
+      setupLeder.disabled = false;
+      setupLeder.textContent = "Lederprodukte einmalig anlegen";
+      return;
+    }
+
+    alert("Lederprodukte wurden angelegt ♡");
+    setupLeder.style.display = "none";
+    await ladeProdukte();
+
+  } catch (error) {
+    alert("Lederprodukte konnten nicht angelegt werden.");
+    setupLeder.disabled = false;
+    setupLeder.textContent = "Lederprodukte einmalig anlegen";
+  }
+}); 
+
 
 async function ladeProdukte() {
   produktListe.innerHTML = "Produkte werden geladen …";
