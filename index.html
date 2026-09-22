@@ -3335,6 +3335,27 @@
             }
         ]
     };
+async function syncProductAvailability() {
+    try {
+        const response = await fetch('/api/product-status');
+        if (!response.ok) return;
+
+        const products = await response.json();
+
+        Object.entries(products).forEach(([productId, status]) => {
+    const product = shopProducts.keramik.find(
+        p => p.id === productId
+    );
+
+    if (product) {
+        product.available = status === 'available';
+    }
+}); 
+        renderCart();
+    } catch (error) {
+        console.error('Bestand konnte nicht geladen werden:', error);
+    }
+} 
 
     let currentCollection = "keramik";
     let currentShopCategory = null;
@@ -3977,7 +3998,10 @@ openProduct = function(type,index,pushHistory=true){
   const product=(shopProducts[type]||[])[index]; if(product) prepareCartButton(product);
 };
 
-document.addEventListener('DOMContentLoaded', renderCart);
+document.addEventListener('DOMContentLoaded', async () => {
+    await syncProductAvailability();
+    renderCart();
+}); 
 </script>
 
 
