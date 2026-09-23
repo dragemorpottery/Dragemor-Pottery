@@ -3346,7 +3346,30 @@ async function loadDatabaseProducts() {
         }
 
         const data = await response.json();
-        console.log("Datenbank-Produkte:", data);
+
+const databaseProducts = data.products || [];
+
+databaseProducts.forEach(product => {
+    const newProduct = {
+        id: product.product_id,
+        name: product.name,
+        category: product.category,
+        images: product.images || [],
+        description: product.description || "",
+        measure: product.measure || "",
+        price: (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €",
+        available: product.status === "available"
+    };
+
+    if (product.category === "Leder") {
+        shopProducts.leder.push(newProduct);
+    } else if (product.category === "Weihnachtswerkstatt") {
+        shopProducts.weihnachten.push(newProduct);
+    } else {
+        shopProducts.keramik.push(newProduct);
+    }
+}); 
+
 
     } catch (error) {
         console.error("Fehler beim Laden der Datenbank-Produkte:", error);
@@ -3812,7 +3835,13 @@ function renderCeramicCategory(category){
     grid.innerHTML = "";
 
     const entries = shopProducts.keramik
-        .map((product,index)=>({product,index,categories:getCeramicCategories(product)}))
+  .map((product,index)=>({
+    product,
+    index,
+    categories: product.category
+        ? [product.category]
+        : getCeramicCategories(product)
+})) 
         .filter(x => x.categories.includes(category));
 
     entries.forEach(({product,index})=>{
@@ -4019,6 +4048,7 @@ openProduct = function(type,index,pushHistory=true){
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+    await loadDatabaseProducts();
     await syncProductAvailability();
     renderCart();
 }); 
