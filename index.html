@@ -3335,6 +3335,25 @@
             }
         ]
     };
+
+async function loadDatabaseProducts() {
+    try {
+        const response = await fetch("/api/products");
+
+        if (!response.ok) {
+            console.error("Datenbank-Produkte konnten nicht geladen werden.");
+            return;
+        }
+
+        const data = await response.json();
+        console.log("Datenbank-Produkte:", data);
+
+    } catch (error) {
+        console.error("Fehler beim Laden der Datenbank-Produkte:", error);
+    }
+} 
+
+
 async function syncProductAvailability() {
     try {
         const response = await fetch('/api/produkt-status');
