@@ -42,7 +42,9 @@ if (!stripeSecretKey) {
   if (items.length > 20) return res.status(400).json({ error: 'Zu viele Artikel im Warenkorb.' });
 
   const selected = items.map(item => ({ id: String(item.id || ''), product: catalog[String(item.id || '')] }));
-  if (selected.some(x => !x.product)) return res.status(400).json({ error: 'Mindestens ein Artikel kann derzeit nicht bezahlt werden.' });
+  const missingIds = selected
+  .filter(({ product }) => !product)
+  .map(({ id }) => id); 
    const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
@@ -54,6 +56,30 @@ if (!stripeSecretKey) {
   try {
     const { neon } = await import('@neondatabase/serverless');
     const sql = neon(databaseUrl);
+if (missingIds.length > 0) {
+  const databaseProducts = await sql`
+    SELECT product_id, name, price, status
+    FROM products
+    WHERE product_id = ANY(${missingIds})
+  `;
+
+  databaseProducts.forEach(dbProduct => {
+    const entry = selected.find(({ id }) => id === dbProduct.product_id);
+
+    if (entry && dbProduct.status === 'available') {
+      entry.product = {
+        name: dbProduct.name,
+        amount: Number(dbProduct.price)
+      };
+    }
+  });
+
+  if (selected.some(({ product }) => !product)) {
+    return res.status(400).json({
+      error: 'Mindestens ein Artikel kann derzeit nicht bestellt werden.'
+    });
+  }
+} 
 
     const productIds = selected.map(({ id }) => id);
 
