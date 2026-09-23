@@ -397,6 +397,7 @@ button.addEventListener("click", async () => {
   }
 });
    editButton.addEventListener("click", () => {
+     document.getElementById("neuesProduktFormular").style.display = "block";
      produktInBearbeitung = product.produkt_id;
   document.getElementById("produktName").value = product.name || "";
   document.getElementById("produktKategorie").value = product.category || "";
