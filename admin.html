@@ -134,7 +134,9 @@
 <div id="produktSpeichernStatus" style="margin-top:10px;"></div> 
 </div> 
 </div> 
-  
+  <button type="button" id="keramikDetailsButton" style="margin-bottom:16px;">
+  Keramikdetails übernehmen
+</button>
     <div id="produktListe">
       Produkte werden geladen …
     </div>
@@ -142,7 +144,40 @@
   
   <script>
     
-    document.getElementById("neuesProduktButton").addEventListener("click", () => {
+   document.getElementById("keramikDetailsButton").addEventListener("click", async () => {
+  const button = document.getElementById("keramikDetailsButton");
+
+  button.disabled = true;
+  button.textContent = "Details werden übernommen …";
+
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "setup-keramik-details"
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Details konnten nicht übernommen werden.");
+      return;
+    }
+
+    alert("Keramikdetails wurden übernommen ♡");
+    await ladeProdukte();
+
+  } catch (error) {
+    alert("Details konnten nicht übernommen werden.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Keramikdetails übernehmen";
+  }
+}); document.getElementById("neuesProduktButton").addEventListener("click", () => {
     const formular = document.getElementById("neuesProduktFormular");
 
     if (formular.style.display === "none") {
