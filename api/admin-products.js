@@ -190,6 +190,32 @@ if (req.method === "POST" && req.body?.action === "create-product") {
     product: updated[0]
   });
 } 
+if (req.method === "POST" && req.body?.action === "delete-product") {
+  const { product_id } = req.body;
+
+  if (!product_id) {
+    return res.status(400).json({
+      error: "Produkt-ID fehlt."
+    });
+  }
+
+  const deleted = await sql`
+    DELETE FROM products
+    WHERE product_id = ${product_id}
+    RETURNING product_id
+  `;
+
+  if (deleted.length === 0) {
+    return res.status(404).json({
+      error: "Produkt wurde nicht gefunden."
+    });
+  }
+
+  return res.status(200).json({
+    ok: true,
+    product_id: deleted[0].product_id
+  });
+} 
 
     if (req.method === "POST") {
       const { product_id, status } = req.body || {};
