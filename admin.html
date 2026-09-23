@@ -329,17 +329,19 @@ card.innerHTML = `
   <br>
   <span>${statusText}</span>
 
-  <button
+  <button class="statusButton"
     type="button"
     style="margin-top:14px;"
     data-product-id="${product.product_id}"
     data-new-status="${istVerfuegbar ? "sold" : "available"}"
   >
     ${buttonText}
-  </button>
+</button>
+${product.images?.[0] ? `<img src="${product.images[0]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
+
 `;
 
-const button = card.querySelector("button");
+const button = card.querySelector(".statusButton");
 
 button.addEventListener("click", async () => {
   const productId = button.dataset.productId;
