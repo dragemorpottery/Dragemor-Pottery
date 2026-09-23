@@ -328,7 +328,13 @@ card.innerHTML = `
  <strong>${product.name || product.product_id}</strong> 
   <br>
   <span>${statusText}</span>
-
+  
+<div style="margin-top:10px;line-height:1.6;">
+  <div><strong>Kategorie:</strong> ${product.category || "–"}</div>
+  <div><strong>Preis:</strong> ${product.price ? (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €" : "–"}</div>
+  <div><strong>Maß:</strong> ${product.measure || "–"}</div>
+  <div><strong>Beschreibung:</strong> ${product.description || "–"}</div>
+</div> 
   <button class="statusButton"
     type="button"
     style="margin-top:14px;"
