@@ -327,7 +327,7 @@ const buttonText = istVerfuegbar
 
 card.innerHTML = `
  <strong>${product.name || product.product_id}</strong> 
-  <br>
+<br>
   <span>${statusText}</span>
   
 <div style="margin-top:10px;line-height:1.6;">
@@ -358,7 +358,7 @@ ${product.images?.[0] ? `<img src="${product.images[0]}" alt="${product.name || 
 
 const button = card.querySelector(".statusButton");
 const editButton = card.querySelector(".editButton");
-const deletButton = card.querySelector(".deleteButton");
+const deleteButton = card.querySelector(".deleteButton");
 
 button.addEventListener("click", async () => {
   const productId = button.dataset.productId;
@@ -402,7 +402,7 @@ button.addEventListener("click", async () => {
 });
    editButton.addEventListener("click", () => {
      document.getElementById("neuesProduktFormular").style.display = "block";
-     produktInBearbeitung = product.produkt_id;
+     produktInBearbeitung = product.product_id;
   document.getElementById("produktName").value = product.name || "";
   document.getElementById("produktKategorie").value = product.category || "";
   document.getElementById("produktPreis").value = product.price
