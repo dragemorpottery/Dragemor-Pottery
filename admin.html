@@ -151,7 +151,7 @@
         formular.style.display = "none";
     }
 }); 
-
+let produktInBearbeitung = null;
 document.getElementById("produktSpeichernButton").addEventListener("click", async () => {
   const status = document.getElementById("produktSpeichernStatus");
 
@@ -168,7 +168,7 @@ document.getElementById("produktSpeichernButton").addEventListener("click", asyn
   }
 
   status.textContent = "Produkt wird gespeichert …";
-  const productId = `produkt-${Date.now()}`; 
+  const productId = produktInBearbeitung || `produkt-${Date.now()}`; 
   const price = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
 
  const images = await Promise.all(
@@ -218,14 +218,14 @@ try {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            action: "create-product",
+            action: produktInBearbeitung ? "update-product" : "create-product",
             product_id: productId,
             name,
             category,
             price,
             measure,
             description,
-            images
+      images: images.length > 0 ? images : undefined
         })
     });
 
@@ -343,11 +343,17 @@ card.innerHTML = `
   >
     ${buttonText}
 </button>
+
+<button class="editButton" type="button" style="margin-top:10px;">
+  Produkt bearbeiten ✎
+</button> 
+
 ${product.images?.[0] ? `<img src="${product.images[0]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
 
 `;
 
 const button = card.querySelector(".statusButton");
+const editButton = card.querySelector(".editButton");
 
 button.addEventListener("click", async () => {
   const productId = button.dataset.productId;
@@ -389,6 +395,22 @@ button.addEventListener("click", async () => {
     button.disabled = false;
   }
 });
+   editButton.addEventListener("click", () => {
+     produktInBearbeitung = product.produkt_id;
+  document.getElementById("produktName").value = product.name || "";
+  document.getElementById("produktKategorie").value = product.category || "";
+  document.getElementById("produktPreis").value = product.price
+    ? (Number(product.price) / 100).toFixed(2)
+    : "";
+  document.getElementById("produktMass").value = product.measure || "";
+  document.getElementById("produktBeschreibung").value = product.description || "";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}); 
+   
 
 produktListe.appendChild(card); 
 
