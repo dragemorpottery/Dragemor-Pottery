@@ -141,7 +141,56 @@ if (req.method === "POST" && req.body?.action === "create-product") {
     product: created[0]
   });
 } 
-    
+    if (req.method === "POST" && req.body?.action === "update-product") {
+  const {
+    product_id,
+    name,
+    category,
+    price,
+    measure,
+    description,
+    images
+  } = req.body;
+
+  if (!product_id || !name || !category || price === undefined) {
+    return res.status(400).json({
+      error: "Bitte alle Pflichtfelder ausfüllen."
+    });
+  }
+
+  const updated = images
+    ? await sql`
+        UPDATE products
+        SET
+          name = ${name},
+          category = ${category},
+          price = ${price},
+          measure = ${measure || null},
+          description = ${description || null},
+          images = ${images},
+          updated_at = NOW()
+        WHERE product_id = ${product_id}
+        RETURNING *
+      `
+    : await sql`
+        UPDATE products
+        SET
+          name = ${name},
+          category = ${category},
+          price = ${price},
+          measure = ${measure || null},
+          description = ${description || null},
+          updated_at = NOW()
+        WHERE product_id = ${product_id}
+        RETURNING *
+      `;
+
+  return res.status(200).json({
+    ok: true,
+    product: updated[0]
+  });
+} 
+
     if (req.method === "POST") {
       const { product_id, status } = req.body || {};
 
