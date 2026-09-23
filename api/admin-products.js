@@ -44,6 +44,49 @@ export default async function handler(req, res) {
   try {
     const { neon } = await import("@neondatabase/serverless");
     const sql = neon(databaseUrl);
+if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
+  const keramikDetails = [
+    {
+      product_id: "keramik-1",
+      name: "WaterDragon",
+      category: "Momente des Innehaltens",
+      price: 1800,
+      measure: "ca. 400 ml"
+    },
+    {
+      product_id: "keramik-4",
+      name: "WaterDragon",
+      category: "Momente des Innehaltens",
+      price: 1800,
+      measure: "ca. 500 ml"
+    },
+    {
+      product_id: "keramik-7",
+      name: "WaterDragon",
+      category: "Momente des Innehaltens",
+      price: 1800,
+      measure: "ca. 350 ml"
+    }
+  ];
+
+  for (const product of keramikDetails) {
+    await sql`
+      UPDATE products
+      SET
+        name = ${product.name},
+        category = ${product.category},
+        price = ${product.price},
+        measure = ${product.measure},
+        updated_at = NOW()
+      WHERE product_id = ${product.product_id}
+    `;
+  }
+
+  return res.status(200).json({
+    ok: true,
+    message: "Keramikdetails wurden übernommen."
+  });
+}
 if (req.method === "POST" && req.body?.action === "setup-products") {
   const productIds = [
     "keramik-24",
