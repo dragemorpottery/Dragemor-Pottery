@@ -67,6 +67,86 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       price: 1800,
       measure: "ca. 350 ml"
     }
+,
+    {
+      product_id: "keramik-9",
+      name: "Erdtanz",
+      category: "Momente des Innehaltens",
+      price: 1500,
+      measure: "ca. 200 ml"
+    }
+,
+    {
+      product_id: "keramik-12",
+      name: "Waldritual – Keramikset",
+      category: "Gemeinsame Zeit",
+      price: 3500,
+      measure: "Krug ca. 500 ml / Becher ca. 200 ml / Kännchen ca. 50 ml"
+    }
+,
+    {
+      product_id: "keramik-14",
+      name: "WaterDragon",
+      category: "Momente des Innehaltens",
+      price: 1500,
+      measure: "ca. 200 ml"
+    }
+,
+    {
+      product_id: "keramik-24",
+      name: "Erdtanz",
+      category: "Momente des Innehaltens",
+      price: 1500,
+      measure: "ca. 200 ml"
+    }
+,
+    {
+      product_id: "keramik-30",
+      name: "des Drachens Wasser",
+      category: "Momente des Innehaltens",
+      price: 1900,
+      measure: "ca. 400 ml"
+    }
+,
+    {
+      product_id: "keramik-37",
+      name: "Waldgeflüster – Set",
+      category: "Momente des Innehaltens",
+      price: 1500,
+      measure: "ca. 250 ml + 150 ml"
+    }
+,
+    {
+      product_id: "keramik-40",
+      name: "Dämmerwald",
+      category: "Momente des Innehaltens",
+      price: 1000,
+      measure: "ca. 200 ml"
+    }
+,
+    {
+      product_id: "keramik-49",
+      name: "Meeresgrund",
+      category: "Gemeinsame Zeit",
+      price: 1800,
+      measure: "Ø ca. 19 cm"
+    }
+,
+    {
+      product_id: "keramik-56",
+      name: "des Drachens Wasser",
+      category: "Gemeinsame Zeit",
+      price: 1800,
+      measure: "Ø ca. 19 cm"
+    }
+,
+    {
+      product_id: "keramik-58",
+      name: "des Drachens Wasser",
+      category: "Gemeinsame Zeit",
+      price: 1500,
+      measure: "Ø ca. 17 cm"
+    }
   ];
 
   for (const product of keramikDetails) {
