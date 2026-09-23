@@ -349,12 +349,16 @@ card.innerHTML = `
   Produkt bearbeiten ✎
 </button> 
 
+<button class="deleteButton" type="button" style="margin-top:10px;">
+  Produkt löschen 🗑
+</button> 
 ${product.images?.[0] ? `<img src="${product.images[0]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
 
 `;
 
 const button = card.querySelector(".statusButton");
 const editButton = card.querySelector(".editButton");
+const deletButton = card.querySelector(".deleteButton");
 
 button.addEventListener("click", async () => {
   const productId = button.dataset.productId;
@@ -414,7 +418,48 @@ button.addEventListener("click", async () => {
 }); 
    
 
-produktListe.appendChild(card); 
+deleteButton.addEventListener("click", async () => {
+  const wirklichLoeschen = confirm(
+    `${product.name || product.product_id} wirklich endgültig löschen?`
+  );
+
+  if (!wirklichLoeschen) {
+    return;
+  }
+
+  deleteButton.disabled = true;
+  deleteButton.textContent = "Wird gelöscht …";
+
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "delete-product",
+        product_id: product.product_id
+        
+      })
+    });
+    
+
+    if (!response.ok) {
+      alert("Produkt konnte nicht gelöscht werden.");
+      deleteButton.disabled = false;
+      deleteButton.textContent = "Produkt löschen 🗑";
+      return;
+    }
+
+    await ladeProdukte();
+
+  } catch (error) {
+    alert("Produkt konnte nicht gelöscht werden.");
+    deleteButton.disabled = false;
+    deleteButton.textContent = "Produkt löschen 🗑";
+  }
+}); 
+      produktListe.appendChild(card); 
 
     });
 
