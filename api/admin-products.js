@@ -53,7 +53,8 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       price: 1800,
       measure: "ca. 400 ml",
       description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
-    },
+    }
+,
     {
       product_id: "keramik-4",
       name: "WaterDragon",
@@ -61,14 +62,15 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       price: 1800,
       measure: "ca. 500 ml",
       description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
-    },
+    }
+,
     {
       product_id: "keramik-7",
-      name: "WaterDragon",
+      name: "Erdtanz",
       category: "Momente des Innehaltens",
       price: 1800,
       measure: "ca. 350 ml",
-      description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
+      description: "Schwarze Steinzeugkeramik mit filigranen Details außen und brauner Innenseite."
     }
 ,
     {
@@ -89,23 +91,14 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       description: "Tiefes Blau mit weinroten/lila Akzenten. Mit filigranen Details am Henkel."
     }
 ,
-    {
-      product_id: "keramik-14",
-      name: "WaterDragon",
-      category: "Momente des Innehaltens",
-      price: 1500,
-      measure: "ca. 200 ml",
-      description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
-    }
-,
-    {
-      product_id: "keramik-24",
-      name: "Erdtanz",
-      category: "Momente des Innehaltens",
-      price: 1500,
-      measure: "ca. 200 ml",
-      description: "Schwarze Steinzeugkeramik mit filigranen Details außen und brauner innenseite."
-    }
+  {
+  product_id: "keramik-22",
+  name: "Erdtanz",
+  category: "Momente des Innehaltens",
+  price: 1900,
+  measure: "ca. 500 ml",
+  description: "Schwarze Steinzeugkeramik mit einem filigranen Aufdruck und einer warmen braunen Innenseite. Der Kontrast zwischen dem dunklen Äußeren und dem erdigen Braun verleiht jedem Stück seinen besonderen Charakter."
+   }
 ,
     {
       product_id: "keramik-30",
@@ -114,9 +107,18 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       price: 1900,
       measure: "ca. 400 ml",
       descrition: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
+     }
+,    
+    {
+  product_id: "keramik-33",
+  name: "DragonGold",
+  category: "Momente des Innehaltens",
+  price: 1500,
+  measure: "ca. 200 ml",
+  description: "Eine goldene Oberfläche, die im Licht wie Abermillionen kleine Sterne schimmert. Die Innenseite reicht von tiefem Dunkelbraun bis Schwarz. Der Henkel schimmert ebenfalls golden und wird durch einen filigranen Druck veredelt."
     }
 ,
-    {
+   {
       product_id: "keramik-37",
       name: "Waldgeflüster – Set",
       category: "Momente des Innehaltens",
@@ -170,7 +172,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
         category = ${product.category},
         price = ${product.price},
         measure = ${product.measure},
-        description = COALESCE(${product.description || null}, description),
+        description = COALESCE(description, ${product.description || null}), 
         updated_at = NOW()
       WHERE product_id = ${product.product_id}
     `;
@@ -183,7 +185,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
 }
 if (req.method === "POST" && req.body?.action === "setup-products") {
   const productIds = [
-    "keramik-24",
+    "keramim-22",
     "keramik-26",
     "keramik-30",
     "keramik-33",
