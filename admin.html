@@ -245,7 +245,41 @@ try {
     status.textContent = "Produkt konnte nicht gespeichert werden.";
 } 
 }); 
-    
+    document.getElementById("beschreibungenButton")?.addEventListener("click", async () => {
+  const button = document.getElementById("beschreibungenButton");
+
+  button.disabled = true;
+  button.textContent = "Wird übernommen …";
+
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "setup-keramik-details"
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Übernahme fehlgeschlagen.");
+      return;
+    }
+
+    alert("Beschreibungen wurden übernommen ♡");
+    await ladeProdukte();
+
+  } catch (error) {
+    alert("Übernahme fehlgeschlagen.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Beschreibungen einmalig übernehmen";
+  }
+}); 
+
   const form = document.getElementById("loginForm");
   const message = document.getElementById("message");
 
