@@ -3647,14 +3647,35 @@ async function syncProductAvailability() {
         }
     });
 window.addEventListener("DOMContentLoaded", () => {
-  const hash = window.location.hash;
+  const hash = decodeURIComponent(window.location.hash);
 
   if (hash === "#shop-keramik" || hash === "#keramik") {
     openCollection("keramik");
-  } else if (hash === "#shop-leder" || hash === "#leder") {
+    return;
+  }
+
+  if (hash === "#shop-leder" || hash === "#leder") {
     openCollection("leder");
+    return;
+  }
+
+  const keramikKategorien = [
+    "Momente des Innehaltens",
+    "Gemeinsame Zeit",
+    "Raum für Natur",
+    "Kleine Schätze",
+    "Weihnachtswerkstatt"
+  ];
+
+  const kategorie = hash.replace("#shop-", "");
+
+  if (keramikKategorien.includes(kategorie)) {
+    openCollection("keramik");
+    currentShopCategory = kategorie;
+    renderCeramicCategory(kategorie);
   }
 }); 
+
     /* ========================================
        LIGHTBOX
     ======================================== */
