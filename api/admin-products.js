@@ -1,4 +1,4 @@
-const crypto = rquire("crypto");
+const crypto = require("crypto");
 
 function createToken() {
   return crypto
