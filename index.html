@@ -3646,7 +3646,15 @@ async function syncProductAvailability() {
             renderCollection(state.type);
         }
     });
+window.addEventListener("DOMContentLoaded", () => {
+  const hash = window.location.hash;
 
+  if (hash === "#shop-keramik" || hash === "#keramik") {
+    openCollection("keramik");
+  } else if (hash === "#shop-leder" || hash === "#leder") {
+    openCollection("leder");
+  }
+}); 
     /* ========================================
        LIGHTBOX
     ======================================== */
