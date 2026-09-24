@@ -101,9 +101,7 @@
     <p class="subtitle">Dragemor Pottery ♡</p>
 
 <div id="neuesProduktBereich" style="margin: 24px 0;">
-    <button type="button" id="neuesProduktButton">
-        + Neues Produkt anlegen
-    </button>
+
   <div id="neuesProduktFormular" style="display:none; margin-top:20px;">
     <h2>Neues Produkt</h2>
 
@@ -143,41 +141,6 @@
   </div> 
   
   <script>
-document.getElementById("beschreibungenButton").addEventListener("click", async () => {
-  const button = document.getElementById("beschreibungenButton");
-
-  button.disabled = true;
-  button.textContent = "Beschreibungen werden übernommen …";
-
-  try {
-    const response = await fetch("/api/admin-products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        action: "setup-keramik-details"
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.error || "Beschreibungen konnten nicht übernommen werden.");
-      return;
-    }
-
-    alert("Beschreibungen wurden übernommen ♡");
-    await ladeProdukte();
-
-  } catch (error) {
-    console.error(error);
-    alert("Beschreibungen konnten nicht übernommen werden.");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Beschreibungen einmalig übernehmen";
-  }
-}); 
 
  document.getElementById("neuesProduktButton").addEventListener("click", () => {
     const formular = document.getElementById("neuesProduktFormular");
