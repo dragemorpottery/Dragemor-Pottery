@@ -133,7 +133,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1000,
       measure: "ca. 200 ml",
-      descrition: "Strand-sandige Optik mit karamellisierten Verläufen auf weißem Steinzeug."
+      description: "Strand-sandige Optik mit karamellisierten Verläufen auf weißem Steinzeug."
     }
 ,
     {
@@ -142,7 +142,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 1800,
       measure: "Ø ca. 19 cm",
-      descrition: "Schimmerndes Blau und Beige auf schwarzem Ton, mit filigranen Details in der mitte."
+      description: "Schimmerndes Blau und Beige auf schwarzem Ton, mit filigranen Details in der mitte."
     }
 ,
     {
@@ -151,7 +151,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 1800,
       measure: "Ø ca. 19 cm",
-      descrition: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
+      description: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
     }
 ,
     {
@@ -160,7 +160,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 1500,
       measure: "Ø ca. 17 cm",
-      descrition: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
+      description: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
     }
   ];
 
