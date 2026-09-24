@@ -3350,7 +3350,30 @@ async function loadDatabaseProducts() {
 const databaseProducts = data.products || [];
 
 databaseProducts.forEach(product => {
-    if (!product.product_id.startsWith("produkt-")) return; 
+    if (!product.product_id.startsWith("produkt-")) {
+  const existingProduct = shopProducts.keramik.find(
+    p => p.id === product.product_id
+  ) || shopProducts.leder.find(
+    p => p.id === product.product_id
+  );
+
+  if (existingProduct) {
+    existingProduct.name = product.name || existingProduct.name;
+    existingProduct.category = product.category || existingProduct.category;
+    existingProduct.description = product.description || existingProduct.description;
+    existingProduct.measure = product.measure || existingProduct.measure;
+
+    if (product.price != null) {
+      existingProduct.price =
+        (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €";
+    }
+
+    existingProduct.available = product.status === "available";
+  }
+
+  return;
+} 
+
     const newProduct = {
         id: product.product_id,
         name: product.name,
