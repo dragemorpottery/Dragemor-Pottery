@@ -170,7 +170,6 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
         category = ${product.category},
         price = ${product.price},
         measure = ${product.measure},
-        description = ${product.description || null},
         updated_at = NOW()
       WHERE product_id = ${product.product_id}
     `;
