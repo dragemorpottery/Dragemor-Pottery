@@ -92,12 +92,12 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
     }
 ,
   {
-  product_id: "keramik-22",
-  name: "Erdtanz",
-  category: "Momente des Innehaltens",
-  price: 1900,
-  measure: "ca. 500 ml",
-  description: "Schwarze Steinzeugkeramik mit einem filigranen Aufdruck und einer warmen braunen Innenseite. Der Kontrast zwischen dem dunklen Äußeren und dem erdigen Braun verleiht jedem Stück seinen besonderen Charakter."
+     product_id: "keramik-22",
+     name: "Erdtanz",
+     category: "Momente des Innehaltens",
+     price: 1900,
+     measure: "ca. 500 ml",
+     description: "Schwarze Steinzeugkeramik mit einem filigranen Aufdruck und einer warmen braunen Innenseite. Der Kontrast zwischen dem dunklen Äußeren und dem erdigen Braun verleiht jedem Stück seinen besonderen Charakter."
    }
 ,
     {
@@ -165,6 +165,11 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
   ];
 
   for (const product of keramikDetails) {
+await sql`
+  INSERT INTO products (product_id, status)
+  VALUES (${product.product_id}, 'available')
+  ON CONFLICT (product_id) DO NOTHING
+`; 
     await sql`
       UPDATE products
       SET
@@ -172,7 +177,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
         category = ${product.category},
         price = ${product.price},
         measure = ${product.measure},
-        description = COALESCE(description, ${product.description || null}), 
+        description = COALESCE(NULLIF(TRIM(description), ''), ${product.description || null}), 
         updated_at = NOW()
       WHERE product_id = ${product.product_id}
     `;
