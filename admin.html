@@ -302,6 +302,21 @@ async function ladeProdukte() {
     const data = await response.json();
 
     produktListe.innerHTML = "";
+const keramikVorschaubilder = {
+  "keramik-1": "bilder/Keramik01.jpg",
+  "keramik-4": "bilder/Keramik04.jpg",
+  "keramik-7": "bilder/Keramik07.jpg",
+  "keramik-9": "bilder/Keramik09.jpg",
+  "keramik-12": "bilder/Keramik012.jpg",
+  "keramik-14": "bilder/Keramik014.jpg",
+  "keramik-24": "bilder/Keramik024.jpg",
+  "keramik-30": "bilder/Keramik030.jpg",
+  "keramik-37": "bilder/Keramik037.jpg",
+  "keramik-40": "bilder/Keramik040.jpg",
+  "keramik-49": "bilder/Keramik049.jpg",
+  "keramik-56": "bilder/Keramik056.jpg",
+  "keramik-58": "bilder/Keramik058.jpg"
+}; 
 
 const keramikProdukte = [
   "keramik-1",
@@ -388,7 +403,7 @@ card.innerHTML = `
 <button class="deleteButton" type="button" style="margin-top:10px;">
   Produkt löschen 🗑
 </button> 
-${product.images?.[0] ? `<img src="${product.images[0]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
+${(product.images?.[0] || keramikVorschaubilder[product.product_id]) ? `<img src="${product.images?.[0] || keramikVorschaubilder[product.product_id]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
 
 `;
 
