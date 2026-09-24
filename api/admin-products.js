@@ -52,6 +52,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1800,
       measure: "ca. 400 ml"
+      description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
     },
     {
       product_id: "keramik-4",
@@ -59,6 +60,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1800,
       measure: "ca. 500 ml"
+      description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
     },
     {
       product_id: "keramik-7",
@@ -66,6 +68,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1800,
       measure: "ca. 350 ml"
+      description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
     }
 ,
     {
@@ -74,6 +77,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1500,
       measure: "ca. 200 ml"
+      description: "schwarze Steinzeugkeramik mit filigranen Details außen und brauner innenseite."
     }
 ,
     {
@@ -82,6 +86,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 3500,
       measure: "Krug ca. 500 ml / Becher ca. 200 ml / Kännchen ca. 50 ml"
+      description: "Tiefes Blau mit weinroten/lila Akzenten. Mit filigranen Details am Henkel."
     }
 ,
     {
@@ -90,6 +95,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1500,
       measure: "ca. 200 ml"
+      description: "Spiral-Effect innen und außen in Türkis-Grün, mit weißlich schimmerndem Rand."
     }
 ,
     {
@@ -98,6 +104,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1500,
       measure: "ca. 200 ml"
+      description: "schwarze Steinzeugkeramik mit filigranen Details außen und brauner innenseite."
     }
 ,
     {
@@ -106,6 +113,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1900,
       measure: "ca. 400 ml"
+      descrition: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
     }
 ,
     {
@@ -114,6 +122,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1500,
       measure: "ca. 250 ml + 150 ml"
+      description: "Edles Silbrig-glänzender Effekt in anthrazit außen. Innen tiefes klarglänzendes Zartbitter-braun."
     }
 ,
     {
@@ -122,6 +131,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Momente des Innehaltens",
       price: 1000,
       measure: "ca. 200 ml"
+      descrition: "Strand-sandige Optik mit karamellisierten Verläufen auf weißem Steinzeug.
     }
 ,
     {
@@ -130,6 +140,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 1800,
       measure: "Ø ca. 19 cm"
+      descrition: "Schimmerndes Blau und Beige auf schwarzem Ton, mit filigranen Details in der mitte."
     }
 ,
     {
@@ -138,6 +149,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 1800,
       measure: "Ø ca. 19 cm"
+      descrition: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
     }
 ,
     {
@@ -146,6 +158,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
       category: "Gemeinsame Zeit",
       price: 1500,
       measure: "Ø ca. 17 cm"
+      descrition: "Helle Türkies-Wellen wie am weißen Strand, mit filigrane Details."
     }
   ];
 
@@ -157,6 +170,7 @@ if (req.method === "POST" && req.body?.action === "setup-keramik-details") {
         category = ${product.category},
         price = ${product.price},
         measure = ${product.measure},
+        description = ${product.description || null},
         updated_at = NOW()
       WHERE product_id = ${product.product_id}
     `;
