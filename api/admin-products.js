@@ -1,4 +1,4 @@
-import crypto from "crypto";
+const crypto = rquire("crypto");
 
 function createToken() {
   return crypto
@@ -26,7 +26,7 @@ function isAdmin(req) {
   return token === createToken();
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (!isAdmin(req)) {
     return res.status(401).json({
       error: "Nicht angemeldet."
