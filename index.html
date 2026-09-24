@@ -3350,6 +3350,7 @@ async function loadDatabaseProducts() {
 const databaseProducts = data.products || [];
 
 databaseProducts.forEach(product => {
+    if (!product.product_id.startsWith("produkt-")) return; 
     const newProduct = {
         id: product.product_id,
         name: product.name,
