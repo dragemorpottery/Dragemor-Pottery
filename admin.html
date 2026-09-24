@@ -292,7 +292,9 @@ async function ladeProdukte() {
   produktListe.innerHTML = "Produkte werden geladen …";
 
   try {
-    const response = await fetch("/api/admin-products");
+    const response = await fetch("/api/admin-products", {
+  cache: "no-store"
+}); 
 
     if (!response.ok) {
       produktListe.innerHTML = "Produkte konnten nicht geladen werden.";
