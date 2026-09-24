@@ -317,6 +317,21 @@ const keramikVorschaubilder = {
   "keramik-56": "bilder/Keramik056.jpg",
   "keramik-58": "bilder/Keramik058.jpg"
 }; 
+    const lederVorschaubilder = {
+  "leder-1": "bilder/leder-galerie-01.jpg",
+  "leder-2": "bilder/leder-galerie-02.jpg",
+  "leder-3": "bilder/leder-galerie-03.jpg",
+  "leder-4": "bilder/leder-galerie-04.jpg",
+  "leder-5": "bilder/leder-galerie-05.jpg",
+  "leder-6": "bilder/leder-galerie-06.jpg",
+  "leder-7": "bilder/leder-galerie-07.jpg",
+  "leder-8": "bilder/leder-galerie-08.jpg",
+  "leder-9": "bilder/leder-galerie-09.jpg",
+  "leder-10": "bilder/leder-galerie-10.jpg",
+  "leder-11": "bilder/leder-galerie-11.jpg",
+  "leder-12": "bilder/leder-galerie-12.jpg"
+}; 
+
 
 const keramikProdukte = [
   "keramik-1",
@@ -403,7 +418,7 @@ card.innerHTML = `
 <button class="deleteButton" type="button" style="margin-top:10px;">
   Produkt löschen 🗑
 </button> 
-${(product.images?.[0] || keramikVorschaubilder[product.product_id]) ? `<img src="${product.images?.[0] || keramikVorschaubilder[product.product_id]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
+${(product.images?.[0] || keramikVorschaubilder[product.product_id] || lederVorschaubilder[product.product_id]) ? `<img src="${product.images?.[0] || keramikVorschaubilder[product.product_id] || lederVorschaubilder[product.product_id]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
 
 `;
 
