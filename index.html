@@ -3656,18 +3656,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const initialHash = decodeURIComponent(window.location.hash);
 if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-home")?.classList.remove("active");
  
-    document.body.style.visibility = "hidden";
-} 
-
-const startKategorie = initialHash.replace("#shop-", "");
-
-const startKategorien = [
-    "Momente des Innehaltens",
-    "Gemeinsame Zeit",
-    "Raum für Natur",
-    "Kleine Schätze",
-    "Weihnachtswerkstatt"
-];
 
     await loadDatabaseProducts();
     await syncProductAvailability(); 
@@ -3684,14 +3672,6 @@ const startKategorien = [
     return;
   }
 
-  const keramikKategorien = [
-    "Momente des Innehaltens",
-    "Gemeinsame Zeit",
-    "Raum für Natur",
-    "Kleine Schätze",
-    "Weihnachtswerkstatt"
-  ];
-
   const kategorie = hash.replace("#shop-", "");
 
   if (keramikKategorien.includes(kategorie)) {
@@ -3699,7 +3679,6 @@ const startKategorien = [
     openCollection("keramik", false);
     currentShopCategory = kategorie;
     renderCeramicCategory(kategorie);
-    document.body.style.visibility = "visible"; 
   }
 }); 
 
