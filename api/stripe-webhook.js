@@ -968,6 +968,70 @@ von Dragemor Pottery
   });
 }
 
+async function sendInvoiceEmail(
+  session,
+  lineItems,
+  invoiceNumber
+) {
+  const customer =
+    session?.customer_details || {};
+
+  const customerEmail =
+    customer?.email || session?.customer_email;
+
+  if (!customerEmail) {
+    console.error(
+      'Keine Kunden-E-Mail für Rechnung vorhanden.'
+    );
+    return;
+  }
+
+  const pdfBuffer =
+    await createInvoicePdf(
+      session,
+      lineItems,
+      invoiceNumber
+    );
+
+  const firstName =
+    customer?.name
+      ?.trim()
+      ?.split(/\s+/)[0] || '';
+
+  const greeting =
+    firstName
+      ? `Hallo ${firstName},`
+      : 'Hallo,';
+
+  const text = `
+${greeting}
+
+anbei findest du die Rechnung zu deiner Bestellung bei Dragemor Pottery.
+
+Rechnungsnummer: ${invoiceNumber}
+Gesamtbetrag: ${euro(session?.amount_total)}
+
+Vielen Dank für deine Bestellung und dein Vertrauen in meine Arbeit.
+
+Alles Liebe
+
+Franca und André
+von Dragemor Pottery
+`.trim();
+
+  await sendResendEmail({
+    to: customerEmail,
+    subject: `Deine Rechnung ${invoiceNumber} – Dragemor Pottery`,
+    text,
+    attachments: [
+      {
+        filename: `Rechnung-${invoiceNumber}.pdf`,
+        content: pdfBuffer.toString('base64'),
+      },
+    ],
+  });
+} 
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({
@@ -1060,6 +1124,11 @@ await markProductsAsSold(productIds);
           session,
           lineItems
         );
+        await sendInvoiceEmail(
+  session,
+  lineItems,
+  invoiceNumber
+); 
       }
     }
 
