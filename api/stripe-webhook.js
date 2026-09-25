@@ -308,11 +308,245 @@ async function createInvoice(session, lineItems) {
   return invoiceNumber;
 } 
 
+async function createInvoicePdf(
+  session,
+  lineItems,
+  invoiceNumber
+) {
+  const { PDFDocument, StandardFonts, rgb } =
+    await import('pdf-lib');
+
+  const pdfDoc = await PDFDocument.create();
+
+  const page = pdfDoc.addPage([595.28, 841.89]);
+
+  const font =
+    await pdfDoc.embedFont(
+      StandardFonts.Helvetica
+    );
+
+  const boldFont =
+    await pdfDoc.embedFont(
+      StandardFonts.HelveticaBold
+    );
+
+  const { width, height } = page.getSize();
+  const invoiceDate =
+    new Date().toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Europe/Berlin',
+    });
+
+  page.drawText('DRAGEMOR-POTTERY', {
+    x: 50,
+    y: height - 60,
+    size: 16,
+    font: boldFont,
+  });
+
+  page.drawText('Franca Bennin', {
+    x: 50,
+    y: height - 80,
+    size: 10,
+    font,
+  });
+
+  page.drawText('Damm 1', {
+    x: 50,
+    y: height - 95,
+    size: 10,
+    font,
+  });
+
+  page.drawText('24803 Tielen', {
+    x: 50,
+    y: height - 110,
+    size: 10,
+    font,
+  });
+
+  page.drawText(`Rechnung ${invoiceNumber}`, {
+    x: 50,
+    y: height - 165,
+    size: 20,
+    font: boldFont,
+  });
+
+  page.drawText(`Rechnungsdatum: ${invoiceDate}`, {
+    x: 50,
+    y: height - 190,
+    size: 10,
+    font,
+  }); 
+
+  const customer =
+    session?.customer_details || {};
+
+  const address =
+    customer?.address || {};
+
+  let customerY = height - 235;
+
+  page.drawText('Rechnung an:', {
+    x: 50,
+    y: customerY,
+    size: 10,
+    font: boldFont,
+  });
+
+  customerY -= 18;
+
+  const customerAddressLines = [
+    customer?.name,
+    address?.line1,
+    address?.line2,
+    [address?.postal_code, address?.city]
+      .filter(Boolean)
+      .join(' '),
+    address?.country,
+  ].filter(Boolean);
+
+  for (const line of customerAddressLines) {
+    page.drawText(String(line), {
+      x: 50,
+      y: customerY,
+      size: 10,
+      font,
+    });
+
+    customerY -= 15;
+  } 
+ let itemsY = customerY - 25;
+
+  page.drawText('Artikel', {
+    x: 50,
+    y: itemsY,
+    size: 10,
+    font: boldFont,
+  });
+
+  page.drawText('Betrag', {
+    x: 470,
+    y: itemsY,
+    size: 10,
+    font: boldFont,
+  });
+
+  itemsY -= 20;
+
+  for (const item of lineItems) {
+    const quantity = item.quantity || 1;
+
+    const description =
+      `${item.description || 'Artikel'}${
+        quantity > 1 ? ` x ${quantity}` : ''
+      }`;
+
+    page.drawText(description, {
+      x: 50,
+      y: itemsY,
+      size: 10,
+      font,
+    });
+
+    page.drawText(euro(item.amount_total), {
+      x: 470,
+      y: itemsY,
+      size: 10,
+      font,
+    });
+
+    itemsY -= 20;
+  }
+
+  itemsY -= 15;
+
+  page.drawText('Zwischensumme:', {
+    x: 350,
+    y: itemsY,
+    size: 10,
+    font,
+  });
+
+  page.drawText(euro(session?.amount_subtotal), {
+    x: 470,
+    y: itemsY,
+    size: 10,
+    font,
+  });
+
+  itemsY -= 18;
+
+  page.drawText('Versand:', {
+    x: 350,
+    y: itemsY,
+    size: 10,
+    font,
+  });
+
+  page.drawText(
+    euro(session?.total_details?.amount_shipping),
+    {
+      x: 470,
+      y: itemsY,
+      size: 10,
+      font,
+    }
+  );
+
+  itemsY -= 22;
+
+  page.drawText('Gesamtbetrag:', {
+    x: 350,
+    y: itemsY,
+    size: 11,
+    font: boldFont,
+  });
+
+  page.drawText(euro(session?.amount_total), {
+    x: 470,
+    y: itemsY,
+    size: 11,
+    font: boldFont,
+  }); 
+ itemsY -= 45;
+
+  const taxNumber =
+    process.env.INVOICE_TAX_NUMBER || '';
+
+  if (taxNumber) {
+    page.drawText(`Steuernummer: ${taxNumber}`, {
+      x: 50,
+      y: itemsY,
+      size: 9,
+      font,
+    });
+
+    itemsY -= 18;
+  }
+
+  page.drawText(
+    'Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.',
+    {
+      x: 50,
+      y: itemsY,
+      size: 9,
+      font,
+    }
+  ); 
+const pdfBytes = await pdfDoc.save();
+
+  return Buffer.from(pdfBytes); 
+} 
+
 async function sendResendEmail({
   to,
   subject,
   text,
   html,
+  attachments,
 }) {
   const body = {
     from:
@@ -325,7 +559,9 @@ async function sendResendEmail({
   if (html) {
     body.html = html;
   }
-
+if (attachments?.length) {
+  body.attachments = attachments;
+} 
   const response = await fetch(
     'https://api.resend.com/emails',
     {
