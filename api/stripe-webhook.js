@@ -449,6 +449,21 @@ async function createInvoicePdf(
 
     itemsY -= 18;
   }
+page.drawText("Umsatzsteuer:", {
+  x: 350,
+  y: itemsY,
+  size: 10,
+  font: font,
+});
+
+page.drawText("0,00 EUR", {
+  x: 470,
+  y: itemsY,
+  size: 10,
+  font: font,
+});
+
+itemsY -= 18; 
 
   page.drawText(
     'Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.',
