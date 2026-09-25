@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2"
+    "@neondatabase/serverless": "^1.0.2",
+    "pdf-lib": "^1.17.1"
   }
 } 
