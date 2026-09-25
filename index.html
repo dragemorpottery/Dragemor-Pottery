@@ -3672,6 +3672,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const kategorie = hash.replace("#shop-", "");
 
   if (keramikKategorien.includes(kategorie)) {
+    document.getElementById("shop-category-home")?.classList.remove("active"); 
     openCollection("keramik", false);
     currentShopCategory = kategorie;
     renderCeramicCategory(kategorie);
