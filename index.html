@@ -3653,6 +3653,9 @@ if (currentShopCategory) {
         }
     });
 window.addEventListener("DOMContentLoaded", async () => {
+    const initialHash = decodeURIComponent(window.location.hash);
+if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-home")?.classList.remove("active"); 
+
     await loadDatabaseProducts();
 await syncProductAvailability(); 
 
