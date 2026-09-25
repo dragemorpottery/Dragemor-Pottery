@@ -1641,6 +1641,33 @@
 }
 .product-detail.active { display:grid; grid-template-columns:1.2fr .8fr; }
 .product-gallery-main img { width:100%; aspect-ratio:1/1; object-fit:cover; cursor:pointer; }
+.product-gallery-main {
+    position: relative;
+} 
+.product-image-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.product-image-prev {
+    left: 12px;
+}
+
+.product-image-next {
+    right: 12px;
+} 
+
 .product-thumbs { display:flex; gap:8px; padding:10px; overflow-x:auto; background:#dfe6da; }
 .product-thumbs img { width:74px; height:74px; object-fit:cover; border-radius:9px; cursor:pointer; border:2px solid transparent; }
 .product-thumbs img.active { border-color:#b28a4b; }
@@ -3202,7 +3229,11 @@
         <div id="product-detail" class="product-detail">
             <div>
                 <div class="product-gallery-main">
-                    <img id="product-main-image" src="" alt="" onclick="openLightbox(this.src)">
+                    <button class="product-image-arrow product-image-prev" type="button" onclick="changeProductImage(-1)">‹</button>
+
+<img id="product-main-image" src="" alt="" onclick="openLightbox(this.src)">
+
+<button class="product-image-arrow product-image-next" type="button" onclick="changeProductImage(1)">›</button> 
                 </div>
                 <div id="product-thumbs" class="product-thumbs"></div>
             </div>
@@ -3537,6 +3568,7 @@ if (currentShopCategory) {
 
         const main = document.getElementById("product-main-image");
         main.src = product.images[0];
+        main.dataset.imageIndex = "0";
         main.alt = product.name;
 
         const thumbs = document.getElementById("product-thumbs");
@@ -3594,6 +3626,36 @@ if (currentShopCategory) {
 
         if (pushHistory) history.pushState({shop:true, type, index, category: currentShopCategory}, "", `#${product.id}`);
     }
+
+function changeProductImage(direction) {
+    const product = shopProducts[currentCollection]?.find(
+        p => p.id === window.location.hash.replace("#", "")
+    );
+
+    if (!product || !product.images || product.images.length < 2) return;
+
+    const main = document.getElementById("product-main-image");
+    let imageIndex = Number(main.dataset.imageIndex || 0);
+
+    imageIndex += direction;
+
+    if (imageIndex < 0) {
+        imageIndex = product.images.length - 1;
+    }
+
+    if (imageIndex >= product.images.length) {
+        imageIndex = 0;
+    }
+
+    main.src = product.images[imageIndex];
+    main.dataset.imageIndex = imageIndex;
+
+    const thumbs = document.getElementById("product-thumbs");
+    thumbs?.querySelectorAll("img").forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === imageIndex);
+    });
+} 
+
 
     function backToCollection() {
         // Genau einen zuvor gegangenen Schritt zurückgehen.
