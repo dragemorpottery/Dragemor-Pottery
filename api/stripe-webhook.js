@@ -431,6 +431,22 @@ async function createInvoicePdf(
     size: 11,
     font: boldFont,
   }); 
+  itemsY -= 18;
+
+page.drawText("Umsatzsteuer:", {
+  x: 350,
+  y: itemsY,
+  size: 10,
+  font: font,
+});
+
+page.drawText("0,00 EUR", {
+  x: 470,
+  y: itemsY,
+  size: 10,
+  font: font,
+}); 
+
  itemsY -= 45;
 
   const taxNumber =
