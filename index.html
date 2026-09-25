@@ -3652,7 +3652,10 @@ if (currentShopCategory) {
             renderCollection(state.type);
         }
     });
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+    await loadDatabaseProducts();
+await syncProductAvailability(); 
+
   const hash = decodeURIComponent(window.location.hash);
 
   if (hash === "#shop-keramik" || hash === "#keramik") {
@@ -4107,11 +4110,6 @@ openProduct = function(type,index,pushHistory=true){
   const product=(shopProducts[type]||[])[index]; if(product) prepareCartButton(product);
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadDatabaseProducts();
-    await syncProductAvailability();
-    renderCart();
-}); 
 </script>
 
 
