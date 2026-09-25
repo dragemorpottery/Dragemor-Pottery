@@ -3656,7 +3656,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     const initialHash = decodeURIComponent(window.location.hash);
 if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-home")?.classList.remove("active");
  
-
+if (initialHash.startsWith("#shop-")) {
+    document.body.style.visibility = "hidden";
+} 
     await loadDatabaseProducts();
 await syncProductAvailability(); 
 
@@ -3687,6 +3689,7 @@ await syncProductAvailability();
     openCollection("keramik", false);
     currentShopCategory = kategorie;
     renderCeramicCategory(kategorie);
+    document.body.style.visibility = "visible"; 
   }
 }); 
 
