@@ -71,7 +71,10 @@ function euro(amount) {
 }
 
 async function getStripeLineItems(sessionId) {
-  const stripeSecretKey = process.env.STRIPE_TEST_SECRET_KEY;
+ const stripeSecretKey =
+  process.env.VERCEL_ENV === 'production'
+    ? process.env.STRIPE_SECRET_KEY
+    : process.env.STRIPE_TEST_SECRET_KEY; 
 
   if (!stripeSecretKey) {
     throw new Error(
