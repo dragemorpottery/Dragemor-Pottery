@@ -3417,6 +3417,10 @@ async function syncProductAvailability() {
         product.available = status === 'available';
     }
 }); 
+if (currentShopCategory) {
+    renderCeramicCategory(currentShopCategory);
+} 
+
         renderCart();
     } catch (error) {
         console.error('Bestand konnte nicht geladen werden:', error);
