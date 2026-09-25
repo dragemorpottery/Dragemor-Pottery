@@ -3426,14 +3426,14 @@ async function syncProductAvailability() {
     let currentCollection = "keramik";
     let currentShopCategory = null;
 
-    function openCollection(type = "keramik") {
+    function openCollection(type = "keramik", updateHistory = true) {
         currentShopCategory = null;
         const modal = document.getElementById("collection-modal");
         if (!modal) return;
         modal.classList.add("active");
         document.body.style.overflow = "hidden";
         renderCollection(type);
-        history.pushState({shop:true, type}, "", "#shop-" + type);
+        if (updateHistory) {history.pushState({shop:true, type}, "", "#shop-" + type);
     }
 
     function renderCollection(type) {
@@ -3650,12 +3650,12 @@ window.addEventListener("DOMContentLoaded", () => {
   const hash = decodeURIComponent(window.location.hash);
 
   if (hash === "#shop-keramik" || hash === "#keramik") {
-    openCollection("keramik");
+    openCollection("keramik", false);
     return;
   }
 
   if (hash === "#shop-leder" || hash === "#leder") {
-    openCollection("leder");
+    openCollection("leder", false);
     return;
   }
 
@@ -3670,7 +3670,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const kategorie = hash.replace("#shop-", "");
 
   if (keramikKategorien.includes(kategorie)) {
-    openCollection("keramik");
+    openCollection("keramik", false);
     currentShopCategory = kategorie;
     renderCeramicCategory(kategorie);
   }
