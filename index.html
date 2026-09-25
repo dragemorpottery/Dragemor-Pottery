@@ -3433,7 +3433,9 @@ async function syncProductAvailability() {
         modal.classList.add("active");
         document.body.style.overflow = "hidden";
         renderCollection(type);
-        if (updateHistory) {history.pushState({shop:true, type}, "", "#shop-" + type);
+       if (updateHistory) {
+    history.pushState({shop:true, type}, "", "#shop-" + type);
+} 
     }
 
     function renderCollection(type) {
