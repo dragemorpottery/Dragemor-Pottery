@@ -3655,10 +3655,7 @@ if (currentShopCategory) {
 window.addEventListener("DOMContentLoaded", async () => {
     const initialHash = decodeURIComponent(window.location.hash);
 if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-home")?.classList.remove("active");
- if (initialHash.startsWith("#shop-")) {
-    document.getElementById("collection-modal")?.classList.add("active");
-    document.body.style.overflow = "hidden";
-} 
+ 
 
     await loadDatabaseProducts();
 await syncProductAvailability(); 
