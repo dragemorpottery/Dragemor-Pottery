@@ -3669,14 +3669,8 @@ const startKategorien = [
     "Weihnachtswerkstatt"
 ];
 
-if (startKategorien.includes(startKategorie)) {
-    openCollection("keramik", false);
-    currentShopCategory = startKategorie;
-    renderCeramicCategory(startKategorie);
-} 
-
     await loadDatabaseProducts();
-await syncProductAvailability(); 
+    await syncProductAvailability(); 
 
   const hash = decodeURIComponent(window.location.hash);
 
