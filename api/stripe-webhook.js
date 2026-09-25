@@ -124,6 +124,189 @@ if (!productIds?.length) return;
     WHERE product_id = ANY(${productIds})
   `;
 } 
+async function getNextInvoiceNumber(sql) {
+  const year = new Date().getFullYear();
+
+  const result = await sql`
+    INSERT INTO invoice_counters (
+      year,
+      last_number
+    )
+    VALUES (
+      ${year},
+      1
+    )
+    ON CONFLICT (year)
+    DO UPDATE SET
+      last_number =
+        invoice_counters.last_number + 1
+    RETURNING last_number
+  `;
+
+  const number = result[0].last_number;
+
+  return `DP-${year}-${String(number).padStart(4, '0')}`;
+} 
+async function createInvoice(session, lineItems) {
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    throw new Error(
+      'DATABASE_URL ist nicht eingerichtet.'
+    );
+  }
+
+  const { neon } =
+    await import('@neondatabase/serverless');
+
+  const sql = neon(databaseUrl);
+
+  const existing = await sql`
+    SELECT invoice_number
+    FROM invoices
+    WHERE stripe_session_id = ${session.id}
+    LIMIT 1
+  `;
+
+  if (existing.length > 0) {
+    return existing[0].invoice_number;
+  }
+
+  const invoiceNumber =
+    await getNextInvoiceNumber(sql);
+
+  const customer =
+    session?.customer_details || {};
+
+  const address =
+    customer?.address || {};
+
+  const customerAddress = [
+    address?.line1,
+    address?.line2,
+    [address?.postal_code, address?.city]
+      .filter(Boolean)
+      .join(' '),
+    address?.country,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const items = lineItems.map(item => ({
+    description:
+      item.description || 'Artikel',
+    quantity: item.quantity || 1,
+    amount_total:
+      item.amount_total || 0,
+  }));
+
+  await sql`
+    INSERT INTO invoices (
+      invoice_number,
+      stripe_session_id,
+      customer_name,
+      customer_email,
+      customer_address,
+      items,
+      subtotal,
+      shipping,
+      total
+    )
+    VALUES (
+      ${invoiceNumber},
+      ${session.id},
+      ${customer?.name || ''},
+      ${customer?.email || session?.customer_email || ''},
+      ${customerAddress},
+      ${JSON.stringify(items)},
+      ${session?.amount_subtotal || 0},
+      ${session?.total_details?.amount_shipping || 0},
+      ${session?.amount_total || 0}
+    )
+  `;
+
+  return invoiceNumber;
+} 
+async function createInvoice(session, lineItems) {
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    throw new Error(
+      'DATABASE_URL ist nicht eingerichtet.'
+    );
+  }
+
+  const { neon } =
+    await import('@neondatabase/serverless');
+
+  const sql = neon(databaseUrl);
+
+  const existing = await sql`
+    SELECT invoice_number
+    FROM invoices
+    WHERE stripe_session_id = ${session.id}
+    LIMIT 1
+  `;
+
+  if (existing.length > 0) {
+    return existing[0].invoice_number;
+  }
+
+  const invoiceNumber =
+    await getNextInvoiceNumber(sql);
+
+  const customer =
+    session?.customer_details || {};
+
+  const address =
+    customer?.address || {};
+
+  const customerAddress = [
+    address?.line1,
+    address?.line2,
+    [address?.postal_code, address?.city]
+      .filter(Boolean)
+      .join(' '),
+    address?.country,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const items = lineItems.map(item => ({
+    description:
+      item.description || 'Artikel',
+    quantity: item.quantity || 1,
+    amount_total:
+      item.amount_total || 0,
+  }));
+
+  await sql`
+    INSERT INTO invoices (
+      invoice_number,
+      stripe_session_id,
+      customer_name,
+      customer_email,
+      customer_address,
+      items,
+      subtotal,
+      shipping,
+      total
+    )
+    VALUES (
+      ${invoiceNumber},
+      ${session.id},
+      ${customer?.name || ''},
+      ${customer?.email || session?.customer_email || ''},
+      ${customerAddress},
+      ${JSON.stringify(items)},
+      ${session?.amount_subtotal || 0},
+      ${session?.total_details?.amount_shipping || 0},
+      ${session?.amount_total || 0}
+    )
+  `;
+
+  return invoiceNumber;
+} 
 
 async function sendResendEmail({
   to,
@@ -630,6 +813,8 @@ const productIds = (
   .filter(Boolean);
 
 await markProductsAsSold(productIds); 
+        const invoiceNumber = await createInvoice(session, lineItems); 
+        
         await sendInternalOrderEmail(
           session,
           lineItems
