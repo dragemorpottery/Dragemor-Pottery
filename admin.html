@@ -177,11 +177,23 @@ document.getElementById("neuerMarktButton")?.addEventListener("click", () => {
   const formular = document.getElementById("marktFormular");
 
   if (formular.style.display === "none") {
+    marktInBearbeitung = null;
+
+    document.getElementById("marktName").value = "";
+    document.getElementById("marktDatum").value = "";
+    document.getElementById("marktEndDatum").value = "";
+    document.getElementById("marktUhrzeit").value = "";
+    document.getElementById("marktOrt").value = "";
+    document.getElementById("marktInfo").value = "";
+    document.getElementById("marktSpeichernStatus").textContent = "";
+
     formular.style.display = "block";
   } else {
     formular.style.display = "none";
   }
 }); 
+
+    let marktInBearbeitung = null;
 document.getElementById("marktSpeichernButton")?.addEventListener("click", async () => {
   const status = document.getElementById("marktSpeichernStatus");
 
@@ -205,15 +217,18 @@ document.getElementById("marktSpeichernButton")?.addEventListener("click", async
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        name,
-        market_date,
-        end_date,
-        time_text,
-        location,
-        info
-      })
-    });
+      
+    body: JSON.stringify({
+  action: marktInBearbeitung ? "update-market" : undefined,
+  id: marktInBearbeitung,
+  name,
+  market_date,
+  end_date,
+  time_text,
+  location,
+  info
+}) 
+
 
     const data = await response.json();
 
@@ -224,6 +239,7 @@ document.getElementById("marktSpeichernButton")?.addEventListener("click", async
     }
 
     status.textContent = "Markt-Termin wurde gespeichert ♡";
+    marktInBearbeitung = 0
     await ladeMaerkte();
 
     document.getElementById("marktName").value = "";
@@ -248,14 +264,16 @@ async function ladeMaerkte() {
     });
 
     if (!response.ok) {
-      marktListe.innerHTML = "Markt-Termine konnten nicht geladen werden.";
+      marktListe.innerHTML =
+        "Markt-Termine konnten nicht geladen werden.";
       return;
     }
 
     const data = await response.json();
 
     if (!data.markets || data.markets.length === 0) {
-      marktListe.innerHTML = "Noch keine Markt-Termine eingetragen.";
+      marktListe.innerHTML =
+        "Noch keine Markt-Termine eingetragen.";
       return;
     }
 
@@ -272,26 +290,147 @@ async function ladeMaerkte() {
       const datum = new Date(
         markt.market_date
       ).toLocaleDateString("de-DE");
-      const endDatum = markt.end_date
-  ? new Date(markt.end_date).toLocaleDateString("de-DE")
-  : null;
 
-const datumText = endDatum
-  ? `${datum} – ${endDatum}`
-  : datum; 
+      const endDatum = markt.end_date
+        ? new Date(markt.end_date).toLocaleDateString("de-DE")
+        : null;
+
+      const datumText = endDatum
+        ? `${datum} – ${endDatum}`
+        : datum;
 
       card.innerHTML = `
         <strong>${markt.name}</strong><br>
+
         <div style="margin-top:10px; line-height:1.6;">
-          <div><strong>Datum:</strong> ${datumText}</div> 
+          <div><strong>Datum:</strong> ${datumText}</div>
           <div><strong>Uhrzeit:</strong> ${markt.time_text || "–"}</div>
           <div><strong>Ort:</strong> ${markt.location}</div>
           <div><strong>Info:</strong> ${markt.info || "–"}</div>
         </div>
+
+        <button
+          type="button"
+          class="marktBearbeitenButton"
+          style="margin-top:14px;"
+        >
+          Markt-Termin bearbeiten ✎
+        </button>
+
+        <button
+          type="button"
+          class="marktLoeschenButton"
+          style="margin-top:10px;"
+        >
+          Markt-Termin löschen 🗑
+        </button>
       `;
+
+      const bearbeitenButton =
+        card.querySelector(".marktBearbeitenButton");
+
+      const loeschenButton =
+        card.querySelector(".marktLoeschenButton");
+
+      bearbeitenButton.addEventListener("click", () => {
+        document.getElementById("marktFormular").style.display = "block";
+
+        marktInBearbeitung = markt.id;
+
+        document.getElementById("marktName").value =
+          markt.name || "";
+
+        document.getElementById("marktDatum").value =
+          markt.market_date
+            ? String(markt.market_date).slice(0, 10)
+            : "";
+
+        document.getElementById("marktEndDatum").value =
+          markt.end_date
+            ? String(markt.end_date).slice(0, 10)
+            : "";
+
+        document.getElementById("marktUhrzeit").value =
+          markt.time_text || "";
+
+        document.getElementById("marktOrt").value =
+          markt.location || "";
+
+        document.getElementById("marktInfo").value =
+          markt.info || "";
+
+        document.getElementById("marktSpeichernStatus").textContent =
+          "Markt-Termin wird bearbeitet.";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      });
+
+      loeschenButton.addEventListener("click", async () => {
+        const wirklichLoeschen = confirm(
+          `${markt.name} wirklich endgültig löschen?`
+        );
+
+        if (!wirklichLoeschen) {
+          return;
+        }
+
+        loeschenButton.disabled = true;
+        loeschenButton.textContent = "Wird gelöscht …";
+
+        try {
+          const response = await fetch("/api/admin-markets", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              action: "delete-market",
+              id: markt.id
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            alert(
+              data.error ||
+              "Markt-Termin konnte nicht gelöscht werden."
+            );
+
+            loeschenButton.disabled = false;
+            loeschenButton.textContent =
+              "Markt-Termin löschen 🗑";
+
+            return;
+          }
+
+          await ladeMaerkte();
+
+        } catch (error) {
+          console.error(error);
+
+          alert("Markt-Termin konnte nicht gelöscht werden.");
+
+          loeschenButton.disabled = false;
+          loeschenButton.textContent =
+            "Markt-Termin löschen 🗑";
+        }
+      });
 
       marktListe.appendChild(card);
     });
+
+  } catch (error) {
+    console.error(error);
+
+    marktListe.innerHTML =
+      "Markt-Termine konnten nicht geladen werden.";
+  }
+}
+
 
   } catch (error) {
     console.error(error);
