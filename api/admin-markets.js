@@ -62,7 +62,7 @@ export default async function handler(req, res) {
     await sql`
   ALTER TABLE markets
   ADD COLUMN IF NOT EXISTS end_date DATE
-`; 
+`;
 
     if (req.method === "GET") {
       const markets = await sql`
