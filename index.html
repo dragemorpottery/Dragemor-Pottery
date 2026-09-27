@@ -2638,10 +2638,9 @@
                 Nächster Markt
             </h3>
 
-            <p>
-                Termine und Veranstaltungen werden
-                hier bekannt gegeben.
-            </p>
+            <div id="oeffentlicheMarktListe">
+    Markt-Termine werden geladen …
+</div> 
 
         </div>
 
@@ -4311,6 +4310,78 @@ window.addEventListener('load',function(){
     }
   },0);
 },{once:true});
+async function ladeOeffentlicheMaerkte() {
+  const marktListe = document.getElementById("oeffentlicheMarktListe");
+
+  if (!marktListe) return;
+
+  try {
+    const response = await fetch("/api/markets", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      marktListe.innerHTML =
+        "Unsere aktuellen Markt-Termine konnten gerade nicht geladen werden.";
+      return;
+    }
+
+    const data = await response.json();
+    const markets = data.markets || [];
+
+    if (markets.length === 0) {
+      marktListe.innerHTML =
+        "Neue Markt-Termine werden hier bald bekannt gegeben ♡";
+      return;
+    }
+
+    marktListe.innerHTML = "";
+
+    markets.forEach(markt => {
+      const beginn = new Date(
+        markt.market_date
+      ).toLocaleDateString("de-DE");
+
+      const ende = markt.end_date
+        ? new Date(markt.end_date).toLocaleDateString("de-DE")
+        : null;
+
+      const datum = ende && ende !== beginn
+        ? `${beginn} – ${ende}`
+        : beginn;
+
+      const termin = document.createElement("div");
+
+      termin.style.marginBottom = "24px";
+
+      termin.innerHTML = `
+        <strong>${markt.name}</strong><br>
+        ${datum}<br>
+        ${markt.time_text ? `${markt.time_text}<br>` : ""}
+        ${markt.location}
+        ${markt.info ? `<br>${markt.info}` : ""}
+      `;
+
+      marktListe.appendChild(termin);
+    });
+
+  } catch (error) {
+    console.error("Markt-Termine:", error);
+
+    marktListe.innerHTML =
+      "Unsere aktuellen Markt-Termine konnten gerade nicht geladen werden.";
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    ladeOeffentlicheMaerkte
+  );
+} else {
+  ladeOeffentlicheMaerkte();
+} 
+
 </script>
 </body>
 </html> 
