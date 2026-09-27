@@ -47,7 +47,7 @@ export default async function handler(req, res) {
 
 if (req.method === "POST" && req.body?.action === "setup-products") {
   const productIds = [
-    "keramim-22",
+    "keramik-22",
     "keramik-26",
     "keramik-30",
     "keramik-33",
