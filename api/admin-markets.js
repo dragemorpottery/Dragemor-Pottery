@@ -84,6 +84,83 @@ export default async function handler(req, res) {
         markets
       });
     }
+// Markt-Termin bearbeiten
+if (
+  req.method === "POST" &&
+  req.body?.action === "update-market"
+) {
+  const {
+    id,
+    name,
+    market_date,
+    end_date,
+    time_text,
+    location,
+    info
+  } = req.body || {};
+
+  if (!id || !name || !market_date || !location) {
+    return res.status(400).json({
+      error: "Bitte Marktname, Datum und Ort ausfüllen."
+    });
+  }
+
+  const updated = await sql`
+    UPDATE markets
+    SET
+      name = ${name},
+      market_date = ${market_date},
+      end_date = ${end_date || null},
+      time_text = ${time_text || null},
+      location = ${location},
+      info = ${info || null},
+      updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING *
+  `;
+
+  if (updated.length === 0) {
+    return res.status(404).json({
+      error: "Markt-Termin wurde nicht gefunden."
+    });
+  }
+
+  return res.status(200).json({
+    ok: true,
+    market: updated[0]
+  });
+} 
+
+    // Markt-Termin löschen
+if (
+  req.method === "POST" &&
+  req.body?.action === "delete-market"
+) {
+  const { id } = req.body || {};
+
+  if (!id) {
+    return res.status(400).json({
+      error: "Markt-ID fehlt."
+    });
+  }
+
+  const deleted = await sql`
+    DELETE FROM markets
+    WHERE id = ${id}
+    RETURNING id
+  `;
+
+  if (deleted.length === 0) {
+    return res.status(404).json({
+      error: "Markt-Termin wurde nicht gefunden."
+    });
+  }
+
+  return res.status(200).json({
+    ok: true,
+    id: deleted[0].id
+  });
+} 
 
     if (req.method === "POST") {
       const {
