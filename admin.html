@@ -178,7 +178,114 @@ document.getElementById("neuerMarktButton")?.addEventListener("click", () => {
     formular.style.display = "none";
   }
 }); 
+document.getElementById("marktSpeichernButton")?.addEventListener("click", async () => {
+  const status = document.getElementById("marktSpeichernStatus");
 
+  const name = document.getElementById("marktName").value.trim();
+  const market_date = document.getElementById("marktDatum").value;
+  const time_text = document.getElementById("marktUhrzeit").value.trim();
+  const location = document.getElementById("marktOrt").value.trim();
+  const info = document.getElementById("marktInfo").value.trim();
+
+  if (!name || !market_date || !location) {
+    status.textContent = "Bitte Marktname, Datum und Ort ausfüllen.";
+    return;
+  }
+
+  status.textContent = "Markt-Termin wird gespeichert …";
+
+  try {
+    const response = await fetch("/api/admin-markets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        market_date,
+        time_text,
+        location,
+        info
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      status.textContent =
+        data.error || "Markt-Termin konnte nicht gespeichert werden.";
+      return;
+    }
+
+    status.textContent = "Markt-Termin wurde gespeichert ♡";
+
+    document.getElementById("marktName").value = "";
+    document.getElementById("marktDatum").value = "";
+    document.getElementById("marktUhrzeit").value = "";
+    document.getElementById("marktOrt").value = "";
+    document.getElementById("marktInfo").value = "";
+
+  } catch (error) {
+    console.error(error);
+    status.textContent = "Markt-Termin konnte nicht gespeichert werden.";
+  }
+}); 
+async function ladeMaerkte() {
+  const marktListe = document.getElementById("marktListe");
+
+  marktListe.innerHTML = "Markt-Termine werden geladen …";
+
+  try {
+    const response = await fetch("/api/admin-markets", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      marktListe.innerHTML = "Markt-Termine konnten nicht geladen werden.";
+      return;
+    }
+
+    const data = await response.json();
+
+    if (!data.markets || data.markets.length === 0) {
+      marktListe.innerHTML = "Noch keine Markt-Termine eingetragen.";
+      return;
+    }
+
+    marktListe.innerHTML = "";
+
+    data.markets.forEach(markt => {
+      const card = document.createElement("div");
+
+      card.style.background = "#f4f0e7";
+      card.style.padding = "18px";
+      card.style.marginBottom = "12px";
+      card.style.borderRadius = "14px";
+
+      const datum = new Date(
+        markt.market_date
+      ).toLocaleDateString("de-DE");
+
+      card.innerHTML = `
+        <strong>${markt.name}</strong><br>
+        <div style="margin-top:10px; line-height:1.6;">
+          <div><strong>Datum:</strong> ${datum}</div>
+          <div><strong>Uhrzeit:</strong> ${markt.time_text || "–"}</div>
+          <div><strong>Ort:</strong> ${markt.location}</div>
+          <div><strong>Info:</strong> ${markt.info || "–"}</div>
+        </div>
+      `;
+
+      marktListe.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error(error);
+    marktListe.innerHTML = "Markt-Termine konnten nicht geladen werden.";
+  }
+} 
+
+    
  document.getElementById("neuesProduktButton")?.addEventListener("click", () => {
     const formular = document.getElementById("neuesProduktFormular");
 
