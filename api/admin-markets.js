@@ -50,6 +50,7 @@ export default async function handler(req, res) {
         id BIGSERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         market_date DATE NOT NULL,
+        end_date DATE,
         time_text TEXT,
         location TEXT NOT NULL,
         info TEXT,
@@ -58,12 +59,18 @@ export default async function handler(req, res) {
       )
     `;
 
+    await sql`
+  ALTER TABLE markets
+  ADD COLUMN IF NOT EXISTS end_date DATE
+`; 
+
     if (req.method === "GET") {
       const markets = await sql`
         SELECT
           id,
           name,
           market_date,
+          end_date,
           time_text,
           location,
           info,
@@ -82,6 +89,7 @@ export default async function handler(req, res) {
       const {
         name,
         market_date,
+        end_date,
         time_text,
         location,
         info
@@ -97,6 +105,7 @@ export default async function handler(req, res) {
         INSERT INTO markets (
           name,
           market_date,
+          end_date,
           time_text,
           location,
           info
@@ -104,6 +113,7 @@ export default async function handler(req, res) {
         VALUES (
           ${name},
           ${market_date},
+          ${end_date|| null},
           ${time_text || null},
           ${location},
           ${info || null}
