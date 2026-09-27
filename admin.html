@@ -228,7 +228,7 @@ document.getElementById("marktSpeichernButton")?.addEventListener("click", async
   location,
   info
 }) 
-
+    });
 
     const data = await response.json();
 
@@ -239,7 +239,7 @@ document.getElementById("marktSpeichernButton")?.addEventListener("click", async
     }
 
     status.textContent = "Markt-Termin wurde gespeichert ♡";
-    marktInBearbeitung = 0
+    marktInBearbeitung = null;
     await ladeMaerkte();
 
     document.getElementById("marktName").value = "";
@@ -434,9 +434,6 @@ async function ladeMaerkte() {
 
   } catch (error) {
     console.error(error);
-    marktListe.innerHTML = "Markt-Termine konnten nicht geladen werden.";
-  }
-} 
 
     
  document.getElementById("neuesProduktButton")?.addEventListener("click", () => {
