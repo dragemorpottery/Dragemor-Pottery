@@ -26,7 +26,7 @@ function isAdmin(req) {
   return token === createToken();
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) { 
   if (!isAdmin(req)) {
     return res.status(401).json({
       error: "Nicht angemeldet."
