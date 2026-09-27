@@ -99,6 +99,35 @@
 <div id="verwaltung" style="display:none; width:100%; max-width:700px;">
     <h1>Produktverwaltung</h1>
     <p class="subtitle">Dragemor Pottery ♡</p>
+<div id="marktBereich" style="margin: 24px 0;">
+  <h2>Markt-Termine</h2>
+
+  <button id="neuerMarktButton" type="button">
+    + Markt-Termin hinzufügen
+  </button>
+
+  <div id="marktFormular" style="display:none; margin-top:20px;">
+    <input type="text" id="marktName" placeholder="Name des Marktes">
+
+    <input type="date" id="marktDatum">
+
+    <input type="text" id="marktUhrzeit" placeholder="Uhrzeit, z. B. 10:00–18:00 Uhr">
+
+    <input type="text" id="marktOrt" placeholder="Ort / Adresse">
+
+    <textarea id="marktInfo" placeholder="Zusatzinfo (optional)"></textarea>
+
+    <button type="button" id="marktSpeichernButton" style="margin-top:16px;">
+      Markt-Termin speichern ♡
+    </button>
+
+    <div id="marktSpeichernStatus" style="margin-top:10px;"></div>
+  </div>
+
+  <div id="marktListe" style="margin-top:20px;"></div>
+</div>
+
+<hr style="margin:32px 0; opacity:.3;"> 
 
 <div id="neuesProduktBereich" style="margin: 24px 0;">
 
@@ -140,6 +169,15 @@
   </div> 
   
   <script>
+document.getElementById("neuerMarktButton")?.addEventListener("click", () => {
+  const formular = document.getElementById("marktFormular");
+
+  if (formular.style.display === "none") {
+    formular.style.display = "block";
+  } else {
+    formular.style.display = "none";
+  }
+}); 
 
  document.getElementById("neuesProduktButton")?.addEventListener("click", () => {
     const formular = document.getElementById("neuesProduktFormular");
