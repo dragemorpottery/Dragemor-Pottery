@@ -218,6 +218,7 @@ document.getElementById("marktSpeichernButton")?.addEventListener("click", async
     }
 
     status.textContent = "Markt-Termin wurde gespeichert ♡";
+    await ladeMaerkte();
 
     document.getElementById("marktName").value = "";
     document.getElementById("marktDatum").value = "";
@@ -655,6 +656,7 @@ function zeigeVerwaltung() {
   loginBox.style.display = "none";
   verwaltung.style.display = "block";
   ladeProdukte();
+  ladeMaerkte();
 } 
     
   async function checkLogin() {
