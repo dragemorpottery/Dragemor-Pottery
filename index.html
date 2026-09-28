@@ -4007,19 +4007,21 @@ section,
     </nav>
 
     <div class="dp-header-actions">
-      <button
+ <button
   type="button"
   class="dp-account"
   onclick="toggleCustomerAccount()"
   aria-label="Kundenkonto"
-  style="width:auto; gap:7px; padding-left:10px; padding-right:10px;"
+  style="width:auto; display:inline-flex; flex-direction:row; align-items:center; gap:7px; padding-left:10px; padding-right:10px;"
 >
-  <span class="dp-person" aria-hidden="true"></span>
   <span
     id="dp-account-name"
     style="font-family:Georgia,'Times New Roman',serif; white-space:nowrap;"
   ></span>
+
+  <span class="dp-person" aria-hidden="true"></span>
 </button> 
+
 
       <button type="button" class="dp-cart" onclick="openCart()" aria-label="Warenkorb öffnen">
         <span class="dp-cart-icon" aria-hidden="true">♡</span>
