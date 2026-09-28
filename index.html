@@ -5985,7 +5985,7 @@ if (document.readyState === "loading") {
   <div class="customer-account-card" role="dialog" aria-modal="true" aria-labelledby="customer-account-title">
     <button type="button" class="customer-account-close" onclick="toggleCustomerAccount()" aria-label="Kundenkonto schließen">×</button>
     <h2 id="customer-account-title">Kundenkonto</h2>
-    <p class="customer-account-intro">Erstelle dein persönliches Konto bei Dragemor Pottery.</p>
+    <p id="customer-account-intro" class="customer-account-intro">Erstelle dein persönliches Konto bei Dragemor Pottery.</p>
 
     <form id="customer-register-form" class="customer-account-form">
       <label for="customer-name">Name</label>
@@ -6004,7 +6004,7 @@ if (document.readyState === "loading") {
       <div id="customer-register-status" class="customer-register-status" aria-live="polite"></div>
     </form>
 
-<p class="customer-login-note">
+<p id="customer-login-note" class="customer-login-note">
   Du hast bereits ein Kundenkonto? Melde dich hier an.
 </p>
 
@@ -6134,215 +6134,181 @@ function toggleCustomerAccount() {
 <script id="dragemor-customer-login">
 (function () {
   const form = document.getElementById("customer-login-form");
+  const registerForm = document.getElementById("customer-register-form");
   const accountName = document.getElementById("dp-account-name");
-const registerForm =
-  document.getElementById("customer-register-form");
+  const accountIntro = document.getElementById("customer-account-intro");
+  const loginNote = document.getElementById("customer-login-note");
+  const loggedInBox = document.getElementById("customer-logged-in");
+  const loggedInText = document.getElementById("customer-logged-in-text");
+  const logoutButton = document.getElementById("customer-logout-button");
+  const loginStatus = document.getElementById("customer-login-status");
 
-const loggedInBox =
-  document.getElementById("customer-logged-in");
-
-const loggedInText =
-  document.getElementById("customer-logged-in-text");
-
-const logoutButton =
-  document.getElementById("customer-logout-button");
-
-const loginNote =
-  document.querySelector(".customer-login-note"); 
+  function getFirstName(customer) {
+    if (!customer || !customer.name) return "";
+    return String(customer.name).trim().split(/\s+/)[0] || "";
+  }
 
   function showCustomerName(customer) {
     if (!accountName) return;
 
-    if (!customer || !customer.name) {
-      accountName.textContent = "";
-      return;
+    const firstName = getFirstName(customer);
+    accountName.textContent = firstName
+      ? `Schön, dass du da bist, ${firstName}`
+      : "";
+  }
+
+  function setLoggedInState(customer) {
+    const loggedIn = !!(customer && customer.name);
+    const firstName = getFirstName(customer);
+
+    if (registerForm) {
+      registerForm.hidden = loggedIn;
     }
 
-    const firstName = customer.name
-      .trim()
-      .split(/\s+/)[0];
+    if (form) {
+      form.hidden = loggedIn;
+    }
 
-    accountName.textContent = `Hallo, ${firstName}`;
-    function setLoggedInState(customer) {
-  const loggedIn = !!customer;
+    if (loginNote) {
+      loginNote.hidden = loggedIn;
+    }
 
-  if (registerForm) {
-    registerForm.hidden = loggedIn;
+    if (loggedInBox) {
+      loggedInBox.hidden = !loggedIn;
+    }
+
+    if (accountIntro) {
+      accountIntro.textContent = loggedIn
+        ? "Dein persönlicher Bereich bei Dragemor Pottery."
+        : "Erstelle dein persönliches Konto bei Dragemor Pottery.";
+    }
+
+    if (loggedInText) {
+      loggedInText.textContent = loggedIn && firstName
+        ? `Du bist als ${firstName} angemeldet.`
+        : "Du bist angemeldet.";
+    }
+
+    if (!loggedIn && loginStatus) {
+      loginStatus.className = "customer-register-status";
+      loginStatus.textContent = "";
+    }
+
+    showCustomerName(customer);
   }
-
-  if (form) {
-    form.hidden = loggedIn;
-  }
-
-  if (loginNote) {
-    loginNote.hidden = loggedIn;
-  }
-
-  if (loggedInBox) {
-    loggedInBox.hidden = !loggedIn;
-  }
-
-  if (loggedInText && customer?.name) {
-    const firstName = customer.name
-      .trim()
-      .split(/\s+/)[0];
-
-    loggedInText.textContent =
-      `Du bist als ${firstName} angemeldet.`;
-  }
-
-  showCustomerName(customer);
-} 
 
   async function checkLoginStatus() {
     try {
       const response = await fetch("/api/customer-login", {
         method: "GET",
-        credentials: "same-origin"
+        credentials: "same-origin",
+        cache: "no-store"
       });
 
-      const data = await response
-        .json()
-        .catch(() => ({}));
+      const data = await response.json().catch(() => ({}));
 
-     if (response.ok && data.loggedIn) {
-  setLoggedInState(data.customer);
-} else {
-  setLoggedInState(null);
-} 
-
-    } catch (error) {
-      console.error(
-        "Kundenkonto konnte nicht geprüft werden:",
-        error
-      );
-    }
-    if (logoutButton) {
-  logoutButton.addEventListener("click", async function () {
-    logoutButton.disabled = true;
-    logoutButton.textContent = "Abmeldung läuft …";
-
-    try {
-      const response = await fetch("/api/customer-login", {
-        method: "DELETE",
-        credentials: "same-origin"
-      });
-
-      const data = await response
-        .json()
-        .catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-          "Die Abmeldung konnte nicht durchgeführt werden."
-        );
+      if (response.ok && data.loggedIn && data.customer) {
+        setLoggedInState(data.customer);
+      } else {
+        setLoggedInState(null);
       }
-
-      setLoggedInState(null);
-
     } catch (error) {
-      alert(
-        error.message ||
-        "Die Abmeldung konnte nicht durchgeführt werden."
-      );
-
-    } finally {
-      logoutButton.disabled = false;
-      logoutButton.textContent = "Abmelden";
+      console.error("Kundenkonto konnte nicht geprüft werden:", error);
+      setLoggedInState(null);
     }
-  });
-} 
+  }
 
+  if (logoutButton) {
+    logoutButton.addEventListener("click", async function () {
+      logoutButton.disabled = true;
+      logoutButton.textContent = "Abmeldung läuft …";
+
+      try {
+        const response = await fetch("/api/customer-login", {
+          method: "DELETE",
+          credentials: "same-origin"
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Die Abmeldung konnte nicht durchgeführt werden."
+          );
+        }
+
+        setLoggedInState(null);
+      } catch (error) {
+        alert(
+          error.message || "Die Abmeldung konnte nicht durchgeführt werden."
+        );
+      } finally {
+        logoutButton.disabled = false;
+        logoutButton.textContent = "Abmelden";
+      }
+    });
+  }
 
   if (form) {
-    form.addEventListener(
-      "submit",
-      async function (event) {
-        event.preventDefault();
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
 
-        const button =
-          document.getElementById(
-            "customer-login-button"
-          );
+      const button = document.getElementById("customer-login-button");
+      const status = document.getElementById("customer-login-status");
+      const emailInput = document.getElementById("customer-login-email");
+      const passwordInput = document.getElementById("customer-login-password");
 
-        const status =
-          document.getElementById(
-            "customer-login-status"
-          );
+      const email = emailInput ? emailInput.value.trim() : "";
+      const password = passwordInput ? passwordInput.value : "";
 
-        const email =
-          document.getElementById(
-            "customer-login-email"
-          ).value.trim();
-
-        const password =
-          document.getElementById(
-            "customer-login-password"
-          ).value;
-
-        status.className =
-          "customer-register-status";
-
+      if (status) {
+        status.className = "customer-register-status";
         status.textContent = "";
+      }
 
+      if (button) {
         button.disabled = true;
         button.textContent = "Anmeldung läuft …";
+      }
 
-        try {
-          const response = await fetch(
-            "/api/customer-login",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-              credentials: "same-origin",
-              body: JSON.stringify({
-                email,
-                password
-              })
-            }
+      try {
+        const response = await fetch("/api/customer-login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.customer) {
+          throw new Error(
+            data.error || "Die Anmeldung konnte nicht durchgeführt werden."
           );
+        }
 
-          const data = await response
-            .json()
-            .catch(() => ({}));
+        setLoggedInState(data.customer);
+        form.reset();
 
-          if (!response.ok) {
-            throw new Error(
-              data.error ||
-              "Die Anmeldung konnte nicht durchgeführt werden."
-            );
-          }
-
-          setLoggedInState(data.customer);
-
-          form.reset();
-
-          const panel =
-            document.getElementById(
-              "customer-account-popover"
-            );
-
-          if (panel) {
-            panel.hidden = true;
-          }
-
-        } catch (error) {
+        const panel = document.getElementById("customer-account-popover");
+        if (panel) {
+          panel.hidden = true;
+        }
+      } catch (error) {
+        if (status) {
           status.classList.add("error");
-
           status.textContent =
-            error.message ||
-            "Die Anmeldung konnte nicht durchgeführt werden.";
-
-        } finally {
+            error.message || "Die Anmeldung konnte nicht durchgeführt werden.";
+        }
+      } finally {
+        if (button) {
           button.disabled = false;
           button.textContent = "Anmelden";
         }
       }
-    );
+    });
   }
 
   checkLoginStatus();
