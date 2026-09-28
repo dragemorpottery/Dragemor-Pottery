@@ -5983,9 +5983,46 @@ if (document.readyState === "loading") {
       <div id="customer-register-status" class="customer-register-status" aria-live="polite"></div>
     </form>
 
-    <p class="customer-login-note">
-      Die Anmeldung für bestehende Kundenkonten ergänzen wir im nächsten Schritt.
-    </p>
+<p class="customer-login-note">
+  Du hast bereits ein Kundenkonto? Melde dich hier an.
+</p>
+
+<form id="customer-login-form" class="customer-account-form">
+
+  <label for="customer-login-email">E-Mail-Adresse</label>
+  <input
+    id="customer-login-email"
+    name="email"
+    type="email"
+    autocomplete="email"
+    required
+  >
+
+  <label for="customer-login-password">Passwort</label>
+  <input
+    id="customer-login-password"
+    name="password"
+    type="password"
+    autocomplete="current-password"
+    required
+  >
+
+  <button
+    id="customer-login-button"
+    class="customer-register-button"
+    type="submit"
+  >
+    Anmelden
+  </button>
+
+  <div
+    id="customer-login-status"
+    class="customer-register-status"
+    aria-live="polite"
+  ></div>
+
+</form> 
+
   </div>
 </div>
 
@@ -6058,6 +6095,77 @@ function toggleCustomerAccount() {
   });
 })();
 </script>
+
+<script id="dragemor-customer-login">
+(function () {
+  const form = document.getElementById("customer-login-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const button = document.getElementById("customer-login-button");
+    const status = document.getElementById("customer-login-status");
+
+    const email = document
+      .getElementById("customer-login-email")
+      .value
+      .trim();
+
+    const password = document
+      .getElementById("customer-login-password")
+      .value;
+
+    status.className = "customer-register-status";
+    status.textContent = "";
+
+    button.disabled = true;
+    button.textContent = "Anmeldung läuft …";
+
+    try {
+      const response = await fetch("/api/customer-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const data = await response
+        .json()
+        .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Die Anmeldung konnte nicht durchgeführt werden."
+        );
+      }
+
+      status.classList.add("success");
+
+      status.textContent =
+        `Hallo ${data.customer.name} - du bist jetzt angemeldet.`;
+
+      form.reset();
+
+    } catch (error) {
+      status.classList.add("error");
+
+      status.textContent =
+        error.message ||
+        "Die Anmeldung konnte nicht durchgeführt werden.";
+
+    } finally {
+      button.disabled = false;
+      button.textContent = "Anmelden";
+    }
+  });
+})();
+</script> 
 
 <script id="dp-header-cart-sync">
 (function(){
