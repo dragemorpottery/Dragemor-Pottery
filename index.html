@@ -2909,6 +2909,82 @@ nav a:hover {
 /* Vorhandenes Original-Logo und Herz-Ornament bleiben unverändert. */
 </style>
 
+
+<style id="dragemor-laptop-kompakt">
+/* ===== Laptop: Startseite kompakter =====
+   Nur Desktop/Laptop. Mobile Darstellung bleibt unangetastet. */
+@media (min-width: 1101px) and (min-height: 651px) {
+    /* Hero insgesamt etwas kompakter */
+    .hero {
+        padding-top: 34px !important;
+        padding-bottom: 34px !important;
+    }
+
+    .hero-intro {
+        margin-bottom: 20px !important;
+    }
+
+    /* Drei Startseitenbilder kleiner, damit Überschrift + Bilder + Text
+       möglichst gemeinsam in den sichtbaren Bereich passen. */
+    .home-featured {
+        margin-top: 26px !important;
+    }
+
+    .home-featured-head {
+        margin-bottom: 12px !important;
+    }
+
+    .home-product-grid {
+        max-width: 1120px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 16px !important;
+    }
+
+    .home-product-image {
+        aspect-ratio: 4 / 2.65 !important;
+        max-height: 235px;
+        overflow: hidden;
+    }
+
+    .home-product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .home-product-copy {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+
+    /* Das vorhandene Herz-Spiral-Ornament bleibt in seiner Form erhalten.
+       Es wird nur flacher/breiter dargestellt und etwas weiter nach unten gesetzt. */
+    .ornament-divider,
+    .ornament-separator,
+    .section-ornament,
+    .home-ornament {
+        width: min(96vw, 1480px) !important;
+        max-width: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 34px !important;
+        margin-bottom: 22px !important;
+    }
+
+    .ornament-divider img,
+    .ornament-separator img,
+    .section-ornament img,
+    .home-ornament img {
+        width: 100% !important;
+        max-width: none !important;
+        height: 70px !important;
+        object-fit: fill !important;
+        display: block;
+    }
+}
+</style>
+
 </head>
 
 
