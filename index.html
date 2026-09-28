@@ -3382,6 +3382,94 @@ nav a:hover {
 }
 </style>
 
+
+<style id="dragemor-home-bilder-kleiner">
+/* Startseitenbilder: kompakter wie die Bildwirkung im Bereich "Über uns" */
+@media (min-width:1101px) {
+  .dragemor-home-hero .home-featured {
+    max-width: 1040px !important;
+    margin: 8px auto 0 !important;
+  }
+
+  .dragemor-home-hero .home-featured-head {
+    max-width: 960px !important;
+    margin: 0 auto 12px !important;
+  }
+
+  .dragemor-home-hero .home-product-grid {
+    width: 100% !important;
+    max-width: 960px !important;
+    margin: 0 auto !important;
+    gap: 18px !important;
+  }
+
+  .dragemor-home-hero .home-product-card {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background: #f1eadc !important;
+    border: 1px solid rgba(67,79,59,.18) !important;
+    box-shadow: 0 8px 20px rgba(49,57,43,.10) !important;
+  }
+
+  .dragemor-home-hero .home-product-image {
+    height: 155px !important;
+    max-height: 155px !important;
+  }
+
+  .dragemor-home-hero .home-product-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  /* Kein dunkler Schleier mehr: Schrift klar auf hellem Untergrund */
+  .dragemor-home-hero .home-product-copy {
+    min-height: 64px !important;
+    padding: 10px 14px 11px !important;
+    background: rgba(241,234,220,.98) !important;
+    color: #35402f !important;
+    text-shadow: none !important;
+  }
+
+  .dragemor-home-hero .home-product-copy strong {
+    display: block !important;
+    color: #2f392b !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 1.22rem !important;
+    font-weight: 600 !important;
+    line-height: 1.15 !important;
+  }
+
+  .dragemor-home-hero .home-product-copy span {
+    display: block !important;
+    margin-top: 3px !important;
+    color: #596252 !important;
+    font-family: "Lora", Georgia, serif !important;
+    font-size: .82rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .dragemor-home-hero .home-secondary-links {
+    max-width: 960px !important;
+    margin: 12px auto 0 !important;
+  }
+}
+
+/* Handy: Karten ebenfalls etwas kompakter, aber weiterhin gut antippbar */
+@media (max-width:1100px) {
+  .dragemor-home-hero .home-product-image {
+    aspect-ratio: 4 / 2.7 !important;
+  }
+  .dragemor-home-hero .home-product-copy {
+    background:#f1eadc !important;
+    color:#35402f !important;
+    text-shadow:none !important;
+  }
+  .dragemor-home-hero .home-product-copy strong { color:#2f392b !important; }
+  .dragemor-home-hero .home-product-copy span { color:#596252 !important; }
+}
+</style>
+
 </head>
 
 
