@@ -6042,7 +6042,21 @@ if (document.readyState === "loading") {
     aria-live="polite"
   ></div>
 
-</form> 
+</form>
+ <div id="customer-logged-in" hidden>
+  <p id="customer-logged-in-text" class="customer-login-note">
+    Du bist angemeldet.
+  </p>
+
+  <button
+    id="customer-logout-button"
+    class="customer-register-button"
+    type="button"
+  >
+    Abmelden
+  </button>
+</div> 
+
 
   </div>
 </div>
@@ -6121,6 +6135,20 @@ function toggleCustomerAccount() {
 (function () {
   const form = document.getElementById("customer-login-form");
   const accountName = document.getElementById("dp-account-name");
+const registerForm =
+  document.getElementById("customer-register-form");
+
+const loggedInBox =
+  document.getElementById("customer-logged-in");
+
+const loggedInText =
+  document.getElementById("customer-logged-in-text");
+
+const logoutButton =
+  document.getElementById("customer-logout-button");
+
+const loginNote =
+  document.querySelector(".customer-login-note"); 
 
   function showCustomerName(customer) {
     if (!accountName) return;
@@ -6135,7 +6163,36 @@ function toggleCustomerAccount() {
       .split(/\s+/)[0];
 
     accountName.textContent = `Hallo, ${firstName}`;
+    function setLoggedInState(customer) {
+  const loggedIn = !!customer;
+
+  if (registerForm) {
+    registerForm.hidden = loggedIn;
   }
+
+  if (form) {
+    form.hidden = loggedIn;
+  }
+
+  if (loginNote) {
+    loginNote.hidden = loggedIn;
+  }
+
+  if (loggedInBox) {
+    loggedInBox.hidden = !loggedIn;
+  }
+
+  if (loggedInText && customer?.name) {
+    const firstName = customer.name
+      .trim()
+      .split(/\s+/)[0];
+
+    loggedInText.textContent =
+      `Du bist als ${firstName} angemeldet.`;
+  }
+
+  showCustomerName(customer);
+} 
 
   async function checkLoginStatus() {
     try {
@@ -6148,11 +6205,11 @@ function toggleCustomerAccount() {
         .json()
         .catch(() => ({}));
 
-      if (response.ok && data.loggedIn) {
-        showCustomerName(data.customer);
-      } else {
-        showCustomerName(null);
-      }
+     if (response.ok && data.loggedIn) {
+  setLoggedInState(data.customer);
+} else {
+  setLoggedInState(null);
+} 
 
     } catch (error) {
       console.error(
@@ -6160,7 +6217,43 @@ function toggleCustomerAccount() {
         error
       );
     }
-  }
+    if (logoutButton) {
+  logoutButton.addEventListener("click", async function () {
+    logoutButton.disabled = true;
+    logoutButton.textContent = "Abmeldung läuft …";
+
+    try {
+      const response = await fetch("/api/customer-login", {
+        method: "DELETE",
+        credentials: "same-origin"
+      });
+
+      const data = await response
+        .json()
+        .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Die Abmeldung konnte nicht durchgeführt werden."
+        );
+      }
+
+      setLoggedInState(null);
+
+    } catch (error) {
+      alert(
+        error.message ||
+        "Die Abmeldung konnte nicht durchgeführt werden."
+      );
+
+    } finally {
+      logoutButton.disabled = false;
+      logoutButton.textContent = "Abmelden";
+    }
+  });
+} 
+
 
   if (form) {
     form.addEventListener(
@@ -6224,7 +6317,7 @@ function toggleCustomerAccount() {
             );
           }
 
-          showCustomerName(data.customer);
+          setLoggedInState(data.customer);
 
           form.reset();
 
