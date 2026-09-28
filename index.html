@@ -4007,9 +4007,20 @@ section,
     </nav>
 
     <div class="dp-header-actions">
-      <button type="button" class="dp-account" onclick="toggleCustomerAccount()" aria-label="Kundenkonto">
-        <span class="dp-person" aria-hidden="true"></span>
-      </button>
+      <button
+  type="button"
+  class="dp-account"
+  onclick="toggleCustomerAccount()"
+  aria-label="Kundenkonto"
+  style="width:auto; gap:7px; padding-left:10px; padding-right:10px;"
+>
+  <span class="dp-person" aria-hidden="true"></span>
+  <span
+    id="dp-account-name"
+    style="font-family:Georgia,'Times New Roman',serif; white-space:nowrap;"
+  ></span>
+</button> 
+
       <button type="button" class="dp-cart" onclick="openCart()" aria-label="Warenkorb öffnen">
         <span class="dp-cart-icon" aria-hidden="true">♡</span>
         <span class="dp-cart-number">0</span>
@@ -6099,73 +6110,142 @@ function toggleCustomerAccount() {
 <script id="dragemor-customer-login">
 (function () {
   const form = document.getElementById("customer-login-form");
-  if (!form) return;
+  const accountName = document.getElementById("dp-account-name");
 
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  function showCustomerName(customer) {
+    if (!accountName) return;
 
-    const button = document.getElementById("customer-login-button");
-    const status = document.getElementById("customer-login-status");
+    if (!customer || !customer.name) {
+      accountName.textContent = "";
+      return;
+    }
 
-    const email = document
-      .getElementById("customer-login-email")
-      .value
-      .trim();
+    const firstName = customer.name
+      .trim()
+      .split(/\s+/)[0];
 
-    const password = document
-      .getElementById("customer-login-password")
-      .value;
+    accountName.textContent = firstName;
+  }
 
-    status.className = "customer-register-status";
-    status.textContent = "";
-
-    button.disabled = true;
-    button.textContent = "Anmeldung läuft …";
-
+  async function checkLoginStatus() {
     try {
       const response = await fetch("/api/customer-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
+        method: "GET",
+        credentials: "same-origin"
       });
 
       const data = await response
         .json()
         .catch(() => ({}));
 
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-          "Die Anmeldung konnte nicht durchgeführt werden."
-        );
+      if (response.ok && data.loggedIn) {
+        showCustomerName(data.customer);
+      } else {
+        showCustomerName(null);
       }
 
-      status.classList.add("success");
-
-      status.textContent =
-        `Hallo ${data.customer.name} - du bist jetzt angemeldet.`;
-
-      form.reset();
-
     } catch (error) {
-      status.classList.add("error");
-
-      status.textContent =
-        error.message ||
-        "Die Anmeldung konnte nicht durchgeführt werden.";
-
-    } finally {
-      button.disabled = false;
-      button.textContent = "Anmelden";
+      console.error(
+        "Kundenkonto konnte nicht geprüft werden:",
+        error
+      );
     }
-  });
+  }
+
+  if (form) {
+    form.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
+
+        const button =
+          document.getElementById(
+            "customer-login-button"
+          );
+
+        const status =
+          document.getElementById(
+            "customer-login-status"
+          );
+
+        const email =
+          document.getElementById(
+            "customer-login-email"
+          ).value.trim();
+
+        const password =
+          document.getElementById(
+            "customer-login-password"
+          ).value;
+
+        status.className =
+          "customer-register-status";
+
+        status.textContent = "";
+
+        button.disabled = true;
+        button.textContent = "Anmeldung läuft …";
+
+        try {
+          const response = await fetch(
+            "/api/customer-login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+              credentials: "same-origin",
+              body: JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+          const data = await response
+            .json()
+            .catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(
+              data.error ||
+              "Die Anmeldung konnte nicht durchgeführt werden."
+            );
+          }
+
+          showCustomerName(data.customer);
+
+          form.reset();
+
+          const panel =
+            document.getElementById(
+              "customer-account-popover"
+            );
+
+          if (panel) {
+            panel.hidden = true;
+          }
+
+        } catch (error) {
+          status.classList.add("error");
+
+          status.textContent =
+            error.message ||
+            "Die Anmeldung konnte nicht durchgeführt werden.";
+
+        } finally {
+          button.disabled = false;
+          button.textContent = "Anmelden";
+        }
+      }
+    );
+  }
+
+  checkLoginStatus();
 })();
 </script> 
+
 
 <script id="dp-header-cart-sync">
 (function(){
