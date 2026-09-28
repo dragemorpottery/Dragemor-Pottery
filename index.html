@@ -3881,6 +3881,55 @@ section,
 }
 </style>
 
+
+<style id="dragemor-customer-register-style">
+.customer-account-popover{
+  position:fixed; inset:0; z-index:30000;
+  display:flex; align-items:center; justify-content:center;
+  padding:22px; background:rgba(38,48,37,.48);
+  backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+}
+.customer-account-popover[hidden]{display:none !important}
+.customer-account-card{
+  position:relative; width:min(94vw,460px); max-height:90vh; overflow:auto;
+  padding:34px 32px 30px; border-radius:22px;
+  background:rgba(245,239,226,.98);
+  border:1px solid rgba(80,94,70,.24);
+  box-shadow:0 22px 65px rgba(37,45,32,.28);
+  color:#3f4d39; font-family:"Lora",Georgia,serif;
+}
+.customer-account-close{
+  position:absolute; top:12px; right:15px; border:0; background:transparent;
+  color:#465540; font-size:30px; line-height:1; cursor:pointer;
+}
+.customer-account-card h2{
+  margin:0 0 6px; color:#3d4a37;
+  font-family:"Cormorant Garamond",Georgia,serif; font-size:2rem;
+}
+.customer-account-intro{margin:0 0 24px;color:#69685e;font-size:.92rem}
+.customer-account-form label{display:block;margin:0 0 7px;font-weight:600;color:#465540}
+.customer-account-form input{
+  width:100%; margin:0 0 16px; padding:12px 14px;
+  border:1px solid rgba(70,85,64,.30); border-radius:10px;
+  background:#fffdf8; color:#35402f; font:inherit; outline:none;
+}
+.customer-account-form input:focus{
+  border-color:#718064; box-shadow:0 0 0 3px rgba(113,128,100,.12);
+}
+.customer-register-button{
+  width:100%; padding:12px 18px; margin-top:3px; border:0; border-radius:999px;
+  background:#52614a; color:#fffaf0; font:600 1rem "Lora",Georgia,serif; cursor:pointer;
+}
+.customer-register-button:disabled{opacity:.58;cursor:wait}
+.customer-register-status{min-height:24px;margin:14px 0 0;text-align:center;font-size:.9rem}
+.customer-register-status.success{color:#486343}
+.customer-register-status.error{color:#8a4540}
+.customer-login-note{
+  margin:18px 0 0; padding-top:16px; border-top:1px solid rgba(70,85,64,.16);
+  text-align:center; color:#777166; font-size:.84rem;
+}
+</style>
+
 </head>
 
 
@@ -5909,6 +5958,37 @@ if (document.readyState === "loading") {
 
 </script>
 
+
+<div id="customer-account-popover" class="customer-account-popover" hidden
+     onclick="if(event.target===this) toggleCustomerAccount()">
+  <div class="customer-account-card" role="dialog" aria-modal="true" aria-labelledby="customer-account-title">
+    <button type="button" class="customer-account-close" onclick="toggleCustomerAccount()" aria-label="Kundenkonto schließen">×</button>
+    <h2 id="customer-account-title">Kundenkonto</h2>
+    <p class="customer-account-intro">Erstelle dein persönliches Konto bei Dragemor Pottery.</p>
+
+    <form id="customer-register-form" class="customer-account-form">
+      <label for="customer-name">Name</label>
+      <input id="customer-name" name="name" type="text" autocomplete="name" required>
+
+      <label for="customer-email">E-Mail-Adresse</label>
+      <input id="customer-email" name="email" type="email" autocomplete="email" required>
+
+      <label for="customer-password">Passwort</label>
+      <input id="customer-password" name="password" type="password"
+             autocomplete="new-password" minlength="8" required>
+
+      <button id="customer-register-button" class="customer-register-button" type="submit">
+        Konto erstellen
+      </button>
+      <div id="customer-register-status" class="customer-register-status" aria-live="polite"></div>
+    </form>
+
+    <p class="customer-login-note">
+      Die Anmeldung für bestehende Kundenkonten ergänzen wir im nächsten Schritt.
+    </p>
+  </div>
+</div>
+
 <script id="dragemor-customer-account-ui">
 function toggleCustomerAccount() {
     const panel = document.getElementById("customer-account-popover");
@@ -5917,6 +5997,67 @@ function toggleCustomerAccount() {
 }
 </script>
 
+
+
+<script id="dragemor-customer-register">
+(function(){
+  const form = document.getElementById("customer-register-form");
+  if (!form) return;
+
+  form.addEventListener("submit", async function(event){
+    event.preventDefault();
+
+    const button = document.getElementById("customer-register-button");
+    const status = document.getElementById("customer-register-status");
+    const name = document.getElementById("customer-name").value.trim();
+    const email = document.getElementById("customer-email").value.trim();
+    const password = document.getElementById("customer-password").value;
+
+    status.className = "customer-register-status";
+    status.textContent = "";
+
+    if (password.length < 8) {
+      status.classList.add("error");
+      status.textContent = "Das Passwort muss mindestens 8 Zeichen lang sein.";
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Konto wird erstellt …";
+
+    try {
+      const response = await fetch("/api/customer-register", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({name, email, password})
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Das Kundenkonto konnte nicht erstellt werden.");
+      }
+
+      status.classList.add("success");
+      status.textContent = data.message || "Dein Kundenkonto wurde erfolgreich erstellt.";
+      form.reset();
+    } catch (error) {
+      status.classList.add("error");
+      status.textContent = error.message || "Das Kundenkonto konnte nicht erstellt werden.";
+    } finally {
+      button.disabled = false;
+      button.textContent = "Konto erstellen";
+    }
+  });
+
+  document.addEventListener("keydown", function(event){
+    if (event.key === "Escape") {
+      const panel = document.getElementById("customer-account-popover");
+      if (panel && !panel.hidden) panel.hidden = true;
+    }
+  });
+})();
+</script>
 
 <script id="dp-header-cart-sync">
 (function(){
