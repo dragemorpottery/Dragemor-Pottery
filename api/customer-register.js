@@ -6,6 +6,93 @@ function hashPassword(password, salt) {
     .toString("hex");
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+async function sendWelcomeEmail(name, email) {
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (!resendApiKey) {
+    console.error("RESEND_API_KEY fehlt.");
+    return;
+  }
+
+  const safeName = escapeHtml(name);
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: "Dragemor Pottery <kontakt@dragemor-pottery.de>",
+      to: [email],
+      subject: "Willkommen bei Dragemor Pottery ♡",
+      html: `
+        <div style="
+          font-family: Georgia, 'Times New Roman', serif;
+          color: #30372f;
+          background: #f4f0e7;
+          padding: 32px;
+          line-height: 1.7;
+        ">
+          <div style="
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 36px;
+            border-radius: 18px;
+          ">
+            <h1 style="
+              font-size: 28px;
+              font-weight: normal;
+              margin-top: 0;
+              color: #344436;
+            ">
+              Willkommen bei Dragemor Pottery ♡
+            </h1>
+
+            <p>Hallo ${safeName},</p>
+
+            <p>
+              wie schön, dass du da bist.
+            </p>
+
+            <p>
+              Dein persönliches Kundenkonto bei
+              <strong>Dragemor Pottery</strong> wurde erfolgreich erstellt.
+            </p>
+
+            <p>
+              Du kannst dich ab jetzt mit deiner E-Mail-Adresse und deinem
+              selbst gewählten Passwort anmelden.
+            </p>
+
+            <p style="margin-top: 30px;">
+              Alles Liebe<br>
+              Franca von Dragemor Pottery
+            </p>
+          </div>
+        </div>
+      `
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Resend Fehler ${response.status}: ${errorText}`
+    );
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -49,7 +136,6 @@ export default async function handler(req, res) {
     const { neon } = await import("@neondatabase/serverless");
     const sql = neon(databaseUrl);
 
-    // Tabelle beim ersten Aufruf automatisch anlegen.
     await sql`
       CREATE TABLE IF NOT EXISTS customers (
         id BIGSERIAL PRIMARY KEY,
@@ -92,6 +178,17 @@ export default async function handler(req, res) {
       )
     `;
 
+    // Bestätigungsmail versenden.
+    // Falls die Mail fehlschlägt, bleibt das Kundenkonto trotzdem bestehen.
+    try {
+      await sendWelcomeEmail(name, email);
+    } catch (mailError) {
+      console.error(
+        "Customer welcome email error:",
+        mailError
+      );
+    }
+
     return res.status(201).json({
       success: true,
       message: "Dein Kundenkonto wurde erfolgreich erstellt."
@@ -100,8 +197,6 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Customer registration error:", error);
 
-    // Falls zwei Registrierungen mit derselben Mail
-    // praktisch gleichzeitig eintreffen.
     if (error?.code === "23505") {
       return res.status(409).json({
         error: "Für diese E-Mail-Adresse gibt es bereits ein Kundenkonto."
@@ -113,3 +208,5 @@ export default async function handler(req, res) {
     });
   }
 } 
+
+
