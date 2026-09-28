@@ -3800,6 +3800,87 @@ section,
 }
 </style>
 
+
+<style id="dragemor-maerkte-logo-text-nebeneinander">
+/* Märkte: Logo links, kompletter Einleitungstext rechts.
+   Die vorhandenen Marktbilder darunter bleiben unverändert. */
+@media (min-width: 901px) {
+    #maerkte .markt-header,
+    #maerkte .maerkte-header,
+    .maerkte .markt-header,
+    .maerkte .maerkte-header {
+        max-width: 1050px !important;
+        margin: 0 auto 28px !important;
+        display: grid !important;
+        grid-template-columns: minmax(220px, 330px) 1fr !important;
+        gap: 42px !important;
+        align-items: center !important;
+        text-align: left !important;
+    }
+
+    #maerkte .markt-logo,
+    #maerkte .maerkte-logo,
+    .maerkte .markt-logo,
+    .maerkte .maerkte-logo {
+        grid-column: 1 !important;
+        grid-row: 1 / span 10 !important;
+        width: 100% !important;
+        max-width: 300px !important;
+        height: auto !important;
+        margin: 0 auto !important;
+        object-fit: contain !important;
+    }
+
+    #maerkte .markt-header > *:not(.markt-logo):not(.maerkte-logo),
+    #maerkte .maerkte-header > *:not(.markt-logo):not(.maerkte-logo),
+    .maerkte .markt-header > *:not(.markt-logo):not(.maerkte-logo),
+    .maerkte .maerkte-header > *:not(.markt-logo):not(.maerkte-logo) {
+        grid-column: 2 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+</style>
+
+
+<style id="dragemor-herstellung-bild-komplett">
+/* Herstellungsbild vollständig im vorhandenen Rahmen anzeigen:
+   kein Abschneiden mehr. */
+#herstellung .herstellung-bild,
+#herstellung .herstellung-image,
+.herstellung .herstellung-bild,
+.herstellung .herstellung-image {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(244,239,226,.55) !important;
+}
+
+#herstellung .herstellung-bild img,
+#herstellung .herstellung-image img,
+.herstellung .herstellung-bild img,
+.herstellung .herstellung-image img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+}
+
+/* Laptop: kompakt genug, damit Überschrift und kompletter Block
+   möglichst gemeinsam ins Fenster passen. */
+@media (min-width: 1000px) {
+    #herstellung .herstellung-bild,
+    #herstellung .herstellung-image,
+    .herstellung .herstellung-bild,
+    .herstellung .herstellung-image {
+        height: 330px !important;
+        max-height: 330px !important;
+    }
+}
+</style>
+
 </head>
 
 
