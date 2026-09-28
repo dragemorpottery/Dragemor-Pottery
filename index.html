@@ -3706,6 +3706,100 @@ section,
 }
 </style>
 
+
+<style id="dragemor-herstellung-kompakt">
+/* "So entsteht unsere Keramik" auf Laptop kompakter:
+   Überschrift + Bild + Text passen gemeinsam besser ins Fenster. */
+@media (min-width: 1000px) {
+    #herstellung,
+    .herstellung {
+        padding-top: 24px !important;
+        padding-bottom: 28px !important;
+        min-height: auto !important;
+    }
+
+    #herstellung .section-header,
+    .herstellung .section-header {
+        margin-bottom: 18px !important;
+    }
+
+    #herstellung .section-header h2,
+    .herstellung .section-header h2 {
+        margin-bottom: 7px !important;
+    }
+
+    #herstellung .section-header p,
+    .herstellung .section-header p {
+        margin-bottom: 0 !important;
+    }
+
+    #herstellung .herstellung-content,
+    #herstellung .herstellung-grid,
+    .herstellung .herstellung-content,
+    .herstellung .herstellung-grid {
+        max-width: 1050px !important;
+        margin: 0 auto !important;
+        gap: 26px !important;
+        align-items: center !important;
+    }
+
+    #herstellung img,
+    .herstellung img {
+        max-height: 390px !important;
+        object-fit: cover !important;
+    }
+
+    #herstellung .herstellung-bild,
+    #herstellung .herstellung-image,
+    .herstellung .herstellung-bild,
+    .herstellung .herstellung-image {
+        max-height: 390px !important;
+        overflow: hidden !important;
+        border-radius: 14px !important;
+    }
+
+    #herstellung .herstellung-text,
+    .herstellung .herstellung-text {
+        font-size: .94rem !important;
+        line-height: 1.55 !important;
+    }
+
+    #herstellung .herstellung-text p,
+    .herstellung .herstellung-text p {
+        margin-bottom: 10px !important;
+    }
+}
+
+/* Besonders für typische Laptop-Höhen wie auf deinem Foto. */
+@media (min-width: 1000px) and (max-height: 850px) {
+    #herstellung,
+    .herstellung {
+        padding-top: 16px !important;
+        padding-bottom: 20px !important;
+    }
+
+    #herstellung .section-header,
+    .herstellung .section-header {
+        margin-bottom: 12px !important;
+    }
+
+    #herstellung img,
+    .herstellung img,
+    #herstellung .herstellung-bild,
+    #herstellung .herstellung-image,
+    .herstellung .herstellung-bild,
+    .herstellung .herstellung-image {
+        max-height: 330px !important;
+    }
+
+    #herstellung .herstellung-text,
+    .herstellung .herstellung-text {
+        font-size: .88rem !important;
+        line-height: 1.42 !important;
+    }
+}
+</style>
+
 </head>
 
 
