@@ -4006,20 +4006,14 @@ section,
       <a href="#kontakt">Kontakt</a>
     </nav>
 
-    <div class="dp-header-actions">
+   <div class="dp-header-actions" style="position:relative;"> 
  <button
   type="button"
   class="dp-account"
   onclick="toggleCustomerAccount()"
   aria-label="Kundenkonto"
-  style="width:auto; display:inline-flex; flex-direction:row; align-items:center; gap:7px; padding-left:10px; padding-right:10px;"
 >
-  <span
-    id="dp-account-name"
-    style="font-family:Georgia,'Times New Roman',serif; white-space:nowrap;"
-  ></span>
-
- <span class="dp-person" aria-hidden="true" style="flex-shrink:0;"></span>
+  <span class="dp-person" aria-hidden="true"></span>
 </button> 
 
 
@@ -4027,6 +4021,19 @@ section,
         <span class="dp-cart-icon" aria-hidden="true">♡</span>
         <span class="dp-cart-number">0</span>
       </button>
+      <span
+  id="dp-account-name"
+  style="
+    position:absolute;
+    right:0;
+    top:100%;
+    margin-top:5px;
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:14px;
+    white-space:nowrap;
+  "
+></span> 
+
     </div>
 
     <button class="dp-mobile-menu" type="button" aria-label="Menü öffnen" onclick="document.body.classList.toggle('dp-menu-open')">
@@ -6126,7 +6133,7 @@ function toggleCustomerAccount() {
       .trim()
       .split(/\s+/)[0];
 
-    accountName.textContent = firstName;
+    accountName.textContent = `Schön, dass Du da bist, ${firstName}`;
   }
 
   async function checkLoginStatus() {
