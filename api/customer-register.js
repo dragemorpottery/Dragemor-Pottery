@@ -32,55 +32,43 @@ async function sendWelcomeEmail(name, email) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      from: "Dragemor Pottery <kontakt@dragemor-pottery.de>",
-      to: [email],
-      subject: "Willkommen bei Dragemor Pottery ♡",
-      html: `
-        <div style="
-          font-family: Georgia, 'Times New Roman', serif;
-          color: #30372f;
-          background: #f4f0e7;
-          padding: 32px;
-          line-height: 1.7;
-        ">
-          <div style="
-            max-width: 600px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 36px;
-            border-radius: 18px;
-          ">
-            <h1 style="
-              font-size: 28px;
-              font-weight: normal;
-              margin-top: 0;
-              color: #344436;
-            ">
-              Willkommen bei Dragemor Pottery ♡
-            </h1>
+  from: "Dragemor Pottery <kontakt@dragemor-pottery.de>",
+  to: [email],
+  reply_to: "kontakt@dragemor-pottery.de",
+  subject: "Dein Kundenkonto bei Dragemor Pottery",
 
-            <p>Hallo ${safeName},</p>
+  text: `Hallo ${name},
 
-            <p>
-              wie schön, dass du da bist.
-            </p>
+dein persönliches Kundenkonto bei Dragemor Pottery wurde erfolgreich erstellt.
 
-            <p>
-              Dein persönliches Kundenkonto bei
-              <strong>Dragemor Pottery</strong> wurde erfolgreich erstellt.
-            </p>
+Du kannst dich ab jetzt mit deiner E-Mail-Adresse und deinem selbst gewählten Passwort anmelden.
 
-            <p>
-              Du kannst dich ab jetzt mit deiner E-Mail-Adresse und deinem
-              selbst gewählten Passwort anmelden.
-            </p>
+Alles Liebe
+Franca von Dragemor Pottery`,
 
-            <p style="margin-top: 30px;">
-              Alles Liebe<br>
-              Franca von Dragemor Pottery
-            </p>
-          </div>
-        </div>
+  html: `
+    <div style="font-family: Georgia, 'Times New Roman', serif; color:#30372f; line-height:1.7;">
+      <h2 style="color:#344436;">Willkommen bei Dragemor Pottery</h2>
+
+      <p>Hallo ${safeName},</p>
+
+      <p>
+        dein persönliches Kundenkonto bei
+        <strong>Dragemor Pottery</strong> wurde erfolgreich erstellt.
+      </p>
+
+      <p>
+        Du kannst dich ab jetzt mit deiner E-Mail-Adresse und deinem
+        selbst gewählten Passwort anmelden.
+      </p>
+
+      <p>
+        Alles Liebe<br>
+        Franca von Dragemor Pottery
+      </p>
+    </div>
+  `
+})
       `
     })
   });
