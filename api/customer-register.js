@@ -69,8 +69,6 @@ Franca von Dragemor Pottery`,
     </div>
   `
 })
-      `
-    })
   });
 
   if (!response.ok) {
