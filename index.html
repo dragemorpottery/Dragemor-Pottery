@@ -3590,6 +3590,122 @@ section {
 }
 </style>
 
+
+<style id="dragemor-fixed-bg-cleanup">
+/* ===== Festen Hintergrund wirklich durch die ganze Seite sichtbar lassen =====
+   Alte vollflächige Salbei-/Beige-Sektionshintergründe werden transparent. */
+body,
+main,
+section,
+.hero,
+.herstellung,
+.instagram-section,
+.maerkte,
+.ueber-uns,
+.kontakt,
+.impressum,
+.datenschutz,
+.start-kollektionen,
+.collection-section,
+.home-secondary,
+.home-featured {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Inhaltsboxen dürfen weiterhin eine helle Fläche haben,
+   damit Texte auf dem festen Aquarellhintergrund lesbar bleiben. */
+.herstellung-card,
+.kontakt-box,
+.naechster-markt,
+.ueber-uns-content,
+.instagram-card {
+    background-color: rgba(244, 239, 226, .88) !important;
+}
+
+/* ===== Herz-Spiralen-Rankenleiste =====
+   Sichtbarer, aber weiterhin filigran und NICHT verzerrt. */
+.dragemor-farbtrenner {
+    width: 100% !important;
+    height: 92px !important;
+    min-height: 92px !important;
+    margin: 10px 0 18px !important;
+    padding: 8px 2vw !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+
+.dragemor-farbtrenner img {
+    display: block !important;
+    width: min(96vw, 1500px) !important;
+    max-width: 1500px !important;
+    height: 76px !important;
+    max-height: 76px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    opacity: .82 !important;
+    mix-blend-mode: multiply !important;
+    transform: none !important;
+}
+
+/* Handy: nicht winzig, aber proportional. */
+@media (max-width: 700px) {
+    .dragemor-farbtrenner {
+        height: 72px !important;
+        min-height: 72px !important;
+        padding: 6px 4px !important;
+    }
+    .dragemor-farbtrenner img {
+        width: 98vw !important;
+        height: 58px !important;
+        max-height: 58px !important;
+        object-fit: contain !important;
+    }
+}
+</style>
+
+
+<style id="dragemor-menu-readable-dropdowns">
+/* Aufklappbare Menüfelder: dunkle Schrift auf hellem Beige */
+.dp-dropdown {
+    background: rgba(242, 234, 217, .97) !important;
+    border: 1px solid rgba(73, 88, 66, .18) !important;
+}
+
+.dp-dropdown a,
+.dp-dropdown button {
+    color: #3f4d39 !important;
+    text-shadow: none !important;
+}
+
+.dp-dropdown a:hover,
+.dp-dropdown a:focus,
+.dp-dropdown button:hover,
+.dp-dropdown button:focus {
+    color: #51483e !important;
+    background: rgba(106, 119, 91, .12) !important;
+}
+
+/* Falls noch ältere Untermenüs aus der ursprünglichen Index aktiv sind */
+.main-nav .dropdown-menu,
+.main-nav .submenu,
+.nav-dropdown,
+.dropdown-menu {
+    background: rgba(242, 234, 217, .97) !important;
+}
+
+.main-nav .dropdown-menu a,
+.main-nav .submenu a,
+.nav-dropdown a,
+.dropdown-menu a {
+    color: #3f4d39 !important;
+    text-shadow: none !important;
+}
+</style>
+
 </head>
 
 
