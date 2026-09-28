@@ -3519,6 +3519,77 @@ body > .cart-open-button{display:none !important}
 }
 </style>
 
+
+<style id="dragemor-fixed-site-background">
+/* Ein ruhiger, feststehender Hintergrund für die gesamte Website.
+   Alle normalen Inhalte scrollen darüber hinweg. */
+html {
+    background: #e8e1d2 !important;
+}
+
+body {
+    position: relative !important;
+    background: transparent !important;
+}
+
+/* Fixed statt background-attachment:fixed:
+   stabiler auf Desktop UND mobilen Browsern. */
+body::before {
+    content: "" !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: -2 !important;
+    pointer-events: none !important;
+    background-image: url("dragemor-botanik-hintergrund.png") !important;
+    background-repeat: no-repeat !important;
+    background-position: center top !important;
+    background-size: cover !important;
+    background-color: #e8e1d2 !important;
+}
+
+/* Sanfte helle Schicht für gute Lesbarkeit, ohne das Motiv zu verdecken. */
+body::after {
+    content: "" !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    background: rgba(248, 244, 235, .10) !important;
+}
+
+/* Die Hauptbereiche dürfen den Hintergrund nicht wieder mit
+   vollflächigen alten Farben/Bildern überdecken. */
+main,
+#home,
+.dragemor-home-hero,
+.home-featured,
+.home-secondary,
+section {
+    background-image: none !important;
+}
+
+/* Startseite transparent, damit Logo/Ranken des festen Hintergrunds sichtbar bleiben. */
+.dragemor-home-hero {
+    background-color: transparent !important;
+}
+
+/* Bestehende Inhaltskarten bleiben lesbar und schweben über dem Hintergrund. */
+.home-product-card,
+.home-secondary-link {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+/* Auf kleinen Displays Hintergrund etwas breiter skalieren,
+   damit das Zentrum nicht ungewollt abgeschnitten wird. */
+@media (max-width: 700px) {
+    body::before {
+        background-size: auto 100vh !important;
+        background-position: center top !important;
+    }
+}
+</style>
+
 </head>
 
 
