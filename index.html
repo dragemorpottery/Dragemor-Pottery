@@ -3278,174 +3278,95 @@ nav a:hover {
 </style>
 
 
-<style id="dragemor-menueleiste-final">
-/* ===== Desktop-Menü wie abgestimmte Vorlage ===== */
-@media (min-width:1101px) {
-  header {
-    height:82px !important;
-    background:linear-gradient(90deg,#46523e 0%,#59654e 54%,#46523e 100%) !important;
-    border:0 !important;
-    box-shadow:none !important;
-  }
-  header .nav-container {
-    width:min(1460px,95vw) !important;
-    max-width:1460px !important;
-    height:82px !important;
-    margin:0 auto !important;
-    padding:0 108px 0 0 !important;
-    display:grid !important;
-    grid-template-columns:300px 1fr !important;
-    align-items:center !important;
-    column-gap:18px !important;
-  }
 
-  header .brand {
-    min-width:0 !important;
-    display:block !important;
-    text-decoration:none !important;
-  }
-  header .brand > img,
-  header .brand-text p { display:none !important; }
-  header .brand-text h1 {
-    display:block !important;
-    margin:0 !important;
-    color:#f4ede1 !important;
-    font-family:"Cormorant Garamond",Georgia,serif !important;
-    font-size:2.25rem !important;
-    font-weight:500 !important;
-    line-height:1 !important;
-    letter-spacing:.10em !important;
-    text-transform:uppercase !important;
-    white-space:nowrap !important;
-  }
 
-  .menu-toggle { display:none !important; }
 
-  #main-nav.main-nav {
-    position:static !important;
-    inset:auto !important;
-    transform:none !important;
-    visibility:visible !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-    width:auto !important;
-    max-width:none !important;
-    height:auto !important;
-    min-height:0 !important;
-    display:flex !important;
-    flex-direction:row !important;
-    align-items:center !important;
-    justify-content:center !important;
-    gap:4px !important;
-    margin:0 !important;
-    padding:0 !important;
-    background:transparent !important;
-    border:0 !important;
-    box-shadow:none !important;
-    overflow:visible !important;
-  }
-  #main-nav .nav-direct {
-    display:inline-flex !important;
-    align-items:center !important;
-    width:auto !important;
-    min-width:0 !important;
-    margin:0 !important;
-    padding:12px 12px !important;
-    border:0 !important;
-    background:transparent !important;
-    color:#f4ede1 !important;
-    font-family:"Cormorant Garamond",Georgia,serif !important;
-    font-size:1.13rem !important;
-    font-weight:500 !important;
-    line-height:1 !important;
-    text-decoration:none !important;
-    white-space:nowrap !important;
-  }
-  #main-nav .nav-direct:hover {
-    color:#fff !important;
-    opacity:.82 !important;
-  }
-
-  /* Personensymbol */
-  .customer-account-button {
-    position:fixed !important;
-    top:20px !important;
-    right:66px !important;
-    z-index:1260 !important;
-    display:block !important;
-    width:38px !important;
-    height:42px !important;
-    padding:0 !important;
-    border:0 !important;
-    background:transparent !important;
-    color:#f4ede1 !important;
-    cursor:pointer !important;
-  }
-  .account-icon {
-    width:16px !important;
-    height:16px !important;
-    border:1.5px solid currentColor !important;
-    border-radius:50% !important;
-    display:block !important;
-    margin:0 auto 10px !important;
-    position:relative !important;
-  }
-  .account-icon::after {
-    content:"" !important;
-    position:absolute !important;
-    width:24px !important;
-    height:12px !important;
-    left:50% !important;
-    top:18px !important;
-    transform:translateX(-50%) !important;
-    border:1.5px solid currentColor !important;
-    border-bottom:0 !important;
-    border-radius:16px 16px 0 0 !important;
-  }
-  .account-label { display:none !important; }
-
-  /* Warenkorb rechts */
-  .cart-open-button {
-    position:fixed !important;
-    top:19px !important;
-    right:14px !important;
-    z-index:1260 !important;
-    display:block !important;
-    width:44px !important;
-    min-width:44px !important;
-    height:44px !important;
-    padding:0 !important;
-    border:0 !important;
-    border-radius:0 !important;
-    background:transparent !important;
-    box-shadow:none !important;
-    color:#f4ede1 !important;
-    font-size:0 !important;
-    overflow:visible !important;
-  }
-  .cart-open-button::before {
-    content:"🛒" !important;
-    font-size:19px !important;
-    filter:grayscale(1) brightness(2.5) !important;
-  }
-  .cart-count {
-    position:absolute !important;
-    top:-4px !important;
-    right:-3px !important;
-    min-width:19px !important;
-    height:19px !important;
-    line-height:19px !important;
-    padding:0 4px !important;
-    background:#d3b77e !important;
-    color:#35402f !important;
-    font-size:.7rem !important;
-    border-radius:50% !important;
-  }
+<style id="dragemor-header-neu-css">
+.dp-header{
+  position:sticky; top:0; z-index:1200;
+  width:100%; background:linear-gradient(90deg,#46523e,#59654e 55%,#46523e);
+  color:#f5eee2; box-shadow:none;
 }
+.dp-header-inner{
+  width:min(1450px,94vw); height:82px; margin:auto;
+  display:grid; grid-template-columns:290px 1fr 100px;
+  align-items:center; gap:20px;
+}
+.dp-wordmark{
+  color:#f5eee2; text-decoration:none;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:2.55rem; font-weight:500; letter-spacing:.12em;
+}
+.dp-desktop-nav{
+  display:flex; justify-content:center; align-items:center; gap:20px;
+}
+.dp-desktop-nav>a,.dp-nav-trigger{
+  color:#f5eee2; text-decoration:none; border:0; background:none;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:1.28rem; font-weight:500; cursor:pointer; padding:10px 3px;
+}
+.dp-desktop-nav>a:hover,.dp-nav-trigger:hover{opacity:.72}
+.dp-nav-dropdown{position:relative}
+.dp-dropdown{
+  display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  min-width:190px; padding:8px; border-radius:8px;
+  background:#f1e8d8; box-shadow:0 10px 28px rgba(37,43,33,.18);
+}
+.dp-nav-dropdown:hover .dp-dropdown,
+.dp-nav-dropdown:focus-within .dp-dropdown{display:block}
+.dp-dropdown a{
+  display:block; padding:9px 12px; color:#35402f; text-decoration:none;
+  font-family:"Lora",Georgia,serif; font-size:.88rem; white-space:nowrap;
+}
+.dp-dropdown a:hover{background:rgba(84,101,74,.09);border-radius:5px}
 
-/* Auf kleineren Geräten bleibt bewusst der vorhandene Hamburger. */
-@media (max-width:1100px) {
-  .menu-toggle { display:flex !important; }
+.dp-header-actions{display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.dp-account,.dp-cart{
+  position:relative !important; inset:auto !important; width:34px !important;height:42px !important;
+  min-width:34px !important; padding:0 !important;margin:0 !important;
+  border:0 !important;background:transparent !important;box-shadow:none !important;
+  color:#f5eee2 !important;cursor:pointer;
+}
+.dp-person{
+  display:block;width:14px;height:14px;margin:0 auto 9px;
+  border:1.6px solid currentColor;border-radius:50%;position:relative;
+}
+.dp-person:after{
+  content:"";position:absolute;width:23px;height:12px;left:50%;top:17px;
+  transform:translateX(-50%);border:1.6px solid currentColor;border-bottom:0;
+  border-radius:15px 15px 0 0;
+}
+.dp-cart-icon{font-size:24px;line-height:1}
+.dp-cart-number{
+  position:absolute;right:-7px;top:1px;width:18px;height:18px;line-height:18px;
+  border-radius:50%;background:#d3b77e;color:#35402f;font-size:11px;text-align:center;
+}
+.dp-mobile-menu,.dp-mobile-nav{display:none}
+
+/* Hide legacy floating cart button; new header button calls the same cart function. */
+body > .cart-open-button{display:none !important}
+
+@media(max-width:1100px){
+  .dp-header-inner{height:72px;grid-template-columns:54px 1fr 82px;gap:10px}
+  .dp-wordmark{font-size:1.7rem;text-align:center;grid-column:2}
+  .dp-desktop-nav{display:none}
+  .dp-header-actions{grid-column:3;grid-row:1;gap:12px}
+  .dp-mobile-menu{
+    display:flex;grid-column:1;grid-row:1;width:44px;height:44px;
+    flex-direction:column;justify-content:center;gap:5px;
+    border:1px solid rgba(245,238,226,.42);border-radius:10px;background:transparent;
+  }
+  .dp-mobile-menu span{display:block;width:22px;height:1.5px;background:#f5eee2;margin:0 auto}
+  .dp-mobile-nav{
+    background:#526049;padding:8px 20px 16px;
+    border-top:1px solid rgba(245,238,226,.15)
+  }
+  body.dp-menu-open .dp-mobile-nav{display:grid}
+  .dp-mobile-nav a{
+    color:#f5eee2;text-decoration:none;padding:11px 4px;
+    font-family:"Cormorant Garamond",Georgia,serif;font-size:1.25rem;
+    border-bottom:1px solid rgba(245,238,226,.11)
+  }
 }
 </style>
 
@@ -3495,50 +3416,59 @@ nav a:hover {
      HEADER
 ======================================== -->
 
-<header>
+<header class="dp-header">
+  <div class="dp-header-inner">
+    <a href="#start" class="dp-wordmark" aria-label="Zur Startseite">DRAGEMOR</a>
 
-    <div class="nav-container">
+    <nav class="dp-desktop-nav" aria-label="Hauptnavigation">
+      <a href="#start">Startseite</a>
 
-        <a
-            href="#start"
-            class="brand"
-        >
+      <div class="dp-nav-dropdown">
+        <button type="button" class="dp-nav-trigger">Produkte <span>⌄</span></button>
+        <div class="dp-dropdown">
+          <a href="javascript:void(0)" onclick="openCollection('keramik'); return false;">Keramik</a>
+          <a href="javascript:void(0)" onclick="openCollection('leder'); return false;">Leder</a>
+        </div>
+      </div>
 
-            <img
-                src="bilder/logo.png"
-                alt="Dragemor Pottery Logo"
-            >
+      <a href="#ueber-uns">Über uns</a>
 
-            <div class="brand-text">
+      <div class="dp-nav-dropdown">
+        <button type="button" class="dp-nav-trigger">Infos <span>⌄</span></button>
+        <div class="dp-dropdown">
+          <a href="#herstellung">Herstellung</a>
+          <a href="#maerkte">Märkte &amp; Termine</a>
+          <a href="#impressum">Impressum</a>
+          <a href="#datenschutz">Datenschutz</a>
+        </div>
+      </div>
 
-                <h1>
-                    Dragemor Pottery
-                </h1>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
 
-                <p>
-                    Drachenfeuer und Lederwind
-                </p>
-
-            </div>
-
-        </a>
-
-
-        <button class="menu-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" onclick="toggleMainMenu()">
-            <span></span><span></span><span></span>
-        </button>
-
-        <nav id="main-nav" class="main-nav">
-    <a href="#start" class="nav-direct" onclick="closeMainMenu()">Startseite</a>
-    <a href="javascript:void(0)" class="nav-direct" onclick="closeMainMenu(); openCollection('keramik'); return false;">Keramik</a>
-    <a href="javascript:void(0)" class="nav-direct" onclick="closeMainMenu(); openCollection('leder'); return false;">Leder</a>
-    <a href="#maerkte" class="nav-direct" onclick="closeMainMenu()">Märkte</a>
-    <a href="#ueber-uns" class="nav-direct" onclick="closeMainMenu()">Über uns</a>
-    <a href="#kontakt" class="nav-direct" onclick="closeMainMenu()">Kontakt</a>
-</nav>
-
+    <div class="dp-header-actions">
+      <button type="button" class="dp-account" onclick="toggleCustomerAccount()" aria-label="Kundenkonto">
+        <span class="dp-person" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="dp-cart" onclick="openCart()" aria-label="Warenkorb öffnen">
+        <span class="dp-cart-icon" aria-hidden="true">♡</span>
+        <span class="dp-cart-number">0</span>
+      </button>
     </div>
 
+    <button class="dp-mobile-menu" type="button" aria-label="Menü öffnen" onclick="document.body.classList.toggle('dp-menu-open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="dp-mobile-nav" aria-label="Mobile Navigation">
+    <a href="#start" onclick="document.body.classList.remove('dp-menu-open')">Startseite</a>
+    <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('keramik'); return false;">Keramik</a>
+    <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('leder'); return false;">Leder</a>
+    <a href="#maerkte" onclick="document.body.classList.remove('dp-menu-open')">Märkte</a>
+    <a href="#ueber-uns" onclick="document.body.classList.remove('dp-menu-open')">Über uns</a>
+    <a href="#kontakt" onclick="document.body.classList.remove('dp-menu-open')">Kontakt</a>
+  </nav>
 </header>
 
 
@@ -5474,6 +5404,22 @@ function toggleCustomerAccount() {
     if (!panel) return;
     panel.hidden = !panel.hidden;
 }
+</script>
+
+
+<script id="dp-header-cart-sync">
+(function(){
+  function syncHeaderCart(){
+    var source=document.querySelector('.cart-count');
+    var target=document.querySelector('.dp-cart-number');
+    if(source && target) target.textContent=(source.textContent||'0').trim();
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    syncHeaderCart();
+    var source=document.querySelector('.cart-count');
+    if(source) new MutationObserver(syncHeaderCart).observe(source,{childList:true,subtree:true,characterData:true});
+  });
+})();
 </script>
 
 </body>
