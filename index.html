@@ -3370,6 +3370,54 @@ body > .cart-open-button{display:none !important}
 }
 </style>
 
+
+<style id="dragemor-botanik-hintergrund">
+/* Botanische Gestaltung als hinterste Ebene – Inhalte bleiben echte HTML-Elemente */
+.dragemor-home-hero{
+  position:relative !important;
+  isolation:isolate;
+  background:
+    linear-gradient(rgba(247,241,226,.35), rgba(247,241,226,.35)),
+    url("dragemor-botanik-hintergrund.png") center top / cover no-repeat !important;
+  overflow:hidden;
+}
+.dragemor-home-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:rgba(248,243,231,.22);
+  pointer-events:none;
+}
+
+/* Das echte Dragemor-Logo und alle Texte/Bilder bleiben über dem Hintergrund */
+.dragemor-home-hero > *{
+  position:relative;
+  z-index:1;
+}
+
+/* Der Hintergrund soll nicht gegen die echten Produktbilder konkurrieren */
+.dragemor-home-hero .home-product-card{
+  backdrop-filter:none !important;
+}
+
+/* Desktop: ruhiger, breiter botanischer Hintergrund */
+@media (min-width:1101px){
+  .dragemor-home-hero{
+    background-position:center top !important;
+    background-size:cover !important;
+  }
+}
+
+/* Mobil: Mitte priorisieren, damit Logo/Text nicht von den Randranken verdeckt werden */
+@media (max-width:1100px){
+  .dragemor-home-hero{
+    background-position:center top !important;
+    background-size:auto 100% !important;
+  }
+}
+</style>
+
 </head>
 
 
