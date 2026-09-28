@@ -2803,6 +2803,112 @@ body {
 }
 </style>
 
+
+<!-- Dragemor: Cormorant Garamond + Lora -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style id="dragemor-salbei-typografie">
+/* ===== Dragemor – weiches Salbei-Menü + neue Typografie ===== */
+
+/* Ruhige, gut lesbare Grundschrift */
+body,
+p,
+span,
+small,
+input,
+textarea,
+select,
+.product-info,
+.product-card-info {
+    font-family: "Lora", Georgia, serif;
+}
+
+/* Elegantere Akzentschrift */
+h1, h2, h3, h4, h5, h6,
+.brand-text,
+.main-nav,
+nav,
+button,
+.home-featured-kicker,
+.home-featured-link {
+    font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+/* Rauchiges / verwaschenes Salbeigrün statt Schwarz */
+header {
+    background: rgba(83, 98, 78, 0.94) !important;
+    border-bottom: 1px solid rgba(239, 234, 218, 0.22) !important;
+    box-shadow: 0 7px 24px rgba(44, 52, 41, 0.14);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Hauptnavigation */
+.main-nav {
+    background: rgba(83, 98, 78, 0.97) !important;
+    border-color: rgba(239, 234, 218, 0.20) !important;
+}
+
+.main-nav .nav-direct,
+.main-nav .nav-parent,
+nav a {
+    color: #f3eee2 !important;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+}
+
+.main-nav .nav-direct:hover,
+.main-nav .nav-parent:hover,
+.nav-group.open > .nav-parent,
+nav a:hover {
+    color: #fffaf0 !important;
+}
+
+/* Hamburger passend zur neuen Leiste */
+.menu-toggle {
+    border-color: rgba(243, 238, 226, .55) !important;
+}
+.menu-toggle span {
+    background: #f3eee2 !important;
+}
+
+/* Untermenüs: helles, warmes Salbei */
+.nav-submenu,
+#main-nav .nav-submenu {
+    background: rgba(223, 230, 218, .98) !important;
+    border-color: rgba(91, 108, 86, .28) !important;
+}
+.nav-submenu a,
+#main-nav .nav-submenu a {
+    color: #354333 !important;
+}
+.nav-submenu a:hover,
+#main-nav .nav-submenu a:hover {
+    background: rgba(169, 182, 155, .45) !important;
+    color: #273126 !important;
+}
+
+/* Mobile / Querformat: kein schwarzes Menü mehr */
+@media (max-width: 1100px), (max-height: 650px) {
+    #main-nav.main-nav {
+        background: rgba(83, 98, 78, .985) !important;
+        border-right-color: rgba(239, 234, 218, .20) !important;
+    }
+    #main-nav .nav-direct,
+    #main-nav .nav-parent {
+        color: #f3eee2 !important;
+    }
+    #main-nav .nav-parent span {
+        color: #e5dcc7 !important;
+    }
+}
+
+/* Vorhandenes Original-Logo und Herz-Ornament bleiben unverändert. */
+</style>
+
 </head>
 
 
@@ -2981,7 +3087,7 @@ body {
             <div class="home-product-grid">
                 <a href="#keramik" class="home-product-card" onclick="openCollection('keramik'); return false;">
                     <div class="home-product-image">
-                        <img src="bilder/startseite-tasse-klangschale.jpg" alt="Handgemachte Keramik von Dragemor Pottery">
+                        <img src="bilder/tasse-klangschale.jpg" alt="Handgemachte Keramik von Dragemor Pottery">
                     </div>
                     <div class="home-product-copy">
                         <strong>Einzelstücke</strong>
@@ -2991,7 +3097,7 @@ body {
 
                 <a href="#keramik" class="home-product-card" onclick="openCollection('keramik'); return false;">
                     <div class="home-product-image">
-                        <img src="bilder/startseite-schale-oben.jpg" alt="Keramik-Unikat von Dragemor Pottery">
+                        <img src="bilder/schale-oben.jpg" alt="Keramik-Unikat von Dragemor Pottery">
                     </div>
                     <div class="home-product-copy">
                         <strong>Mit Charakter</strong>
@@ -3001,7 +3107,7 @@ body {
 
                 <a href="#keramik" class="home-product-card" onclick="openCollection('keramik'); return false;">
                     <div class="home-product-image">
-                        <img src="bilder/startseite-gefaesse-stapel.png" alt="Handgefertigte Keramik von Dragemor Pottery">
+                        <img src="bilder/gefaesse-stapel.png" alt="Handgefertigte Keramik von Dragemor Pottery">
                     </div>
                     <div class="home-product-copy">
                         <strong>Für deinen Alltag</strong>
