@@ -3187,200 +3187,7 @@ nav a:hover {
 
 
 
-<style id="dragemor-startseite-korrektur">
-/* ===== KORREKTUR: Vorlage ohne graue CSS-Flächen ===== */
 
-/* Navigation auf Laptop/Desktop */
-@media (min-width: 1101px) {
-  header {
-    height: 82px !important;
-    background:
-      radial-gradient(circle at 78% 0%, rgba(135,149,119,.18), transparent 30%),
-      linear-gradient(90deg,#46523e 0%,#59654e 54%,#46523e 100%) !important;
-    border: 0 !important;
-    box-shadow: none !important;
-  }
-  header .nav-container {
-    width: min(1450px,94vw) !important;
-    max-width:1450px !important;
-    height:82px !important;
-    margin:auto !important;
-    padding:0 118px 0 0 !important;
-    display:flex !important;
-    align-items:center !important;
-    gap:22px !important;
-  }
-  header .brand {
-    min-width:315px !important;
-    display:flex !important;
-    align-items:center !important;
-  }
-  header .brand > img,
-  header .brand-text p { display:none !important; }
-  header .brand-text h1 {
-    display:block !important;
-    margin:0 !important;
-    color:#f4ede1 !important;
-    font-family:"Cormorant Garamond",Georgia,serif !important;
-    font-size:2.55rem !important;
-    font-weight:500 !important;
-    letter-spacing:.105em !important;
-    text-transform:uppercase !important;
-    white-space:nowrap !important;
-  }
-  .menu-toggle { display:none !important; }
-  #main-nav.main-nav {
-    position:static !important;
-    transform:none !important;
-    width:auto !important;
-    height:auto !important;
-    display:flex !important;
-    flex:1 1 auto !important;
-    flex-direction:row !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:5px !important;
-    padding:0 !important;
-    margin:0 !important;
-    background:transparent !important;
-    border:0 !important;
-    box-shadow:none !important;
-    overflow:visible !important;
-  }
-  #main-nav .nav-direct {
-    display:block !important;
-    width:auto !important;
-    padding:11px 12px !important;
-    color:#f4ede1 !important;
-    font-family:"Cormorant Garamond",Georgia,serif !important;
-    font-size:1.18rem !important;
-    font-weight:500 !important;
-    text-decoration:none !important;
-    white-space:nowrap !important;
-  }
-  #main-nav .nav-direct:hover { color:#fff !important; }
-
-  .customer-account-button {
-    position:fixed !important;
-    top:20px !important;
-    right:72px !important;
-    z-index:1260 !important;
-    width:40px !important;
-    height:42px !important;
-    border:0 !important;
-    background:transparent !important;
-    color:#f4ede1 !important;
-  }
-  .account-icon {
-    width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;
-    display:block;margin:0 auto 10px;position:relative;
-  }
-  .account-icon:after {
-    content:"";position:absolute;width:24px;height:12px;left:50%;top:18px;
-    transform:translateX(-50%);border:1.5px solid currentColor;border-bottom:0;
-    border-radius:16px 16px 0 0;
-  }
-  .account-label { display:none !important; }
-
-  .cart-open-button {
-    position:fixed !important;
-    top:19px !important;
-    right:18px !important;
-    z-index:1260 !important;
-    width:45px !important;
-    min-width:45px !important;
-    height:44px !important;
-    padding:0 !important;
-    border:0 !important;
-    background:transparent !important;
-    box-shadow:none !important;
-    color:#f4ede1 !important;
-    font-size:0 !important;
-  }
-  .cart-open-button::before {
-    content:"🛒";
-    font-size:20px;
-    filter:grayscale(1) brightness(2.5);
-  }
-  .cart-count {
-    position:absolute !important;right:-2px !important;top:-4px !important;
-    background:#d5bb88 !important;color:#35402f !important;
-    font-size:.7rem !important;
-  }
-}
-
-/* Hero-Hintergrund: weiche, verwaschene Farben.
-   Keine künstlichen grauen CSS-Ranken mehr. */
-.dragemor-home-hero {
-  position:relative !important;
-  overflow:hidden !important;
-  background:
-    radial-gradient(ellipse at 2% 10%,rgba(115,132,99,.30),transparent 20%),
-    radial-gradient(ellipse at 98% 9%,rgba(91,112,87,.31),transparent 25%),
-    radial-gradient(ellipse at 96% 88%,rgba(123,139,109,.18),transparent 22%),
-    radial-gradient(ellipse at 3% 91%,rgba(173,149,114,.15),transparent 20%),
-    linear-gradient(103deg,#eee2cd 0%,#f3e9d8 42%,#e8dfca 70%,#cbd2bd 100%) !important;
-}
-.dragemor-home-hero::before,
-.dragemor-home-hero::after { display:none !important; }
-
-/* Logo mittig und kompakt */
-.dragemor-brand-stage {
-  min-height:215px !important;
-  padding-top:12px !important;
-}
-.dragemor-brand-stage .brand-vine { display:none !important; }
-.dragemor-brand-stage .hero-logo {
-  width:128px !important;height:128px !important;
-  object-fit:contain !important;
-  margin:0 auto 5px !important;
-}
-.dragemor-brand-stage h2 {
-  font-size:2rem !important;
-  margin:0 !important;
-}
-.dragemor-brand-stage h3 { margin:2px 0 0 !important; }
-.dragemor-brand-stage p { display:none !important; }
-
-/* Bilder kompakt wie gewünscht */
-.dragemor-home-hero .home-featured { margin-top:8px !important; }
-.dragemor-home-hero .home-product-grid {
-  max-width:1320px !important;
-  gap:14px !important;
-}
-.dragemor-home-hero .home-product-image {
-  height:215px !important;
-  max-height:215px !important;
-}
-.dragemor-home-hero .home-product-copy {
-  background:rgba(55,51,42,.82) !important;
-  color:#f6efe3 !important;
-  padding:8px 12px !important;
-}
-
-/* Originales unteres Ornament nie verzerren */
-.dragemor-farbtrenner {
-  min-height:100px !important;
-  padding:12px 2vw !important;
-  background:linear-gradient(180deg,#eee2cd,#d9ddca) !important;
-}
-.dragemor-farbtrenner img {
-  display:block !important;
-  width:min(1300px,94vw) !important;
-  height:auto !important;
-  max-height:95px !important;
-  object-fit:contain !important;
-  margin:auto !important;
-  opacity:.75 !important;
-}
-
-/* Mobile: bestehendes Hamburger-Menü */
-@media (max-width:1100px) {
-  .dragemor-home-hero .home-product-image {
-    height:auto !important;max-height:none !important;
-  }
-}
-</style>
 
 
 <style id="dragemor-home-bilder-kleiner">
@@ -3467,6 +3274,178 @@ nav a:hover {
   }
   .dragemor-home-hero .home-product-copy strong { color:#2f392b !important; }
   .dragemor-home-hero .home-product-copy span { color:#596252 !important; }
+}
+</style>
+
+
+<style id="dragemor-menueleiste-final">
+/* ===== Desktop-Menü wie abgestimmte Vorlage ===== */
+@media (min-width:1101px) {
+  header {
+    height:82px !important;
+    background:linear-gradient(90deg,#46523e 0%,#59654e 54%,#46523e 100%) !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+  header .nav-container {
+    width:min(1460px,95vw) !important;
+    max-width:1460px !important;
+    height:82px !important;
+    margin:0 auto !important;
+    padding:0 108px 0 0 !important;
+    display:grid !important;
+    grid-template-columns:300px 1fr !important;
+    align-items:center !important;
+    column-gap:18px !important;
+  }
+
+  header .brand {
+    min-width:0 !important;
+    display:block !important;
+    text-decoration:none !important;
+  }
+  header .brand > img,
+  header .brand-text p { display:none !important; }
+  header .brand-text h1 {
+    display:block !important;
+    margin:0 !important;
+    color:#f4ede1 !important;
+    font-family:"Cormorant Garamond",Georgia,serif !important;
+    font-size:2.25rem !important;
+    font-weight:500 !important;
+    line-height:1 !important;
+    letter-spacing:.10em !important;
+    text-transform:uppercase !important;
+    white-space:nowrap !important;
+  }
+
+  .menu-toggle { display:none !important; }
+
+  #main-nav.main-nav {
+    position:static !important;
+    inset:auto !important;
+    transform:none !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    width:auto !important;
+    max-width:none !important;
+    height:auto !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:4px !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+  }
+  #main-nav .nav-direct {
+    display:inline-flex !important;
+    align-items:center !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:12px 12px !important;
+    border:0 !important;
+    background:transparent !important;
+    color:#f4ede1 !important;
+    font-family:"Cormorant Garamond",Georgia,serif !important;
+    font-size:1.13rem !important;
+    font-weight:500 !important;
+    line-height:1 !important;
+    text-decoration:none !important;
+    white-space:nowrap !important;
+  }
+  #main-nav .nav-direct:hover {
+    color:#fff !important;
+    opacity:.82 !important;
+  }
+
+  /* Personensymbol */
+  .customer-account-button {
+    position:fixed !important;
+    top:20px !important;
+    right:66px !important;
+    z-index:1260 !important;
+    display:block !important;
+    width:38px !important;
+    height:42px !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    color:#f4ede1 !important;
+    cursor:pointer !important;
+  }
+  .account-icon {
+    width:16px !important;
+    height:16px !important;
+    border:1.5px solid currentColor !important;
+    border-radius:50% !important;
+    display:block !important;
+    margin:0 auto 10px !important;
+    position:relative !important;
+  }
+  .account-icon::after {
+    content:"" !important;
+    position:absolute !important;
+    width:24px !important;
+    height:12px !important;
+    left:50% !important;
+    top:18px !important;
+    transform:translateX(-50%) !important;
+    border:1.5px solid currentColor !important;
+    border-bottom:0 !important;
+    border-radius:16px 16px 0 0 !important;
+  }
+  .account-label { display:none !important; }
+
+  /* Warenkorb rechts */
+  .cart-open-button {
+    position:fixed !important;
+    top:19px !important;
+    right:14px !important;
+    z-index:1260 !important;
+    display:block !important;
+    width:44px !important;
+    min-width:44px !important;
+    height:44px !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    color:#f4ede1 !important;
+    font-size:0 !important;
+    overflow:visible !important;
+  }
+  .cart-open-button::before {
+    content:"🛒" !important;
+    font-size:19px !important;
+    filter:grayscale(1) brightness(2.5) !important;
+  }
+  .cart-count {
+    position:absolute !important;
+    top:-4px !important;
+    right:-3px !important;
+    min-width:19px !important;
+    height:19px !important;
+    line-height:19px !important;
+    padding:0 4px !important;
+    background:#d3b77e !important;
+    color:#35402f !important;
+    font-size:.7rem !important;
+    border-radius:50% !important;
+  }
+}
+
+/* Auf kleineren Geräten bleibt bewusst der vorhandene Hamburger. */
+@media (max-width:1100px) {
+  .menu-toggle { display:flex !important; }
 }
 </style>
 
