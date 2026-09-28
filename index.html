@@ -3418,6 +3418,107 @@ body > .cart-open-button{display:none !important}
 }
 </style>
 
+
+<style id="dragemor-final-home-korrektur">
+/* Alte, in der Index erzeugte Ranken ausblenden.
+   Die botanischen Elemente kommen nur noch aus dem Hintergrundbild. */
+.dragemor-brand-stage .brand-vine,
+.brand-vine,
+.brand-vine-left,
+.brand-vine-right {
+    display: none !important;
+}
+
+/* Desktop/Laptop: drei kompaktere Hochformat-Karten.
+   Die Texte unter den Bildern bleiben dadurch gut sichtbar. */
+@media (min-width: 1101px) {
+    .dragemor-home-hero .home-featured {
+        max-width: 880px !important;
+        margin: 8px auto 0 !important;
+    }
+
+    .dragemor-home-hero .home-featured-head {
+        max-width: 800px !important;
+        margin: 0 auto 10px !important;
+    }
+
+    .dragemor-home-hero .home-product-grid {
+        width: 100% !important;
+        max-width: 800px !important;
+        margin: 0 auto !important;
+        gap: 18px !important;
+    }
+
+    .dragemor-home-hero .home-product-image {
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        aspect-ratio: 4 / 5 !important;
+        overflow: hidden !important;
+    }
+
+    .dragemor-home-hero .home-product-image img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+    }
+
+    .dragemor-home-hero .home-product-copy {
+        min-height: 58px !important;
+        padding: 8px 12px 9px !important;
+    }
+
+    .dragemor-home-hero .home-secondary-links {
+        max-width: 800px !important;
+        margin: 10px auto 0 !important;
+    }
+}
+
+/* Herz-Spiralen-Ornament:
+   unter Bildern/Texten, sehr flach, filigran und proportional.
+   Kein Strecken des Herzmotivs mehr. */
+.dragemor-farbtrenner {
+    width: 100% !important;
+    min-height: 0 !important;
+    height: 62px !important;
+    margin: 8px 0 0 !important;
+    padding: 7px 2.5vw !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    background: transparent !important;
+}
+
+.dragemor-farbtrenner img {
+    display: block !important;
+    width: 95vw !important;
+    max-width: 1500px !important;
+    height: 46px !important;
+    max-height: 46px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    opacity: .64 !important;
+    mix-blend-mode: multiply !important;
+}
+
+/* Handy: ebenfalls proportional, nur etwas kompakter. */
+@media (max-width: 1100px) {
+    .dragemor-farbtrenner {
+        height: 48px !important;
+        padding: 5px 8px !important;
+    }
+
+    .dragemor-farbtrenner img {
+        width: 98vw !important;
+        height: 36px !important;
+        max-height: 36px !important;
+        object-fit: contain !important;
+    }
+}
+</style>
+
 </head>
 
 
