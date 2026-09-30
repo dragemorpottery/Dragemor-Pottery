@@ -14,7 +14,7 @@ const catalog = {
   "keramik-14": { name: "Waldgeflüster – Set", amount: 1500 },
   "keramik-15": { name: "Dämmerwald", amount: 1000 },
   "keramik-16": { name: "Feuerlicht – Teelichthalter", amount: 500 },
-  "keramik-17": { name: "Erdtanz", amount: 1800 },
+  // Keramik 017 has been permanently retired.
   "keramik-18": { name: "Meeresgrund", amount: 1800 },
   "keramik-19": { name: "des Drachens Wasser", amount: 1800 },
   "keramik-20": { name: "des Drachens Wasser", amount: 1800 },
@@ -35,11 +35,20 @@ if (!stripeSecretKey) {
   return res.status(500).json({
     error: 'Stripe ist noch nicht vollständig eingerichtet.'
   });
-} 
+}
   
   const items = Array.isArray(req.body?.items) ? req.body.items : [];
   if (!items.length) return res.status(400).json({ error: 'Der Warenkorb ist leer.' });
   if (items.length > 20) return res.status(400).json({ error: 'Zu viele Artikel im Warenkorb.' });
+
+  // Prevent old saved carts and direct requests from ordering withdrawn products,
+  // even if old records are still present in the database.
+  const withdrawnIds = new Set(['keramik-17', 'keramik-017', 'keramik-55', 'keramik-055']);
+  if (items.some(item => withdrawnIds.has(String(item?.id || '')))) {
+    return res.status(400).json({
+      error: 'Mindestens ein Artikel wurde aus dem Sortiment genommen.'
+    });
+  }
 
   const selected = items.map(item => ({ id: String(item.id || ''), product: catalog[String(item.id || '')] }));
   const missingIds = selected
