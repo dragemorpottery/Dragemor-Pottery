@@ -55,9 +55,7 @@ export default async function handler(req, res) {
     error: "Mindestens ein Artikel ist nicht mehr verfügbar."
   });
 } 
-        selected.push({ id, product: catalog[id] });
-        continue;
-      }
+
       if (dbProduct.status !== "available") {
         return res.status(409).json({ error: "Mindestens ein Artikel wurde leider bereits verkauft." });
       }
