@@ -15,13 +15,11 @@ const catalog = {
   "keramik-13": { name: "DragonGold", amount: 1500 },
   "keramik-14": { name: "Waldgeflüster – Set", amount: 1500 },
   "keramik-15": { name: "Dämmerwald", amount: 1000 },
-  "keramik-16": { name: "Feuerlicht – Teelichthalter", amount: 500 },
   "keramik-18": { name: "Meeresgrund", amount: 1800 },
   "keramik-19": { name: "des Drachens Wasser", amount: 1800 },
   "keramik-20": { name: "des Drachens Wasser", amount: 1800 },
   "keramik-21": { name: "des Drachens Wasser", amount: 1800 },
   "keramik-22": { name: "des Drachens Wasser", amount: 1500 },
-  "weihnachten-feuerlicht": { name: "Feuerlicht – Teelichthalter", amount: 500 }
 };
 
 // Historical IDs already managed in the central product database.
@@ -34,7 +32,7 @@ const managedLegacyIds = new Set([
 ]);
 // Only this current, unmanaged legacy listing may use the static fallback.
 // Older historical IDs must not be orderable from an old saved cart.
-const legacyFallbackIds = new Set(["weihnachten-feuerlicht"]);
+const legacyFallbackIds = new Set();
 const retiredLegacyIds = new Set([
   "keramik-17", "keramik-017", "keramik-29", "keramik-029",
   "keramik-37", "keramik-037", "keramik-55", "keramik-055"
