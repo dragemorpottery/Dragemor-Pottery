@@ -2,6 +2,12 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <script>
+      // Start one product request as soon as the document begins loading.
+      // A handled failure allows a retry when the shop initializes.
+      window.dragemorInitialProductFetch = fetch("/api/products", { cache: "no-store" })
+        .catch(() => null);
+    </script>
 
     <meta
         name="viewport"
@@ -5197,7 +5203,11 @@ section,
 
 async function loadDatabaseProducts() {
     try {
-        const response = await fetch("/api/products", { cache: "no-store" });
+        // Consume the early request once; later refreshes always check the server.
+        const firstRequest = window.dragemorInitialProductFetch;
+        window.dragemorInitialProductFetch = null;
+        const response = (firstRequest && await firstRequest) ||
+            await fetch("/api/products", { cache: "no-store" });
         if (!response.ok) throw new Error("Produktdaten konnten nicht geladen werden.");
         const data = await response.json();
         if (!Array.isArray(data.products) || !Array.isArray(data.deletedIds)) {
@@ -5267,40 +5277,6 @@ async function loadDatabaseProducts() {
     }
 }
 
-async function syncProductAvailability() {
-    try {
-        const response = await fetch('/api/produkt-status');
-        if (!response.ok) return;
-
-        const products = await response.json();
-
-        Object.entries(products).forEach(([productId, status]) => {
-    const product = shopProducts.keramik.find(
-        p => p.id === productId
-    );
-
-    if (product) {
-        product.available = status === 'available';
-    }
-}); 
-if (currentShopCategory === 'Alle Keramik') {
-    renderAllCeramics(false);
-} else if (currentShopCategory) {
-    renderCeramicCategory(currentShopCategory);
-}
-// Falls die Detailansicht beim Laden offen ist, den Kaufbutton aktualisieren.
-const detail = document.getElementById('product-detail');
-if (detail?.classList.contains('active') && detail.dataset.productId === 'keramik-1' && typeof prepareCartButton === 'function') {
-    const firstProduct = shopProducts.keramik.find(p => p.id === 'keramik-1');
-    if (firstProduct) prepareCartButton(firstProduct);
-} 
-
-        renderCart();
-    } catch (error) {
-        console.error('Bestand konnte nicht geladen werden:', error);
-    }
-} 
-
     // Neue Namen und Preise aus der Verwaltung auch in bereits geoeffneten
     // Shop-Ansichten anzeigen, ohne Navigation oder offenen Artikel zu schliessen.
     let activeShopProductRefresh = null;
@@ -5361,11 +5337,26 @@ if (detail?.classList.contains('active') && detail.dataset.productId === 'kerami
         }
     }
 
-    function refreshShopProductData() {
+    let lastShopCatalogRefresh = 0;
+    function refreshShopProductData(force = false) {
         if (activeShopProductRefresh) return activeShopProductRefresh;
+        // Reopening a category should not start the same slow API request again.
+        // Focus changes and checkout checks still trigger a fresh verification.
+        if (!force && catalogSyncSucceeded && Date.now() - lastShopCatalogRefresh < 15000) {
+            return Promise.resolve(true);
+        }
         activeShopProductRefresh = (async () => {
             const loaded = await loadDatabaseProducts();
-            if (loaded) refreshVisibleShopProducts();
+            if (loaded) {
+                lastShopCatalogRefresh = Date.now();
+                refreshVisibleShopProducts();
+            } else if (!catalogSyncSucceeded &&
+                       document.getElementById("collection-modal")?.classList.contains("active")) {
+                const grid = document.getElementById("collection-grid");
+                if (grid) {
+                    grid.innerHTML = '<div class="christmas-intro"><h3>Produkte konnten gerade nicht geladen werden.</h3><p>Bitte versuche es erneut.</p><button class="collection-button" type="button" onclick="refreshShopProductData(true)">Erneut laden</button></div>';
+                }
+            }
             return loaded;
         })().finally(() => { activeShopProductRefresh = null; });
         return activeShopProductRefresh;
@@ -5375,7 +5366,7 @@ if (detail?.classList.contains('active') && detail.dataset.productId === 'kerami
     // in den Shop die aktuellen Verwaltungsdaten neu abrufen.
     window.addEventListener("focus", () => {
         if (document.getElementById("collection-modal")?.classList.contains("active")) {
-            void refreshShopProductData();
+            void refreshShopProductData(true);
         }
     });
 
@@ -5693,9 +5684,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-home")?.classList.remove("active");
  
 
-    await loadDatabaseProducts();
-    await syncProductAvailability();
-    refreshVisibleShopProducts(); 
+    // /api/products already contains the current status: no second API request.
+    await refreshShopProductData(); 
 
   const hash = decodeURIComponent(window.location.hash);
 
@@ -5931,6 +5921,11 @@ function renderCeramicCategory(category){
     grid.style.display = "grid";
     grid.innerHTML = "";
 
+    if (!catalogSyncSucceeded) {
+        grid.innerHTML = '<div class="christmas-intro"><h3>Produkte werden geladen …</h3><p>Einen kleinen Moment bitte.</p></div>';
+        return;
+    }
+
     const entries = shopProducts.keramik
   .map((product,index)=>({
     product,
@@ -5941,8 +5936,8 @@ function renderCeramicCategory(category){
 })) 
         .filter(x => x.categories.includes(category));
 
-    entries.forEach(({product,index})=>{
-        if (!catalogSyncSucceeded || deletedProductIds.has(product.id)) return;
+    entries.forEach(({product,index}, position)=>{
+        if (deletedProductIds.has(product.id)) return;
         const card = document.createElement("article");
         card.className = "collection-grid-item product-card";
         if (product.available === false) card.classList.add("coming-soon");
@@ -5951,7 +5946,8 @@ function renderCeramicCategory(category){
         const img = document.createElement("img");
         img.src = product.images[0];
         img.alt = product.name;
-        img.loading = "lazy";
+        img.loading = position < 4 ? "eager" : "lazy";
+        if (position < 2) img.fetchPriority = "high";
         img.decoding = "async";
 
         const info = document.createElement("div");
@@ -5975,6 +5971,10 @@ function renderAllCeramics(pushHistory = true){
     if (tabs) tabs.style.display = "none";
     grid.style.display = "grid";
     grid.innerHTML = "";
+    if (!catalogSyncSucceeded) {
+        grid.innerHTML = '<div class="christmas-intro"><h3>Produkte werden geladen …</h3><p>Einen kleinen Moment bitte.</p></div>';
+        return;
+    }
     shopProducts.keramik.forEach((product,index)=>{
         if (!catalogSyncSucceeded || deletedProductIds.has(product.id)) return;
         const card = document.createElement("article");
@@ -5984,7 +5984,8 @@ function renderAllCeramics(pushHistory = true){
         const img = document.createElement("img");
         img.src = product.images[0];
         img.alt = product.name;
-        img.loading = "lazy";
+        img.loading = index < 4 ? "eager" : "lazy";
+        if (index < 2) img.fetchPriority = "high";
         img.decoding = "async";
         const info = document.createElement("div");
         info.className = "product-card-info";
