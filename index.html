@@ -6209,6 +6209,21 @@ function cartHasPendingAvailability(){ return dragemorCart.some(item => getLiveP
 function renderCart(){
   const box=document.getElementById('cartItems'), count=document.getElementById('cartCount'), total=document.getElementById('cartTotal'), checkout=document.getElementById('cartCheckout');
   if(!box) return;
+  if (catalogSyncSucceeded) {
+  const vorher = dragemorCart.length;
+
+  dragemorCart = dragemorCart.filter(item =>
+    getLiveProduct(item) && !deletedProductIds.has(item.id)
+  );
+
+  if (dragemorCart.length !== vorher) {
+    localStorage.setItem(
+      "dragemorCart",
+      JSON.stringify(dragemorCart)
+    );
+  }
+} 
+
   count.textContent=dragemorCart.length;
   box.innerHTML='';
   if(!dragemorCart.length){ box.innerHTML='<div class="cart-empty">Dein Warenkorb ist noch leer.</div>'; }
