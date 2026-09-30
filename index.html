@@ -4326,7 +4326,7 @@ section,
             </div>
 
             <div class="home-product-grid">
-                <a href="#keramik" class="home-product-card" onclick="openCollection('keramik'); return false;">
+                <a href="#keramik" class="home-product-card" onclick="openProductById('produkt-1790676275018'); return false;" 
                     <div class="home-product-image">
                         <img src="bilder/tasse-klangschale.jpg" alt="Handgemachte Keramik von Dragemor Pottery">
                     </div>
@@ -4336,7 +4336,7 @@ section,
                     </div>
                 </a>
 
-                <a href="#keramik" class="home-product-card" onclick="openCollection('keramik'); return false;">
+                <a href="#keramik" class="home-product-card" onclick="openProductById('produkt-1790708577634'); return false;" 
                     <div class="home-product-image">
                         <img src="bilder/schale-oben.jpg" alt="Keramik-Unikat von Dragemor Pottery">
                     </div>
@@ -4346,7 +4346,7 @@ section,
                     </div>
                 </a>
 
-                <a href="#keramik" class="home-product-card" onclick="openCollection('keramik'); return false;">
+                <a href="#keramik" class="home-product-card" onclick="openProductById('produkt-1790707930872'); return false;" 
                     <div class="home-product-image">
                         <img src="bilder/gefaesse-stapel.png" alt="Handgefertigte Keramik von Dragemor Pottery">
                     </div>
@@ -5616,6 +5616,28 @@ async function loadDatabaseProducts() {
         inFlightProductGalleries.set(key, pending);
         return pending;
     }
+async function openProductById(productId) {
+    if (!catalogSyncSucceeded) {
+        const loaded = await refreshShopProductData();
+        if (!loaded) return;
+    }
+
+    const types = ["keramik", "leder", "weihnachten"];
+
+    for (const type of types) {
+        const index = (shopProducts[type] || []).findIndex(
+            product => product.id === productId
+        );
+
+        if (index !== -1) {
+            openCollection(type, false);
+            openProduct(type, index);
+            return;
+        }
+    }
+
+    console.warn("Produkt nicht gefunden:", productId);
+} 
 
     function openProduct(type, index, pushHistory = true) {
         const product = shopProducts[type][index];
