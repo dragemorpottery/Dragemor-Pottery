@@ -5176,16 +5176,25 @@ section,
 
 async function loadDatabaseProducts() {
     try {
-        const response = await fetch("/api/products");
+        const response = await fetch("/api/products", { cache: "no-store" });
 
         if (!response.ok) {
             console.error("Datenbank-Produkte konnten nicht geladen werden.");
-            return;
+            return false;
         }
 
         const data = await response.json();
 
 const databaseProducts = data.products || [];
+
+// Neue Produkte, die inzwischen in der Verwaltung geloescht wurden,
+// auch aus einem noch geoeffneten Shop-Tab entfernen.
+const activeIds = new Set(databaseProducts.map(product => product.product_id));
+["keramik", "leder", "weihnachten"].forEach(group => {
+    shopProducts[group] = shopProducts[group].filter(product =>
+        !product.id.startsWith("produkt-") || activeIds.has(product.id)
+    );
+});
 
 databaseProducts.forEach(product => {
     if (!product.product_id.startsWith("produkt-")) {
@@ -5200,6 +5209,9 @@ databaseProducts.forEach(product => {
     existingProduct.category = product.category || existingProduct.category;
     existingProduct.description = product.description || existingProduct.description;
     existingProduct.measure = product.measure || existingProduct.measure;
+    if (Array.isArray(product.images) && product.images.length) {
+      existingProduct.images = product.images;
+    }
 
     if (product.price != null) {
       existingProduct.price =
@@ -5223,18 +5235,28 @@ databaseProducts.forEach(product => {
         available: product.status === "available"
     };
 
-    if (product.category === "Leder") {
-        shopProducts.leder.push(newProduct);
-    } else if (product.category === "Weihnachtswerkstatt") {
-        shopProducts.weihnachten.push(newProduct);
+    const destination = product.category === "Leder" ? "leder" :
+        product.category === "Weihnachtswerkstatt" ? "weihnachten" : "keramik";
+    const groups = ["keramik", "leder", "weihnachten"];
+    const previousGroup = groups.find(group =>
+        shopProducts[group].some(p => p.id === newProduct.id)
+    );
+    if (previousGroup) {
+        const previousIndex = shopProducts[previousGroup].findIndex(
+            p => p.id === newProduct.id
+        );
+        // Reuse the existing product rather than creating duplicates.
+        const previous = shopProducts[previousGroup].splice(previousIndex, 1)[0];
+        shopProducts[destination].push({ ...previous, ...newProduct });
     } else {
-        shopProducts.keramik.push(newProduct);
+        shopProducts[destination].push(newProduct);
     }
-}); 
+});
 
-
+    return true;
     } catch (error) {
         console.error("Fehler beim Laden der Datenbank-Produkte:", error);
+        return false;
     }
 } 
 
@@ -5273,6 +5295,72 @@ if (detail?.classList.contains('active') && detail.dataset.productId === 'kerami
     }
 } 
 
+    // Neue Namen und Preise aus der Verwaltung auch in bereits geoeffneten
+    // Shop-Ansichten anzeigen, ohne Navigation oder offenen Artikel zu schliessen.
+    let activeShopProductRefresh = null;
+
+    function refreshVisibleShopProducts() {
+        const modal = document.getElementById("collection-modal");
+        if (modal?.classList.contains("active")) {
+            const detail = document.getElementById("product-detail");
+            if (detail?.classList.contains("active")) {
+                const productId = detail.dataset.productId ||
+                    decodeURIComponent(window.location.hash.replace(/^#/, ""));
+                const product = (shopProducts[currentCollection] || []).find(
+                    item => item.id === productId
+                );
+                if (product) {
+                    document.getElementById("product-name").textContent = product.name;
+                    document.getElementById("product-description").textContent = product.description;
+                    document.getElementById("product-measure").textContent = product.measure;
+                    document.getElementById("product-price").textContent = product.price;
+                    if (typeof prepareCartButton === "function") prepareCartButton(product);
+                }
+            } else if (currentCollection === "keramik" && currentShopCategory) {
+                if (currentShopCategory === "Alle Keramik") renderAllCeramics(false);
+                else renderCeramicCategory(currentShopCategory);
+            } else {
+                renderCollection(currentCollection);
+            }
+        }
+        // A previously saved cart also contains snapshots of product names/prices.
+        if (typeof dragemorCart !== "undefined" && Array.isArray(dragemorCart)) {
+            let changed = false;
+            dragemorCart.forEach(item => {
+                const live = (shopProducts[item.type] || []).find(p => p.id === item.id);
+                if (!live) return;
+                if (item.name !== live.name || item.priceText !== live.price) {
+                    item.name = live.name;
+                    item.priceText = live.price;
+                    item.price = numericEuroPrice(live.price);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                try { localStorage.setItem("dragemorCart", JSON.stringify(dragemorCart)); }
+                catch (error) { console.error("Warenkorb-Aktualisierung:", error); }
+            }
+            if (typeof renderCart === "function") renderCart();
+        }
+    }
+
+    function refreshShopProductData() {
+        if (activeShopProductRefresh) return activeShopProductRefresh;
+        activeShopProductRefresh = (async () => {
+            const loaded = await loadDatabaseProducts();
+            if (loaded) refreshVisibleShopProducts();
+        })().finally(() => { activeShopProductRefresh = null; });
+        return activeShopProductRefresh;
+    }
+
+    // Wenn in einem zweiten Tab etwas bearbeitet wurde: beim Zurueckkehren
+    // in den Shop die aktuellen Verwaltungsdaten neu abrufen.
+    window.addEventListener("focus", () => {
+        if (document.getElementById("collection-modal")?.classList.contains("active")) {
+            void refreshShopProductData();
+        }
+    });
+
     let currentCollection = "keramik";
     let currentShopCategory = null;
 
@@ -5283,6 +5371,7 @@ if (detail?.classList.contains('active') && detail.dataset.productId === 'kerami
         modal.classList.add("active");
         document.body.style.overflow = "hidden";
         renderCollection(type);
+        void refreshShopProductData();
        if (updateHistory) {
     history.pushState({shop:true, type}, "", "#shop-" + type);
 } 
@@ -5586,7 +5675,8 @@ if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-hom
  
 
     await loadDatabaseProducts();
-    await syncProductAvailability(); 
+    await syncProductAvailability();
+    refreshVisibleShopProducts(); 
 
   const hash = decodeURIComponent(window.location.hash);
 
@@ -5894,6 +5984,7 @@ function openShopCategory(category){
     currentCollection = "keramik";
     currentShopCategory = category;
     renderCeramicCategory(category);
+    void refreshShopProductData();
     history.pushState({shop:true,type:"keramik",category}, "", "#shop-" + encodeURIComponent(category));
 }
 
