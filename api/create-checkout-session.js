@@ -1,38 +1,6 @@
 // The original legacy catalog is retained for items which have NEVER been
 // managed in Neon. A formerly managed item must have an active DB row.
-const catalog = {
-  "keramik-1": { name: "WaterDragon", amount: 1800 },
-  "keramik-2": { name: "WaterDragon", amount: 1800 },
-  "keramik-3": { name: "Erdtanz", amount: 1800 },
-  "keramik-4": { name: "WaterDragon", amount: 1500 },
-  "keramik-5": { name: "Waldritual – Keramikset", amount: 3500 },
-  "keramik-6": { name: "Nebelwald", amount: 1500 },
-  "keramik-8": { name: "Erdtanz", amount: 1500 },
-  "keramik-9": { name: "Erdtanz", amount: 1900 },
-  "keramik-10": { name: "Erdtanz", amount: 1500 },
-  "keramik-11": { name: "WaterDragon", amount: 1000 },
-  "keramik-12": { name: "des Drachens Wasser", amount: 1900 },
-  "keramik-13": { name: "DragonGold", amount: 1500 },
-  "keramik-14": { name: "Waldgeflüster – Set", amount: 1500 },
-  "keramik-15": { name: "Dämmerwald", amount: 1000 },
-  "keramik-18": { name: "Meeresgrund", amount: 1800 },
-  "keramik-19": { name: "des Drachens Wasser", amount: 1800 },
-  "keramik-20": { name: "des Drachens Wasser", amount: 1800 },
-  "keramik-21": { name: "des Drachens Wasser", amount: 1800 },
-  "keramik-22": { name: "des Drachens Wasser", amount: 1500 },
-};
 
-// Historical IDs already managed in the central product database.
-const managedLegacyIds = new Set([
-  "keramik-1", "keramik-4", "keramik-7", "keramik-9", "keramik-12",
-  "keramik-14", "keramik-22", "keramik-24", "keramik-26", "keramik-29",
-  "keramik-30", "keramik-33", "keramik-37", "keramik-40",
-  "keramik-49", "keramik-53", "keramik-56", "keramik-58",
-  ...Array.from({ length: 12 }, (_, i) => `leder-${i + 1}`)
-]);
-// Only this current, unmanaged legacy listing may use the static fallback.
-// Older historical IDs must not be orderable from an old saved cart.
-const legacyFallbackIds = new Set();
 const retiredLegacyIds = new Set([
   "keramik-17", "keramik-017", "keramik-29", "keramik-029",
   "keramik-37", "keramik-037", "keramik-55", "keramik-055"
@@ -82,14 +50,11 @@ export default async function handler(req, res) {
     selected = [];
     for (const id of ids) {
       const dbProduct = productsById.get(id);
-      if (!dbProduct) {
-        // After deletion a managed item must never fall back to an old
-        // catalog price/name (even if that static ID is still known).
-        if (managedLegacyIds.has(id) || !catalog[id] || !legacyFallbackIds.has(id)) {
-          return res.status(409).json({
-            error: "Mindestens ein Artikel ist nicht mehr verfügbar."
-          });
-        }
+     if (!dbProduct) {
+  return res.status(409).json({
+    error: "Mindestens ein Artikel ist nicht mehr verfügbar."
+  });
+} 
         selected.push({ id, product: catalog[id] });
         continue;
       }
