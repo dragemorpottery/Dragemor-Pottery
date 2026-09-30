@@ -51,9 +51,7 @@ if (!stripeSecretKey) {
   }
 
   const selected = items.map(item => ({ id: String(item.id || ''), product: catalog[String(item.id || '')] }));
-  const missingIds = selected
-  .filter(({ product }) => !product)
-  .map(({ id }) => id); 
+
    const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
@@ -65,29 +63,32 @@ if (!stripeSecretKey) {
   try {
     const { neon } = await import('@neondatabase/serverless');
     const sql = neon(databaseUrl);
-if (missingIds.length > 0) {
-  const databaseProducts = await sql`
-    SELECT product_id, name, price, status
-    FROM products
-    WHERE product_id = ANY(${missingIds})
-  `;
+// Bei allen bestellten Artikeln (auch dem alten Katalog) gilt der
+// aktuelle Name und Preis aus der Verwaltung, sofern ein DB-Eintrag existiert.
+const allProductIds = selected.map(({ id }) => id);
+const databaseProducts = await sql`
+  SELECT product_id, name, price, status
+  FROM products
+  WHERE product_id = ANY(${allProductIds})
+`;
 
-  databaseProducts.forEach(dbProduct => {
-    const entry = selected.find(({ id }) => id === dbProduct.product_id);
-
-    if (entry && dbProduct.status === 'available') {
-      entry.product = {
-        name: dbProduct.name,
-        amount: Number(dbProduct.price)
-      };
-    }
-  });
-
-  if (selected.some(({ product }) => !product)) {
-    return res.status(400).json({
-      error: 'Mindestens ein Artikel kann derzeit nicht bestellt werden.'
-    });
+databaseProducts.forEach(dbProduct => {
+  const entry = selected.find(({ id }) => id === dbProduct.product_id);
+  const amount = Number(dbProduct.price);
+  if (entry && dbProduct.status === 'available' &&
+      typeof dbProduct.name === 'string' && dbProduct.name.trim() &&
+      Number.isInteger(amount) && amount > 0) {
+    entry.product = {
+      name: dbProduct.name,
+      amount
+    };
   }
+});
+
+if (selected.some(({ product }) => !product)) {
+  return res.status(400).json({
+    error: 'Mindestens ein Artikel kann derzeit nicht bestellt werden.'
+  });
 } 
 
     const productIds = selected.map(({ id }) => id);
