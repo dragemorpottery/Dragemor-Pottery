@@ -5214,6 +5214,9 @@ async function loadDatabaseProducts() {
             throw new Error("Unvollständige Antwort der Produktverwaltung.");
         }
         const databaseProducts = data.products;
+        const oldProductsById = new Map(
+            Object.values(shopProducts).flat().map(product => [product.id, product])
+        );
         const activeIds = new Set(databaseProducts.map(product => product.product_id));
         const nextDeletedIds = new Set([...retiredLegacyIds, ...data.deletedIds]);
         const nextShop = Object.fromEntries(
@@ -5245,6 +5248,10 @@ async function loadDatabaseProducts() {
                 ? "leder"
                 : record.category === "Weihnachtswerkstatt" || id.startsWith("weihnachten-")
                     ? "weihnachten" : "keramik";
+            const databaseHasImages = Array.isArray(record.images) && record.images.length > 0;
+            const previous = oldProductsById.get(id);
+            const sameGallery = databaseHasImages && !!record.updated_at &&
+                previous?._databaseGalleryVersion === record.updated_at;
             const merged = {
                 ...(existing || {}),
                 id,
@@ -5252,8 +5259,14 @@ async function loadDatabaseProducts() {
                 category: record.category || existing?.category || "",
                 description: record.description || existing?.description || "",
                 measure: record.measure || existing?.measure || "",
-                images: Array.isArray(record.images) && record.images.length
-                    ? record.images : (existing?.images || []),
+                // The overview returns only the cover photo. Reuse additional
+                // photos already opened when the product was not edited.
+                images: databaseHasImages
+                    ? (sameGallery ? previous.images : record.images)
+                    : (existing?.images || []),
+                _databaseImageCount: databaseHasImages ? Number(record.imageCount || 1) : 0,
+                _databaseImageVersion: databaseHasImages ? record.updated_at : null,
+                _databaseGalleryVersion: sameGallery ? record.updated_at : null,
                 price,
                 available: record.status === "available"
             };
@@ -5302,6 +5315,14 @@ async function loadDatabaseProducts() {
                     document.getElementById("product-description").textContent = product.description;
                     document.getElementById("product-measure").textContent = product.measure;
                     document.getElementById("product-price").textContent = product.price;
+                    const firstPhoto = product.images?.[0];
+                    const galleryPending = product._databaseImageCount > 1 &&
+                        product._databaseGalleryVersion !== product._databaseImageVersion;
+                    if (firstPhoto && (galleryPending ||
+                        document.getElementById("product-main-image")?.getAttribute("src") !== firstPhoto)) {
+                        renderProductGallery(product);
+                    }
+                    if (galleryPending) void loadFullDatabaseGallery(product);
                     if (typeof prepareCartButton === "function") prepareCartButton(product);
                 }
             } else if (currentCollection === "keramik" && currentShopCategory) {
@@ -5513,6 +5534,69 @@ async function loadDatabaseProducts() {
         }
     }
 
+    // Additional database photos are fetched only when the visitor opens
+    // this product. This also keeps gallery images off the category payload.
+    const inFlightProductGalleries = new Map();
+
+    function renderProductGallery(product) {
+        const main = document.getElementById("product-main-image");
+        const thumbs = document.getElementById("product-thumbs");
+        if (!main || !thumbs || !product.images?.length) return;
+        main.src = product.images[0];
+        main.dataset.imageIndex = "0";
+        main.alt = product.name;
+        thumbs.innerHTML = "";
+        product.images.forEach((src, i) => {
+            const thumb = document.createElement("img");
+            thumb.src = src;
+            thumb.alt = `${product.name} – Ansicht ${i + 1}`;
+            if (i === 0) thumb.classList.add("active");
+            thumb.loading = i === 0 ? "eager" : "lazy";
+            thumb.onclick = () => {
+                main.src = src;
+                main.dataset.imageIndex = String(i);
+                thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active"));
+                thumb.classList.add("active");
+            };
+            thumbs.appendChild(thumb);
+        });
+        thumbs.style.display = product.images.length > 1 ? "flex" : "none";
+    }
+
+    async function loadFullDatabaseGallery(product) {
+        if (!product || deletedProductIds.has(product.id) ||
+            !product._databaseImageVersion || product._databaseImageCount <= 1 ||
+            product._databaseGalleryVersion === product._databaseImageVersion) return;
+        const id = product.id;
+        const version = product._databaseImageVersion;
+        const key = `${id}:${version}`;
+        if (inFlightProductGalleries.has(key)) return inFlightProductGalleries.get(key);
+        const pending = (async () => {
+            try {
+                const response = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+                    cache: "no-store"
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                // A refreshed, edited or deleted item must not regain stale photos.
+                const live = Object.values(shopProducts).flat().find(item => item.id === id);
+                if (!live || deletedProductIds.has(id) ||
+                    live._databaseImageVersion !== version ||
+                    data.product_id !== id || data.updated_at !== version ||
+                    !Array.isArray(data.images) || !data.images.length) return;
+                live.images = data.images;
+                live._databaseGalleryVersion = version;
+                const detail = document.getElementById("product-detail");
+                if (detail?.classList.contains("active") &&
+                    detail.dataset.productId === id) renderProductGallery(live);
+            } catch (error) {
+                console.error("Weitere Produktfotos konnten nicht geladen werden:", error);
+            }
+        })().finally(() => inFlightProductGalleries.delete(key));
+        inFlightProductGalleries.set(key, pending);
+        return pending;
+    }
+
     function openProduct(type, index, pushHistory = true) {
         const product = shopProducts[type][index];
         if (!catalogSyncSucceeded || !product || deletedProductIds.has(product.id)) return;
@@ -5531,26 +5615,9 @@ async function loadDatabaseProducts() {
         document.getElementById("product-measure").textContent = product.measure;
         document.getElementById("product-price").textContent = product.price;
 
-        const main = document.getElementById("product-main-image");
-        main.src = product.images[0];
-        main.dataset.imageIndex = "0";
-        main.alt = product.name;
-
-        const thumbs = document.getElementById("product-thumbs");
-        thumbs.innerHTML = "";
-        product.images.forEach((src, i) => {
-            const thumb = document.createElement("img");
-            thumb.src = src;
-            thumb.alt = `${product.name} – Ansicht ${i + 1}`;
-            if (i === 0) thumb.classList.add("active");
-            thumb.onclick = () => {
-                main.src = src;
-                thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active"));
-                thumb.classList.add("active");
-            };
-            thumbs.appendChild(thumb);
-        });
-        thumbs.style.display = product.images.length > 1 ? "flex" : "none";
+        renderProductGallery(product);
+        // Avoid waiting for secondary photos before showing the product.
+        void loadFullDatabaseGallery(product);
 
         const related = document.getElementById("series-related");
         if (related) {
@@ -6116,7 +6183,7 @@ async function startStripeCheckout(){
   if(!dragemorCart.length) return;
   // Validate server data one more time before sending the cart to Stripe.
   const beforeRefreshIds = dragemorCart.map(item => item.id);
-  const loaded = await refreshShopProductData();
+  const loaded = await refreshShopProductData(true);
   if (!loaded || !catalogSyncSucceeded) {
     if(status) status.textContent='Bitte versuche es erneut. Die Produktdaten konnten nicht geladen werden.';
     return;
