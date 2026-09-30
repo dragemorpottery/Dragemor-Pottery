@@ -2,12 +2,6 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <script>
-      // Start one product request as soon as the document begins loading.
-      // A handled failure allows a retry when the shop initializes.
-      window.dragemorInitialProductFetch = fetch("/api/products", { cache: "no-store" })
-        .catch(() => null);
-    </script>
 
     <meta
         name="viewport"
@@ -5179,116 +5173,126 @@ section,
         ]
     };
 
-    // Preserve the initial photo catalog as an immutable basis on each reload.
-    // Legacy IDs known to have been maintained via the database are not
-    // allowed to reappear after their database record was deleted.
-    const initialShopProducts = Object.fromEntries(
-        Object.entries(shopProducts).map(([group, products]) => [
-            group,
-            products.map(product => ({ ...product, images: [...product.images] }))
-        ])
-    );
-    const managedLegacyIds = new Set([
-        "keramik-1", "keramik-4", "keramik-7", "keramik-9", "keramik-12",
-        "keramik-14", "keramik-22", "keramik-24", "keramik-26",
-        "keramik-29", "keramik-30", "keramik-33", "keramik-37",
-        "keramik-40", "keramik-49", "keramik-53", "keramik-56", "keramik-58",
-        ...Array.from({ length: 12 }, (_, i) => `leder-${i + 1}`)
-    ]);
-    const retiredLegacyIds = new Set([
-        "keramik-17", "keramik-29", "keramik-37", "keramik-55"
-    ]);
-    let deletedProductIds = new Set(retiredLegacyIds);
-    let catalogSyncSucceeded = false;
-
 async function loadDatabaseProducts() {
     try {
-        // Consume the early request once; later refreshes always check the server.
-        const firstRequest = window.dragemorInitialProductFetch;
-        window.dragemorInitialProductFetch = null;
-        const response = (firstRequest && await firstRequest) ||
-            await fetch("/api/products", { cache: "no-store" });
-        if (!response.ok) throw new Error("Produktdaten konnten nicht geladen werden.");
+        const response = await fetch("/api/products", { cache: "no-store" });
+
+        if (!response.ok) {
+            console.error("Datenbank-Produkte konnten nicht geladen werden.");
+            return false;
+        }
+
         const data = await response.json();
-        if (!Array.isArray(data.products) || !Array.isArray(data.deletedIds)) {
-            throw new Error("Unvollständige Antwort der Produktverwaltung.");
-        }
-        const databaseProducts = data.products;
-        const oldProductsById = new Map(
-            Object.values(shopProducts).flat().map(product => [product.id, product])
+
+const databaseProducts = data.products || [];
+
+// Neue Produkte, die inzwischen in der Verwaltung geloescht wurden,
+// auch aus einem noch geoeffneten Shop-Tab entfernen.
+const activeIds = new Set(databaseProducts.map(product => product.product_id));
+["keramik", "leder", "weihnachten"].forEach(group => {
+    shopProducts[group] = shopProducts[group].filter(product =>
+        !product.id.startsWith("produkt-") || activeIds.has(product.id)
+    );
+});
+
+databaseProducts.forEach(product => {
+    if (!product.product_id.startsWith("produkt-")) {
+  const existingProduct = shopProducts.keramik.find(
+    p => p.id === product.product_id
+  ) || shopProducts.leder.find(
+    p => p.id === product.product_id
+  );
+
+  if (existingProduct) {
+    existingProduct.name = product.name || existingProduct.name;
+    existingProduct.category = product.category || existingProduct.category;
+    existingProduct.description = product.description || existingProduct.description;
+    existingProduct.measure = product.measure || existingProduct.measure;
+    if (Array.isArray(product.images) && product.images.length) {
+      existingProduct.images = product.images;
+    }
+
+    if (product.price != null) {
+      existingProduct.price =
+        (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €";
+    }
+
+    existingProduct.available = product.status === "available";
+  }
+
+  return;
+} 
+
+    const newProduct = {
+        id: product.product_id,
+        name: product.name,
+        category: product.category,
+        images: product.images || [],
+        description: product.description || "",
+        measure: product.measure || "",
+        price: (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €",
+        available: product.status === "available"
+    };
+
+    const destination = product.category === "Leder" ? "leder" :
+        product.category === "Weihnachtswerkstatt" ? "weihnachten" : "keramik";
+    const groups = ["keramik", "leder", "weihnachten"];
+    const previousGroup = groups.find(group =>
+        shopProducts[group].some(p => p.id === newProduct.id)
+    );
+    if (previousGroup) {
+        const previousIndex = shopProducts[previousGroup].findIndex(
+            p => p.id === newProduct.id
         );
-        const activeIds = new Set(databaseProducts.map(product => product.product_id));
-        const nextDeletedIds = new Set([...retiredLegacyIds, ...data.deletedIds]);
-        const nextShop = Object.fromEntries(
-            Object.entries(initialShopProducts).map(([group, entries]) => [
-                group,
-                entries.filter(item => !nextDeletedIds.has(item.id) &&
-                    (!managedLegacyIds.has(item.id) || activeIds.has(item.id)))
-                    .map(item => ({ ...item, images: [...item.images] }))
-            ])
-        );
-        for (const record of databaseProducts) {
-            const id = String(record.product_id || "");
-            if (!id || nextDeletedIds.has(id)) continue;
-            const groups = ["keramik", "leder", "weihnachten"];
-            const previousGroup = groups.find(group =>
-                nextShop[group].some(item => item.id === id));
-            const existing = previousGroup
-                ? nextShop[previousGroup].find(item => item.id === id)
-                : null;
-            const validName = typeof record.name === "string" && record.name.trim();
-            // Incomplete setup rows are allowed as long as they have an
-            // existing, explicitly registered legacy product photograph.
-            if (!existing && (!validName || record.price == null)) continue;
-            const name = validName ? record.name : existing.name;
-            const price = record.price == null
-                ? existing.price
-                : (Number(record.price) / 100).toFixed(2).replace(".", ",") + " €";
-            const destination = record.category === "Leder" || id.startsWith("leder-")
-                ? "leder"
-                : record.category === "Weihnachtswerkstatt" || id.startsWith("weihnachten-")
-                    ? "weihnachten" : "keramik";
-            const databaseHasImages = Array.isArray(record.images) && record.images.length > 0;
-            const previous = oldProductsById.get(id);
-            const sameGallery = databaseHasImages && !!record.updated_at &&
-                previous?._databaseGalleryVersion === record.updated_at;
-            const merged = {
-                ...(existing || {}),
-                id,
-                name,
-                category: record.category || existing?.category || "",
-                description: record.description || existing?.description || "",
-                measure: record.measure || existing?.measure || "",
-                // The overview returns only the cover photo. Reuse additional
-                // photos already opened when the product was not edited.
-                images: databaseHasImages
-                    ? (sameGallery ? previous.images : record.images)
-                    : (existing?.images || []),
-                _databaseImageCount: databaseHasImages ? Number(record.imageCount || 1) : 0,
-                _databaseImageVersion: databaseHasImages ? record.updated_at : null,
-                _databaseGalleryVersion: sameGallery ? record.updated_at : null,
-                price,
-                available: record.status === "available"
-            };
-            if (!merged.images.length) continue;
-            if (previousGroup) {
-                nextShop[previousGroup] = nextShop[previousGroup]
-                    .filter(item => item.id !== id);
-            }
-            nextShop[destination].push(merged);
-        }
-        for (const group of ["keramik", "leder", "weihnachten"]) {
-            shopProducts[group] = nextShop[group];
-        }
-        deletedProductIds = nextDeletedIds;
-        catalogSyncSucceeded = true;
-        return true;
+        // Reuse the existing product rather than creating duplicates.
+        const previous = shopProducts[previousGroup].splice(previousIndex, 1)[0];
+        shopProducts[destination].push({ ...previous, ...newProduct });
+    } else {
+        shopProducts[destination].push(newProduct);
+    }
+});
+
+    return true;
     } catch (error) {
-        // Never replace an already validated catalog with stale fallback data.
         console.error("Fehler beim Laden der Datenbank-Produkte:", error);
         return false;
     }
+} 
+
+
+async function syncProductAvailability() {
+    try {
+        const response = await fetch('/api/produkt-status');
+        if (!response.ok) return;
+
+        const products = await response.json();
+
+        Object.entries(products).forEach(([productId, status]) => {
+    const product = shopProducts.keramik.find(
+        p => p.id === productId
+    );
+
+    if (product) {
+        product.available = status === 'available';
+    }
+}); 
+if (currentShopCategory === 'Alle Keramik') {
+    renderAllCeramics(false);
+} else if (currentShopCategory) {
+    renderCeramicCategory(currentShopCategory);
 }
+// Falls die Detailansicht beim Laden offen ist, den Kaufbutton aktualisieren.
+const detail = document.getElementById('product-detail');
+if (detail?.classList.contains('active') && detail.dataset.productId === 'keramik-1' && typeof prepareCartButton === 'function') {
+    const firstProduct = shopProducts.keramik.find(p => p.id === 'keramik-1');
+    if (firstProduct) prepareCartButton(firstProduct);
+} 
+
+        renderCart();
+    } catch (error) {
+        console.error('Bestand konnte nicht geladen werden:', error);
+    }
+} 
 
     // Neue Namen und Preise aus der Verwaltung auch in bereits geoeffneten
     // Shop-Ansichten anzeigen, ohne Navigation oder offenen Artikel zu schliessen.
@@ -5304,25 +5308,11 @@ async function loadDatabaseProducts() {
                 const product = (shopProducts[currentCollection] || []).find(
                     item => item.id === productId
                 );
-                if (!product) {
-                    detail.classList.remove("active");
-                    if (currentCollection === "keramik" && currentShopCategory) {
-                        if (currentShopCategory === "Alle Keramik") renderAllCeramics(false);
-                        else renderCeramicCategory(currentShopCategory);
-                    } else renderCollection(currentCollection);
-                } else {
+                if (product) {
                     document.getElementById("product-name").textContent = product.name;
                     document.getElementById("product-description").textContent = product.description;
                     document.getElementById("product-measure").textContent = product.measure;
                     document.getElementById("product-price").textContent = product.price;
-                    const firstPhoto = product.images?.[0];
-                    const galleryPending = product._databaseImageCount > 1 &&
-                        product._databaseGalleryVersion !== product._databaseImageVersion;
-                    if (firstPhoto && (galleryPending ||
-                        document.getElementById("product-main-image")?.getAttribute("src") !== firstPhoto)) {
-                        renderProductGallery(product);
-                    }
-                    if (galleryPending) void loadFullDatabaseGallery(product);
                     if (typeof prepareCartButton === "function") prepareCartButton(product);
                 }
             } else if (currentCollection === "keramik" && currentShopCategory) {
@@ -5335,11 +5325,6 @@ async function loadDatabaseProducts() {
         // A previously saved cart also contains snapshots of product names/prices.
         if (typeof dragemorCart !== "undefined" && Array.isArray(dragemorCart)) {
             let changed = false;
-            const previousCartLength = dragemorCart.length;
-            dragemorCart = dragemorCart.filter(item =>
-                !deletedProductIds.has(item.id) && !!(shopProducts[item.type] || [])
-                    .some(product => product.id === item.id));
-            changed = dragemorCart.length !== previousCartLength;
             dragemorCart.forEach(item => {
                 const live = (shopProducts[item.type] || []).find(p => p.id === item.id);
                 if (!live) return;
@@ -5358,27 +5343,11 @@ async function loadDatabaseProducts() {
         }
     }
 
-    let lastShopCatalogRefresh = 0;
-    function refreshShopProductData(force = false) {
+    function refreshShopProductData() {
         if (activeShopProductRefresh) return activeShopProductRefresh;
-        // Reopening a category should not start the same slow API request again.
-        // Focus changes and checkout checks still trigger a fresh verification.
-        if (!force && catalogSyncSucceeded && Date.now() - lastShopCatalogRefresh < 15000) {
-            return Promise.resolve(true);
-        }
         activeShopProductRefresh = (async () => {
             const loaded = await loadDatabaseProducts();
-            if (loaded) {
-                lastShopCatalogRefresh = Date.now();
-                refreshVisibleShopProducts();
-            } else if (!catalogSyncSucceeded &&
-                       document.getElementById("collection-modal")?.classList.contains("active")) {
-                const grid = document.getElementById("collection-grid");
-                if (grid) {
-                    grid.innerHTML = '<div class="christmas-intro"><h3>Produkte konnten gerade nicht geladen werden.</h3><p>Bitte versuche es erneut.</p><button class="collection-button" type="button" onclick="refreshShopProductData(true)">Erneut laden</button></div>';
-                }
-            }
-            return loaded;
+            if (loaded) refreshVisibleShopProducts();
         })().finally(() => { activeShopProductRefresh = null; });
         return activeShopProductRefresh;
     }
@@ -5387,7 +5356,7 @@ async function loadDatabaseProducts() {
     // in den Shop die aktuellen Verwaltungsdaten neu abrufen.
     window.addEventListener("focus", () => {
         if (document.getElementById("collection-modal")?.classList.contains("active")) {
-            void refreshShopProductData(true);
+            void refreshShopProductData();
         }
     });
 
@@ -5489,7 +5458,6 @@ async function loadDatabaseProducts() {
         }
 
         const addProductCard = (product, index, target = grid) => {
-            if (!catalogSyncSucceeded || deletedProductIds.has(product.id)) return;
             const card = document.createElement("article");
             card.className = "collection-grid-item product-card";
             if (product.available === false) card.classList.add("coming-soon");
@@ -5534,72 +5502,9 @@ async function loadDatabaseProducts() {
         }
     }
 
-    // Additional database photos are fetched only when the visitor opens
-    // this product. This also keeps gallery images off the category payload.
-    const inFlightProductGalleries = new Map();
-
-    function renderProductGallery(product) {
-        const main = document.getElementById("product-main-image");
-        const thumbs = document.getElementById("product-thumbs");
-        if (!main || !thumbs || !product.images?.length) return;
-        main.src = product.images[0];
-        main.dataset.imageIndex = "0";
-        main.alt = product.name;
-        thumbs.innerHTML = "";
-        product.images.forEach((src, i) => {
-            const thumb = document.createElement("img");
-            thumb.src = src;
-            thumb.alt = `${product.name} – Ansicht ${i + 1}`;
-            if (i === 0) thumb.classList.add("active");
-            thumb.loading = i === 0 ? "eager" : "lazy";
-            thumb.onclick = () => {
-                main.src = src;
-                main.dataset.imageIndex = String(i);
-                thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active"));
-                thumb.classList.add("active");
-            };
-            thumbs.appendChild(thumb);
-        });
-        thumbs.style.display = product.images.length > 1 ? "flex" : "none";
-    }
-
-    async function loadFullDatabaseGallery(product) {
-        if (!product || deletedProductIds.has(product.id) ||
-            !product._databaseImageVersion || product._databaseImageCount <= 1 ||
-            product._databaseGalleryVersion === product._databaseImageVersion) return;
-        const id = product.id;
-        const version = product._databaseImageVersion;
-        const key = `${id}:${version}`;
-        if (inFlightProductGalleries.has(key)) return inFlightProductGalleries.get(key);
-        const pending = (async () => {
-            try {
-                const response = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
-                    cache: "no-store"
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                // A refreshed, edited or deleted item must not regain stale photos.
-                const live = Object.values(shopProducts).flat().find(item => item.id === id);
-                if (!live || deletedProductIds.has(id) ||
-                    live._databaseImageVersion !== version ||
-                    data.product_id !== id || data.updated_at !== version ||
-                    !Array.isArray(data.images) || !data.images.length) return;
-                live.images = data.images;
-                live._databaseGalleryVersion = version;
-                const detail = document.getElementById("product-detail");
-                if (detail?.classList.contains("active") &&
-                    detail.dataset.productId === id) renderProductGallery(live);
-            } catch (error) {
-                console.error("Weitere Produktfotos konnten nicht geladen werden:", error);
-            }
-        })().finally(() => inFlightProductGalleries.delete(key));
-        inFlightProductGalleries.set(key, pending);
-        return pending;
-    }
-
     function openProduct(type, index, pushHistory = true) {
         const product = shopProducts[type][index];
-        if (!catalogSyncSucceeded || !product || deletedProductIds.has(product.id)) return;
+        if (!product) return;
         currentCollection = type;
 
         const grid = document.getElementById("collection-grid");
@@ -5615,9 +5520,26 @@ async function loadDatabaseProducts() {
         document.getElementById("product-measure").textContent = product.measure;
         document.getElementById("product-price").textContent = product.price;
 
-        renderProductGallery(product);
-        // Avoid waiting for secondary photos before showing the product.
-        void loadFullDatabaseGallery(product);
+        const main = document.getElementById("product-main-image");
+        main.src = product.images[0];
+        main.dataset.imageIndex = "0";
+        main.alt = product.name;
+
+        const thumbs = document.getElementById("product-thumbs");
+        thumbs.innerHTML = "";
+        product.images.forEach((src, i) => {
+            const thumb = document.createElement("img");
+            thumb.src = src;
+            thumb.alt = `${product.name} – Ansicht ${i + 1}`;
+            if (i === 0) thumb.classList.add("active");
+            thumb.onclick = () => {
+                main.src = src;
+                thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active"));
+                thumb.classList.add("active");
+            };
+            thumbs.appendChild(thumb);
+        });
+        thumbs.style.display = product.images.length > 1 ? "flex" : "none";
 
         const related = document.getElementById("series-related");
         if (related) {
@@ -5751,8 +5673,9 @@ window.addEventListener("DOMContentLoaded", async () => {
 if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-home")?.classList.remove("active");
  
 
-    // /api/products already contains the current status: no second API request.
-    await refreshShopProductData(); 
+    await loadDatabaseProducts();
+    await syncProductAvailability();
+    refreshVisibleShopProducts(); 
 
   const hash = decodeURIComponent(window.location.hash);
 
@@ -5988,11 +5911,6 @@ function renderCeramicCategory(category){
     grid.style.display = "grid";
     grid.innerHTML = "";
 
-    if (!catalogSyncSucceeded) {
-        grid.innerHTML = '<div class="christmas-intro"><h3>Produkte werden geladen …</h3><p>Einen kleinen Moment bitte.</p></div>';
-        return;
-    }
-
     const entries = shopProducts.keramik
   .map((product,index)=>({
     product,
@@ -6003,8 +5921,7 @@ function renderCeramicCategory(category){
 })) 
         .filter(x => x.categories.includes(category));
 
-    entries.forEach(({product,index}, position)=>{
-        if (deletedProductIds.has(product.id)) return;
+    entries.forEach(({product,index})=>{
         const card = document.createElement("article");
         card.className = "collection-grid-item product-card";
         if (product.available === false) card.classList.add("coming-soon");
@@ -6013,8 +5930,7 @@ function renderCeramicCategory(category){
         const img = document.createElement("img");
         img.src = product.images[0];
         img.alt = product.name;
-        img.loading = position < 4 ? "eager" : "lazy";
-        if (position < 2) img.fetchPriority = "high";
+        img.loading = "lazy";
         img.decoding = "async";
 
         const info = document.createElement("div");
@@ -6038,12 +5954,7 @@ function renderAllCeramics(pushHistory = true){
     if (tabs) tabs.style.display = "none";
     grid.style.display = "grid";
     grid.innerHTML = "";
-    if (!catalogSyncSucceeded) {
-        grid.innerHTML = '<div class="christmas-intro"><h3>Produkte werden geladen …</h3><p>Einen kleinen Moment bitte.</p></div>';
-        return;
-    }
     shopProducts.keramik.forEach((product,index)=>{
-        if (!catalogSyncSucceeded || deletedProductIds.has(product.id)) return;
         const card = document.createElement("article");
         card.className = "collection-grid-item product-card";
         if (product.available === false) card.classList.add("coming-soon");
@@ -6051,8 +5962,7 @@ function renderAllCeramics(pushHistory = true){
         const img = document.createElement("img");
         img.src = product.images[0];
         img.alt = product.name;
-        img.loading = index < 4 ? "eager" : "lazy";
-        if (index < 2) img.fetchPriority = "high";
+        img.loading = "lazy";
         img.decoding = "async";
         const info = document.createElement("div");
         info.className = "product-card-info";
@@ -6121,7 +6031,7 @@ function navigateShop(kind, value){
 let dragemorCart = [];
 try { dragemorCart = JSON.parse(localStorage.getItem('dragemorCart') || '[]'); } catch(e) { dragemorCart = []; }
 // Remove retired products from shopping carts saved before their deletion.
-const retiredProductIds = retiredLegacyIds;
+const retiredProductIds = new Set(['keramik-17', 'keramik-55']);
 const previousCartSize = dragemorCart.length;
 dragemorCart = dragemorCart.filter(item => !retiredProductIds.has(String(item.id)));
 if (dragemorCart.length !== previousCartSize) {
@@ -6139,8 +6049,7 @@ function addCurrentProductToCart(){
   const type = currentCollection;
   const id = document.getElementById('product-detail')?.dataset.productId;
   const product = (shopProducts[type] || []).find(p => p.id === id);
-  if(!catalogSyncSucceeded || !product || deletedProductIds.has(product.id) ||
-     product.available === false || product.available === null) return;
+  if(!product || product.available === false || product.available === null) return;
   const value = numericEuroPrice(product.price);
   if(value === null) return;
   if(!dragemorCart.some(x => x.id === product.id)){
@@ -6167,33 +6076,17 @@ function renderCart(){
     row.querySelector('button').onclick=()=>removeCartItem(item.id); box.appendChild(row);
   });
   const hasComingSoon=cartHasComingSoon();
-  const hasMissing=dragemorCart.some(item => !getLiveProduct(item) || deletedProductIds.has(item.id));
-  const purchasableItems=dragemorCart.filter(item =>
-      getLiveProduct(item)?.available === true && !deletedProductIds.has(item.id));
+  const purchasableItems=dragemorCart.filter(item => getLiveProduct(item)?.available !== false);
   const sum=purchasableItems.reduce((a,x)=>a+Number(x.price||0),0);
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-  checkout.disabled=!catalogSyncSucceeded || !dragemorCart.length ||
-      hasMissing || hasComingSoon || cartHasPendingAvailability();
+  checkout.disabled=!dragemorCart.length || hasComingSoon || cartHasPendingAvailability();
   const status=document.getElementById("checkoutStatus");
-  if(status) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung über Stripe.';
+  if(status) status.innerHTML=hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung über Stripe.';
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
   if(!dragemorCart.length) return;
-  // Validate server data one more time before sending the cart to Stripe.
-  const beforeRefreshIds = dragemorCart.map(item => item.id);
-  const loaded = await refreshShopProductData(true);
-  if (!loaded || !catalogSyncSucceeded) {
-    if(status) status.textContent='Bitte versuche es erneut. Die Produktdaten konnten nicht geladen werden.';
-    return;
-  }
-  if(beforeRefreshIds.length !== dragemorCart.length ||
-     dragemorCart.some(item => !getLiveProduct(item) || deletedProductIds.has(item.id))) {
-    if(status) status.textContent='Ein Artikel wurde inzwischen entfernt. Bitte prüfe deinen Warenkorb erneut.';
-    renderCart();
-    return;
-  }
   if(cartHasComingSoon()){ if(status) status.innerHTML='<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>'; return; }
   if(cartHasPendingAvailability()){ if(status) status.textContent='Die Verfügbarkeit wird noch geprüft. Bitte einen Moment warten.'; return; }
   checkout.disabled=true;
