@@ -575,7 +575,10 @@ ${session?.payment_status || 'Nicht angegeben'}
 `.trim();
 
   await sendResendEmail({
-    to: 'kontakt@dragemor-pottery.de',
+    to: [
+  'kontakt@dragemor-pottery.de',
+  process.env.ORDER_NOTIFICATION_EMAIL
+].filter(Boolean), 
     subject:
       `Neue Bestellung – Dragemor Pottery – ${total}`,
     text: emailText,
