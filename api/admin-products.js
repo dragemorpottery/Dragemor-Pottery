@@ -137,6 +137,15 @@ if (req.method === "POST" && req.body?.action === "create-product") {
     RETURNING *
   `;
 
+  // A deliberately recreated ID can be displayed again.
+  await sql`
+    CREATE TABLE IF NOT EXISTS deleted_products (
+      product_id TEXT PRIMARY KEY,
+      deleted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+  await sql`DELETE FROM deleted_products WHERE product_id = ${product_id}`;
+
   return res.status(201).json({
     ok: true,
     product: created[0]
@@ -200,9 +209,23 @@ if (req.method === "POST" && req.body?.action === "delete-product") {
     });
   }
 
+  // Save a permanent deletion marker so the old HTML catalog and saved
+  // browser carts cannot bring this product back after a hard delete.
+  await sql`
+    CREATE TABLE IF NOT EXISTS deleted_products (
+      product_id TEXT PRIMARY KEY,
+      deleted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
   const deleted = await sql`
-    DELETE FROM products
-    WHERE product_id = ${product_id}
+    WITH removed AS (
+      DELETE FROM products
+      WHERE product_id = ${product_id}
+      RETURNING product_id
+    )
+    INSERT INTO deleted_products (product_id, deleted_at)
+    SELECT product_id, NOW() FROM removed
+    ON CONFLICT (product_id) DO UPDATE SET deleted_at = NOW()
     RETURNING product_id
   `;
 
