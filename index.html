@@ -4130,6 +4130,10 @@ section,
 }
 </style>
 
+<style>
+/* A neutral status is shown only while Keramik 01 is checked in the database. */
+.shop-card-checking {font-size:.86rem; color:#495540; font-style:italic;}
+</style>
 </head>
 
 
@@ -5120,13 +5124,12 @@ section,
 
     const shopProducts = {
         keramik: [
-            { category: "Momente des Innehaltens", name: "WaterDragon", images: ["01","02","03"], measure: "ca. 400 ml", price: "18 €", available: false },
+            { category: "Momente des Innehaltens", name: "WaterDragon", images: ["01","02","03"], measure: "ca. 400 ml", price: "18 €", available: null },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["04","05","06"], measure: "ca. 500 ml", price: "18 €" },
             { category: "Momente des Innehaltens", name: "Erdtanz", images: ["07","08"], measure: "ca. 350 ml", price: "18 €" },
             { category: "Momente des Innehaltens", name: "WaterDragon", images: ["09","010","011"], measure: "ca. 200 ml", price: "15 €" },
             { category: "Momente des Innehaltens", name: "Waldritual – Keramikset", images: ["012","013"], measure: "Krug ca. 500 ml · Becher ca. 200 ml · Kännchen ca. 50 ml", price: "35 €" },
             { category: "Momente des Innehaltens", name: "Nebelwald", images: ["014","015","016"], measure: "ca. 200 ml", price: "15 €" },
-            { category: "Gemeinsame Zeit", name: "Wilde Küste", images: ["017","018","019"], measure: "4 unterschiedliche Schalen", price: "groß 18 € · klein 15 €" },
             { category: "Momente des Innehaltens", name: "Erdtanz", images: ["022","023"], measure: "ca. 500 ml", price: "19 €" },
             { category: "Momente des Innehaltens", name: "des Drachens Wasser", images: ["030","031","032","033"], measure: "ca. 400 ml", price: "19 €" },
             { category: "Momente des Innehaltens", name: "DragonGold", images: ["034","035","036"], measure: "ca. 200 ml", price: "15 €" },
@@ -5135,7 +5138,6 @@ section,
             { category: "Gemeinsame Zeit", name: "Erdtanz", images: ["047","048"], measure: "Ø ca. 18 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "Meeresgrund", images: ["049","050","051"], measure: "Ø ca. 19 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["052","053","054"], measure: "Ø ca. 19 cm", price: "18 €" },
-            { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["055"], measure: "Ø ca. 21 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["056","057"], measure: "Ø ca. 19 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["058","059"], measure: "Ø ca. 17 cm", price: "15 €" }
         ].map((product, i) => ({
@@ -5146,7 +5148,7 @@ section,
             description: ceramicDescriptions[product.name] || "Handgefertigtes Einzelstück von Dragemor Pottery.",
             measure: product.measure,
             price: product.price,
-            available: product.available !== false
+            available: product.available === null ? null : product.available !== false
         })),
         leder: Array.from({length:14}, (_, i) => {
             const n = String(i + 1).padStart(2, "0");
@@ -5253,8 +5255,16 @@ async function syncProductAvailability() {
         product.available = status === 'available';
     }
 }); 
-if (currentShopCategory) {
+if (currentShopCategory === 'Alle Keramik') {
+    renderAllCeramics(false);
+} else if (currentShopCategory) {
     renderCeramicCategory(currentShopCategory);
+}
+// Falls die Detailansicht beim Laden offen ist, den Kaufbutton aktualisieren.
+const detail = document.getElementById('product-detail');
+if (detail?.classList.contains('active') && detail.dataset.productId === 'keramik-1' && typeof prepareCartButton === 'function') {
+    const firstProduct = shopProducts.keramik.find(p => p.id === 'keramik-1');
+    if (firstProduct) prepareCartButton(firstProduct);
 } 
 
         renderCart();
@@ -5373,7 +5383,7 @@ if (currentShopCategory) {
 
             const info = document.createElement("div");
             info.className = "product-card-info";
-            info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+            info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
 
             card.append(img, info);
             target.appendChild(card);
@@ -5778,7 +5788,6 @@ const ceramicCategoriesByFirstImage = {
     "09":["Momente des Innehaltens"],
     "012":["Momente des Innehaltens"],
     "014":["Momente des Innehaltens"],
-    "017":["Gemeinsame Zeit"],
     "020":["Gemeinsame Zeit"],
     "022":["Gemeinsame Zeit"],
     "024":["Gemeinsame Zeit"],
@@ -5789,7 +5798,6 @@ const ceramicCategoriesByFirstImage = {
     "047":["Gemeinsame Zeit"],
     "049":["Gemeinsame Zeit"],
     "052":["Gemeinsame Zeit"],
-    "055":["Gemeinsame Zeit"],
     "056":["Gemeinsame Zeit"],
     "058":["Gemeinsame Zeit"]
 };
@@ -5838,7 +5846,7 @@ function renderCeramicCategory(category){
 
         const info = document.createElement("div");
         info.className = "product-card-info";
-        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
         card.append(img, info);
         grid.appendChild(card);
     });
@@ -5869,7 +5877,7 @@ function renderAllCeramics(pushHistory = true){
         img.decoding = "async";
         const info = document.createElement("div");
         info.className = "product-card-info";
-        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p><p>Details ansehen →</p>`;
+        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
         card.append(img, info);
         grid.appendChild(card);
     });
@@ -5932,6 +5940,13 @@ function navigateShop(kind, value){
 /* ===== WARENKORB – Einzelstücke, lokal im Browser gespeichert ===== */
 let dragemorCart = [];
 try { dragemorCart = JSON.parse(localStorage.getItem('dragemorCart') || '[]'); } catch(e) { dragemorCart = []; }
+// Remove retired products from shopping carts saved before their deletion.
+const retiredProductIds = new Set(['keramik-17', 'keramik-55']);
+const previousCartSize = dragemorCart.length;
+dragemorCart = dragemorCart.filter(item => !retiredProductIds.has(String(item.id)));
+if (dragemorCart.length !== previousCartSize) {
+  try { localStorage.setItem('dragemorCart', JSON.stringify(dragemorCart)); } catch(e) {}
+}
 
 function numericEuroPrice(text){
   const m = String(text || '').trim().match(/^(\d+(?:[.,]\d{1,2})?)\s*€$/);
@@ -5944,7 +5959,7 @@ function addCurrentProductToCart(){
   const type = currentCollection;
   const id = document.getElementById('product-detail')?.dataset.productId;
   const product = (shopProducts[type] || []).find(p => p.id === id);
-  if(!product || product.available === false) return;
+  if(!product || product.available === false || product.available === null) return;
   const value = numericEuroPrice(product.price);
   if(value === null) return;
   if(!dragemorCart.some(x => x.id === product.id)){
@@ -5956,6 +5971,7 @@ function addCurrentProductToCart(){
 function removeCartItem(id){ dragemorCart = dragemorCart.filter(x => x.id !== id); saveCart(); }
 function getLiveProduct(item){ return (shopProducts[item.type] || []).find(p => p.id === item.id); }
 function cartHasComingSoon(){ return dragemorCart.some(item => getLiveProduct(item)?.available === false); }
+function cartHasPendingAvailability(){ return dragemorCart.some(item => getLiveProduct(item)?.available === null); }
 function renderCart(){
   const box=document.getElementById('cartItems'), count=document.getElementById('cartCount'), total=document.getElementById('cartTotal'), checkout=document.getElementById('cartCheckout');
   if(!box) return;
@@ -5973,15 +5989,16 @@ function renderCart(){
   const purchasableItems=dragemorCart.filter(item => getLiveProduct(item)?.available !== false);
   const sum=purchasableItems.reduce((a,x)=>a+Number(x.price||0),0);
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-  checkout.disabled=!dragemorCart.length || hasComingSoon;
+  checkout.disabled=!dragemorCart.length || hasComingSoon || cartHasPendingAvailability();
   const status=document.getElementById("checkoutStatus");
-  if(status) status.innerHTML=hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : 'Sichere Bezahlung über Stripe.';
+  if(status) status.innerHTML=hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung über Stripe.';
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
   if(!dragemorCart.length) return;
   if(cartHasComingSoon()){ if(status) status.innerHTML='<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>'; return; }
+  if(cartHasPendingAvailability()){ if(status) status.textContent='Die Verfügbarkeit wird noch geprüft. Bitte einen Moment warten.'; return; }
   checkout.disabled=true;
   checkout.textContent='Checkout wird geöffnet …';
   if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
@@ -6014,7 +6031,8 @@ function prepareCartButton(product){
   }
   const price=numericEuroPrice(product.price);
   const already=dragemorCart.some(x=>x.id===product.id);
-  if(product.available === false){ btn.disabled=true; btn.textContent='Kommt bald wieder ♡'; note.textContent='Ein ähnliches Stück kommt bald wieder.'; }
+  if(product.available === null){ btn.disabled=true; btn.textContent='Verfügbarkeit wird geprüft …'; note.textContent='Wir gleichen den Bestand mit der Verwaltung ab.'; }
+  else if(product.available === false){ btn.disabled=true; btn.textContent='Kommt bald wieder ♡'; note.textContent='Ein ähnliches Stück kommt bald wieder.'; }
   else if(price===null){ btn.disabled=true; btn.textContent='Variante / Preis noch auswählen'; note.textContent='Dieses Produkt hat noch keinen eindeutigen Einzelpreis und kann deshalb noch nicht in den Warenkorb gelegt werden.'; }
   else if(already){ btn.disabled=true; btn.textContent='Bereits im Warenkorb'; note.textContent='Dieses handgefertigte Einzelstück ist bereits für deinen Warenkorb vorgemerkt.'; }
   else { btn.disabled=false; btn.textContent='In den Warenkorb'; note.textContent='Einzelstück – daher maximal 1 Stück verfügbar.'; }
