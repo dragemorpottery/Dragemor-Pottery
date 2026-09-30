@@ -89,7 +89,7 @@ export default async function handler(req, res) {
         // catalog price/name (even if that static ID is still known).
         if (managedLegacyIds.has(id) || !catalog[id] || !legacyFallbackIds.has(id)) {
           return res.status(409).json({
-            error: "Mindestens ein Artikel ist nicht mehr in der Produktverwaltung vorhanden."
+            error: "Mindestens ein Artikel ist nicht mehr verfügbar."
           });
         }
         selected.push({ id, product: catalog[id] });
