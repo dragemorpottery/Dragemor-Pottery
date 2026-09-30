@@ -4118,10 +4118,11 @@ section,
 </style>
 
 <style id="dragemor-shop-background-like-home">
-/* Geöffnete Shop-/Kategorieansichten nutzen denselben festen Hintergrund
-   wie die Startseite statt der bisherigen dunklen Vollfläche. */
+/* Deckender, warmer Taupe-Hintergrund für geöffnete Shop-Kategorien.
+   Die darunterliegende Startseite und ihre Bilder bleiben vollständig verdeckt. */
 .collection-modal {
-    background: transparent !important;
+    background-color: #c8bcac !important;
+    background-image: linear-gradient(165deg, #d6cbbb 0%, #c8bcac 55%, #b9b6a3 100%) !important;
 }
 .collection-modal h2 {
     color: #354333 !important;
