@@ -6487,12 +6487,40 @@ async function applyVoucher(){
     saveVoucher();
     clearPreparedStripeCheckout();
     if(input) input.value=data.code;
-    if(status){ status.textContent=`Gutschein aktiv – Guthaben ${euroNumber(Number(data.balance || 0)/100)} ♡`; status.className='voucher-status ok'; }
+
+    if(data.checkoutUrl){
+      const checkout=document.getElementById('cartCheckout');
+      if(checkout){
+        checkout.dataset.stripeUrl=data.checkoutUrl;
+        checkout.dataset.checkoutFingerprint=currentCheckoutFingerprint();
+        checkout.disabled=false;
+        checkout.textContent='Jetzt bezahlen →';
+      }
+      if(status){
+        status.textContent=`Gutschein aktiv – Guthaben ${euroNumber(Number(data.balance || 0)/100)} ♡ Der offene Bezahlvorgang kann fortgesetzt werden.`;
+        status.className='voucher-status ok';
+      }
+      const checkoutStatus=document.getElementById('checkoutStatus');
+      if(checkoutStatus) checkoutStatus.textContent='Dein Gutschein ist weiterhin vorgemerkt. Tippe auf „Jetzt bezahlen →“.';
+    }else{
+      if(status){
+        status.textContent=`Gutschein aktiv – Guthaben ${euroNumber(Number(data.balance || 0)/100)} ♡`;
+        status.className='voucher-status ok';
+      }
+    }
+
     renderCart();
   }catch(error){
-    dragemorVoucher=null;
-    saveVoucher();
-    clearPreparedStripeCheckout();
+    const enteredNormalized=String(code || '').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const storedNormalized=String(dragemorVoucher?.code || '').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const reservationMessage=String(error?.message || '').includes('anderen Bezahlvorgang');
+
+    if(!(reservationMessage && enteredNormalized && enteredNormalized===storedNormalized)){
+      dragemorVoucher=null;
+      saveVoucher();
+      clearPreparedStripeCheckout();
+    }
+
     if(status){ status.textContent=error.message || 'Gutschein konnte nicht geprüft werden.'; status.className='voucher-status error'; }
     renderCart();
   }finally{
@@ -6717,10 +6745,10 @@ async function startStripeCheckout(){
     checkout.dataset.stripeUrl=stripeUrl.href;
     checkout.dataset.checkoutFingerprint=checkoutFingerprint;
     checkout.disabled=false;
-    checkout.textContent='Stripe Checkout öffnen →';
+    checkout.textContent='Jetzt bezahlen →';
 
     if(status){
-      status.textContent='Checkout ist bereit. Tippe jetzt auf „Stripe Checkout öffnen →“.';
+      status.textContent='Checkout ist bereit. Tippe jetzt auf „Jetzt bezahlen →“.';
     }
 
   }catch(error){
