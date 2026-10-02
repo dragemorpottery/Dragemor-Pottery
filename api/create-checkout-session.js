@@ -102,6 +102,23 @@ async function releaseVoucherReservation(sql, token) {
   `;
 }
 
+async function getStripeCheckoutSession(stripeSecretKey, sessionId) {
+  if (!sessionId) return null;
+
+  const response = await fetch(
+    `https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${stripeSecretKey}`
+      }
+    }
+  );
+
+  if (!response.ok) return null;
+  return await response.json();
+}
+
 async function createStripeCoupon(stripeSecretKey, voucher) {
   const params = new URLSearchParams();
   params.set("currency", "eur");
@@ -290,6 +307,35 @@ export default async function handler(req, res) {
       const discount = Math.min(Number(voucher.balance), subtotal);
       if (!Number.isInteger(discount) || discount <= 0) {
         return res.status(409).json({ error: "Für diesen Gutschein ist kein Guthaben mehr verfügbar." });
+      }
+
+      // Wurde für genau diesen Warenkorb bereits eine Stripe-Session erstellt,
+      // geben wir deren URL erneut zurück. So lässt sich ein unterbrochener
+      // Weiterleitungsversuch sofort fortsetzen, ohne eine zweite Reservierung.
+      if (
+        voucher.reservation_token &&
+        voucher.reserved_session_id &&
+        voucher.reserved_until &&
+        new Date(voucher.reserved_until).getTime() > Date.now()
+      ) {
+        const existingSession = await getStripeCheckoutSession(
+          stripeSecretKey,
+          voucher.reserved_session_id
+        );
+
+        const sameProducts =
+          existingSession?.metadata?.dragemor_product_ids === ids.join(",");
+
+        if (
+          existingSession?.status === "open" &&
+          existingSession?.url &&
+          sameProducts
+        ) {
+          return res.status(200).json({
+            url: existingSession.url,
+            reused: true
+          });
+        }
       }
 
       const reservationToken = crypto.randomUUID();
