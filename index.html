@@ -6598,9 +6598,38 @@ async function startStripeCheckout(){
       throw new Error(data.error || 'Checkout konnte nicht gestartet werden.');
     }
 
+    let stripeUrl;
+    try{
+      stripeUrl = new URL(data.url);
+    }catch{
+      throw new Error('Stripe hat keine gültige Checkout-Adresse zurückgegeben.');
+    }
+
+    if(
+      stripeUrl.protocol !== 'https:' ||
+      !(stripeUrl.hostname === 'stripe.com' || stripeUrl.hostname.endsWith('.stripe.com'))
+    ){
+      throw new Error('Die Checkout-Adresse von Stripe konnte nicht bestätigt werden.');
+    }
+
     checkout.textContent='Stripe wird geöffnet …';
-    if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
-    window.location.assign(data.url);
+
+    if(status){
+      status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
+
+      const directLink=document.createElement('a');
+      directLink.href=stripeUrl.href;
+      directLink.textContent='Falls nichts passiert: Stripe Checkout hier öffnen';
+      directLink.style.display='block';
+      directLink.style.marginTop='10px';
+      directLink.style.fontWeight='bold';
+      directLink.style.textDecoration='underline';
+      status.appendChild(directLink);
+    }
+
+    // Automatische Weiterleitung. Der sichtbare Link darüber bleibt als
+    // zuverlässiger Fallback, falls der Browser die Script-Navigation blockiert.
+    window.location.href=stripeUrl.href;
 
   }catch(error){
     console.error('Stripe Checkout Fehler:',error);
