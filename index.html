@@ -891,6 +891,79 @@
         }
 
 
+
+        /* ========================================
+           WIDERRUF & VERBRAUCHERINFORMATIONEN
+        ======================================== */
+
+        .rechtliches-box ul {
+            color: #3d4939;
+            margin: 0 0 18px 1.25rem;
+            padding: 0;
+        }
+
+        .rechtliches-box li {
+            margin-bottom: 8px;
+        }
+
+        .widerruf-highlight {
+            margin: 24px 0 30px;
+            padding: 24px;
+            border: 2px solid #b28a4b;
+            border-radius: 18px;
+            background: #f4f6f1;
+        }
+
+        .widerruf-highlight h3 {
+            margin-top: 0;
+        }
+
+        .widerruf-form {
+            margin-top: 20px;
+        }
+
+        .widerruf-form .form-gruppe input,
+        .widerruf-form .form-gruppe textarea {
+            background: #fff;
+            color: #273126;
+        }
+
+        .widerruf-confirm-button {
+            width: 100%;
+            margin-top: 6px;
+            padding: 14px 20px;
+            border: 1px solid #b28a4b;
+            border-radius: 999px;
+            background: #354333;
+            color: #f4ead8;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .widerruf-confirm-button:hover {
+            background: #4b6048;
+        }
+
+        .widerruf-confirm-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .footer-withdrawal-link {
+            display: inline-block;
+            padding: 8px 14px;
+            border: 1px solid #c99b5b;
+            border-radius: 999px;
+            color: #f4ead8 !important;
+            font-weight: 700;
+        }
+
+        .footer-withdrawal-link:hover {
+            background: #c99b5b;
+            color: #263025 !important;
+        }
+
         /* ========================================
            FOOTER
         ======================================== */
@@ -4227,6 +4300,7 @@ section,
           <a href="#maerkte">Märkte &amp; Termine</a>
           <a href="#impressum">Impressum</a>
           <a href="#datenschutz">Datenschutz</a>
+          <a href="#widerruf">Widerrufsrecht</a>
         </div>
       </div>
 
@@ -4281,6 +4355,7 @@ section,
     <a href="#maerkte" onclick="document.body.classList.remove('dp-menu-open')">Märkte</a>
     <a href="#ueber-uns" onclick="document.body.classList.remove('dp-menu-open')">Über uns</a>
     <a href="#kontakt" onclick="document.body.classList.remove('dp-menu-open')">Kontakt</a>
+    <a href="#widerruf" onclick="document.body.classList.remove('dp-menu-open')">Widerrufsrecht</a>
   </nav>
 </header>
 
@@ -4682,8 +4757,13 @@ section,
                 </p>
 
                 <p>
-                        kontakt@dragemor-pottery.de
-                    </a>
+                    E-Mail:
+                    <a href="mailto:kontakt@dragemor-pottery.de">kontakt@dragemor-pottery.de</a>
+                </p>
+
+                <p>
+                    Telefon:
+                    <a href="tel:+491794245699">0179 4245699</a>
                 </p>
 
             </div>
@@ -4839,10 +4919,10 @@ section,
 
 
             <p>
+                Telefon:
+                <a href="tel:+491794245699">0179 4245699</a><br>
                 E-Mail:
-                <a href="mailto:kontakt@dragemor-pottery.de">E-Mail</a>
-                    kontakt@dragemor-pottery.de
-                </a>
+                <a href="mailto:kontakt@dragemor-pottery.de">kontakt@dragemor-pottery.de</a>
             </p>
 
 
@@ -4868,147 +4948,227 @@ section,
      DATENSCHUTZ
 ======================================== -->
 
-<section
-    class="rechtliches datenschutz"
-    id="datenschutz"
->
-
+<section class="rechtliches datenschutz" id="datenschutz">
     <div class="container">
-
         <div class="rechtliches-box">
+            <h2>Datenschutzerklärung</h2>
 
-            <h2>
-                Datenschutzerklärung
-            </h2>
-
-
-            <h3>
-                1. Allgemeine Hinweise
-            </h3>
-
+            <h3>1. Verantwortliche Stelle</h3>
             <p>
-                Der Schutz deiner persönlichen Daten ist uns wichtig.
-                Wir behandeln personenbezogene Daten vertraulich
-                und entsprechend den gesetzlichen Datenschutzvorschriften.
-            </p>
-
-
-            <h3>
-                2. Verantwortliche Stelle
-            </h3>
-
-            <p>
-                Verantwortlich für die Verarbeitung personenbezogener
-                Daten auf dieser Website ist:
-            </p>
-
-            <p>
+                Verantwortlich für die Verarbeitung personenbezogener Daten auf dieser Website ist:<br><br>
                 Franca Bennin<br>
-                Dragemor Pottery<br>
-                Drachenfeuer und Lederwind<br>
+                Dragemor Pottery · Drachenfeuer und Lederwind<br>
                 Damm 1<br>
                 24803 Tielen<br>
-                Deutschland
+                Deutschland<br><br>
+                Telefon: <a href="tel:+491794245699">0179 4245699</a><br>
+                E-Mail: <a href="mailto:kontakt@dragemor-pottery.de">kontakt@dragemor-pottery.de</a>
             </p>
 
-
+            <h3>2. Hosting und technische Bereitstellung</h3>
             <p>
-                E-Mail:
-                <a href="mailto:afspring23@gmail.com">
-                    afspring23@gmail.com
-                </a>
+                Diese Website wird über Vercel bereitgestellt. Beim Aufruf der Website können technisch
+                erforderliche Verbindungsdaten, insbesondere IP-Adresse, Datum und Uhrzeit des Abrufs,
+                aufgerufene Seite, Browser- und Geräteinformationen sowie Server-Log-Daten verarbeitet werden.
+                Die Verarbeitung dient der sicheren und stabilen Bereitstellung der Website.
             </p>
 
-
-            <h3>
-                3. Kontaktaufnahme per E-Mail
-            </h3>
-
+            <h3>3. Kontaktformular und E-Mail-Kommunikation</h3>
             <p>
-                Wenn du uns per E-Mail kontaktierst, werden die von dir
-                übermittelten Angaben zur Bearbeitung deiner Anfrage
-                verarbeitet.
+                Wenn du das Kontaktformular nutzt oder uns per E-Mail kontaktierst, verarbeiten wir die von dir
+                angegebenen Daten, insbesondere Name, E-Mail-Adresse, Betreff und Nachrichteninhalt, um deine
+                Anfrage zu beantworten. Das Kontaktformular übermittelt die Nachricht direkt über unseren
+                E-Mail-Dienst. Für den technischen E-Mail-Versand nutzen wir Resend.
             </p>
 
+            <h3>4. Elektronische Widerrufsfunktion</h3>
             <p>
-                Die Verarbeitung erfolgt nur insoweit, wie dies zur
-                Bearbeitung und Beantwortung deiner Anfrage erforderlich ist.
+                Wenn du die elektronische Widerrufsfunktion nutzt, verarbeiten wir deinen Namen, deine
+                E-Mail-Adresse, Angaben zur Identifizierung der Bestellung bzw. des Vertrags und gegebenenfalls
+                deine zusätzliche Nachricht. Diese Daten werden ausschließlich zur Bearbeitung und Dokumentation
+                des Widerrufs sowie zum Versand der gesetzlich vorgesehenen Eingangsbestätigung verarbeitet.
             </p>
 
-
-            <h3>
-                4. Kontaktformular
-            </h3>
-
+            <h3>5. Kundenkonto</h3>
             <p>
-                Das Kontaktformular auf dieser Website öffnet beim
-                Absenden das E-Mail-Programm des Besuchers.
-                Die Nachricht wird anschließend über den vom Besucher
-                verwendeten E-Mail-Dienst versendet.
+                Wenn du ein Kundenkonto anlegst, verarbeiten wir die bei der Registrierung angegebenen Daten,
+                insbesondere Name und E-Mail-Adresse. Passwörter werden nicht im Klartext gespeichert, sondern
+                technisch gehasht. Die Kontodaten werden in unserer Datenbank bei Neon gespeichert und zur
+                Bereitstellung des Kundenkontos verwendet.
             </p>
 
+            <h3>6. Bestellungen, Zahlung und Rechnungen</h3>
             <p>
-                Es werden durch dieses Formular auf der Website selbst
-                keine Nachrichten gespeichert.
+                Zur Abwicklung von Bestellungen verarbeiten wir die hierfür erforderlichen Bestell-, Kontakt-,
+                Liefer- und Rechnungsdaten. Die Zahlungsabwicklung erfolgt über Stripe. Dabei werden die für die
+                Zahlung notwendigen Daten an Stripe und – abhängig von der gewählten Zahlungsmethode – an weitere
+                im Checkout angezeigte Zahlungsdienstleister übermittelt. Zahlungsdaten wie vollständige
+                Karteninformationen werden nicht von uns selbst gespeichert.
             </p>
-
-
-            <h3>
-                5. Instagram
-            </h3>
-
             <p>
-                Auf dieser Website befindet sich ein Link zu unserem
-                Instagram-Profil. Beim Anklicken des Links wird Instagram
-                aufgerufen. Für die Verarbeitung personenbezogener Daten
-                auf Instagram gelten die Datenschutzbestimmungen von Meta.
+                Bestell- und Rechnungsdaten werden außerdem verarbeitet, soweit dies zur Vertragserfüllung sowie
+                zur Erfüllung gesetzlicher handels- und steuerrechtlicher Aufbewahrungspflichten erforderlich ist.
             </p>
 
-
-            <h3>
-                6. Server-Log-Dateien
-            </h3>
-
+            <h3>7. Technisch notwendige Cookies und lokale Speicherung</h3>
             <p>
-                Beim Aufruf einer Website können durch den jeweiligen
-                Hosting-Anbieter technisch notwendige Informationen
-                verarbeitet und in sogenannten Server-Log-Dateien
-                gespeichert werden.
+                Für Funktionen wie Anmeldung, Sitzung und Warenkorb können technisch notwendige Cookies oder
+                vergleichbare Speichertechniken im Browser eingesetzt werden. Sie dienen ausschließlich dazu,
+                die von dir gewünschten Funktionen der Website bereitzustellen und die Sitzung sicher zu führen.
             </p>
 
+            <h3>8. Instagram</h3>
             <p>
-                Welche Daten dabei konkret verarbeitet werden und wie lange
-                diese gespeichert werden, hängt vom verwendeten
-                Hosting-Anbieter ab.
+                Auf unserer Website befindet sich ein externer Link zu unserem Instagram-Profil. Erst wenn du
+                diesen Link anklickst, wird die Website von Instagram bzw. Meta aufgerufen. Für die dortige
+                Datenverarbeitung gelten die Datenschutzbestimmungen des jeweiligen Anbieters.
             </p>
 
-
-            <h3>
-                7. Deine Rechte
-            </h3>
-
+            <h3>9. Rechtsgrundlagen</h3>
             <p>
-                Du hast im Rahmen der gesetzlichen Vorschriften insbesondere
-                das Recht auf Auskunft, Berichtigung, Löschung,
-                Einschränkung der Verarbeitung und gegebenenfalls
-                Widerspruch gegen die Verarbeitung deiner personenbezogenen Daten.
+                Soweit Daten zur Durchführung eines Vertrags, einer Bestellung, eines Kundenkontos oder zur
+                Bearbeitung vorvertraglicher Anfragen erforderlich sind, erfolgt die Verarbeitung insbesondere
+                auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Gesetzlich erforderliche Verarbeitungen erfolgen
+                auf Grundlage von Art. 6 Abs. 1 lit. c DSGVO. Soweit die sichere und wirtschaftliche Bereitstellung
+                der Website betroffen ist, kann Art. 6 Abs. 1 lit. f DSGVO die Rechtsgrundlage sein.
             </p>
 
-
-            <h3>
-                8. Aktualisierung
-            </h3>
-
+            <h3>10. Speicherdauer</h3>
             <p>
-                Diese Datenschutzerklärung kann angepasst werden,
-                wenn sich die Website, verwendete Dienste oder gesetzliche
-                Anforderungen ändern.
+                Wir speichern personenbezogene Daten nur so lange, wie dies für den jeweiligen Zweck erforderlich
+                ist. Gesetzliche Aufbewahrungspflichten bleiben unberührt. Daten eines Kundenkontos werden gelöscht,
+                wenn das Konto beendet wird und keine gesetzlichen Gründe für eine weitere Speicherung bestehen.
             </p>
 
+            <h3>11. Deine Rechte</h3>
+            <p>
+                Du hast im Rahmen der gesetzlichen Voraussetzungen insbesondere das Recht auf Auskunft,
+                Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch.
+                Eine erteilte Einwilligung kannst du mit Wirkung für die Zukunft widerrufen.
+            </p>
+
+            <h3>12. Beschwerderecht</h3>
+            <p>
+                Du hast das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Für Schleswig-Holstein
+                ist dies das Unabhängige Landeszentrum für Datenschutz Schleswig-Holstein (ULD), Holstenstraße 98,
+                24103 Kiel.
+            </p>
+
+            <h3>13. Stand</h3>
+            <p>Stand dieser Datenschutzerklärung: Oktober 2026.</p>
         </div>
-
     </div>
+</section>
 
+
+<!-- ========================================
+     WIDERRUFSRECHT & ELEKTRONISCHER WIDERRUF
+======================================== -->
+
+<section class="rechtliches" id="widerruf">
+    <div class="container">
+        <div class="rechtliches-box">
+            <h2>Widerrufsrecht</h2>
+
+            <h3>Widerrufsbelehrung</h3>
+            <p>
+                Als Verbraucherin oder Verbraucher hast du bei einem Fernabsatzvertrag grundsätzlich das Recht,
+                den Vertrag innerhalb von vierzehn Tagen ohne Angabe von Gründen zu widerrufen.
+            </p>
+            <p>
+                Bei einem Kaufvertrag über Waren beginnt die Frist grundsätzlich an dem Tag, an dem du oder eine
+                von dir benannte Person, die nicht das Versandunternehmen ist, die Ware erhalten hat. Werden mehrere
+                Waren einer einheitlichen Bestellung getrennt geliefert, beginnt die Frist grundsätzlich mit Erhalt
+                der letzten Ware.
+            </p>
+            <p>
+                Um zu widerrufen, musst du uns deinen Entschluss eindeutig mitteilen. Du kannst dafür die unten
+                angebotene elektronische Widerrufsfunktion, eine E-Mail oder einen Brief verwenden.
+            </p>
+            <p>
+                Dragemor Pottery · Franca Bennin<br>
+                Damm 1 · 24803 Tielen · Deutschland<br>
+                Telefon: <a href="tel:+491794245699">0179 4245699</a><br>
+                E-Mail: <a href="mailto:kontakt@dragemor-pottery.de">kontakt@dragemor-pottery.de</a>
+            </p>
+            <p>
+                Zur Wahrung der Frist reicht es aus, wenn du deine Widerrufserklärung vor Ablauf der Widerrufsfrist
+                absendest.
+            </p>
+
+            <h3>Folgen des Widerrufs</h3>
+            <p>
+                Nach einem wirksamen Widerruf erstatten wir die von dir erhaltenen Zahlungen einschließlich der
+                Kosten unserer günstigsten angebotenen Standardlieferung grundsätzlich spätestens innerhalb von
+                vierzehn Tagen ab Eingang deines Widerrufs. Für die Rückzahlung verwenden wir grundsätzlich dasselbe
+                Zahlungsmittel wie bei der ursprünglichen Zahlung, sofern nichts anderes vereinbart wurde.
+            </p>
+            <p>
+                Wir können die Rückzahlung zurückhalten, bis wir die Ware zurückerhalten haben oder du nachweist,
+                dass du sie zurückgesendet hast – je nachdem, was früher eintritt. Die Ware ist unverzüglich und
+                spätestens binnen vierzehn Tagen nach deinem Widerruf an uns zurückzusenden. Die unmittelbaren Kosten
+                der Rücksendung trägst du.
+            </p>
+
+            <div class="widerruf-highlight">
+                <h3>Vertrag widerrufen</h3>
+                <p>
+                    Hier kannst du deinen online geschlossenen Vertrag direkt widerrufen. Nach dem Absenden erhältst
+                    du unverzüglich eine Eingangsbestätigung per E-Mail mit dem Inhalt deines Widerrufs sowie Datum
+                    und Uhrzeit des Eingangs.
+                </p>
+
+                <form class="widerruf-form" onsubmit="submitWithdrawal(event)">
+                    <div class="form-gruppe">
+                        <label for="withdrawal-name">Dein Name <span>*</span></label>
+                        <input id="withdrawal-name" name="name" type="text" autocomplete="name" required>
+                    </div>
+
+                    <div class="form-gruppe">
+                        <label for="withdrawal-email">E-Mail für die Eingangsbestätigung <span>*</span></label>
+                        <input id="withdrawal-email" name="email" type="email" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-gruppe">
+                        <label for="withdrawal-contract">Bestellnummer oder gekaufter Artikel <span>*</span></label>
+                        <input id="withdrawal-contract" name="contract" type="text" required
+                               placeholder="z. B. Bestellnummer oder Name des Artikels">
+                    </div>
+
+                    <div class="form-gruppe">
+                        <label for="withdrawal-date">Bestelldatum (optional)</label>
+                        <input id="withdrawal-date" name="orderDate" type="date">
+                    </div>
+
+                    <div class="form-gruppe">
+                        <label for="withdrawal-message">Zusätzliche Nachricht (optional)</label>
+                        <textarea id="withdrawal-message" name="message"
+                                  placeholder="Optional: weitere Angaben zu deinem Widerruf"></textarea>
+                    </div>
+
+                    <button type="submit" class="widerruf-confirm-button">Widerruf bestätigen</button>
+                    <div id="withdrawal-status" class="formular-status" role="status" aria-live="polite"></div>
+                </form>
+            </div>
+
+            <h3>Muster-Widerrufsformular</h3>
+            <p>
+                Wenn du den Vertrag auf anderem Weg widerrufen möchtest, kannst du folgende Angaben verwenden
+                (die Verwendung dieses Musters ist nicht vorgeschrieben):
+            </p>
+            <p>
+                An Dragemor Pottery, Franca Bennin, Damm 1, 24803 Tielen,
+                E-Mail: kontakt@dragemor-pottery.de<br><br>
+                Hiermit widerrufe ich den von mir abgeschlossenen Vertrag über den Kauf der folgenden Ware(n):<br>
+                _______________________________<br><br>
+                Bestellt am / erhalten am: _______________________________<br>
+                Name: _______________________________<br>
+                Anschrift: _______________________________<br>
+                Datum: _______________________________<br>
+                Unterschrift (nur bei Mitteilung auf Papier): _______________________________
+            </p>
+        </div>
+    </div>
 </section>
 
 
@@ -5039,6 +5199,14 @@ section,
 
         <a href="#datenschutz">
             Datenschutz
+        </a>
+
+        <a href="#widerruf">
+            Widerrufsrecht
+        </a>
+
+        <a href="#widerruf" class="footer-withdrawal-link">
+            Vertrag widerrufen
         </a>
 
         <a
@@ -5939,6 +6107,76 @@ if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-hom
         }
     }
 
+
+
+    /* ========================================
+       ELEKTRONISCHE WIDERRUFSFUNKTION
+    ======================================== */
+
+    async function submitWithdrawal(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const button = form.querySelector('button[type="submit"]');
+        const status = document.getElementById('withdrawal-status');
+
+        const name = document.getElementById('withdrawal-name').value.trim();
+        const email = document.getElementById('withdrawal-email').value.trim();
+        const contract = document.getElementById('withdrawal-contract').value.trim();
+        const orderDate = document.getElementById('withdrawal-date').value;
+        const message = document.getElementById('withdrawal-message').value.trim();
+
+        status.textContent = '';
+        status.className = 'formular-status';
+
+        if (!name || !email || !contract) {
+            status.textContent = 'Bitte fülle alle Pflichtfelder aus.';
+            status.classList.add('fehler');
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = 'Widerruf wird übermittelt …';
+
+        try {
+            const response = await fetch('/api/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'withdrawal',
+                    name,
+                    email,
+                    contract,
+                    orderDate,
+                    message
+                })
+            });
+
+            let data = {};
+            try { data = await response.json(); } catch (_) { data = {}; }
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Der Widerruf konnte nicht übermittelt werden.');
+            }
+
+            const received = data.receivedAt
+                ? new Date(data.receivedAt).toLocaleString('de-DE')
+                : new Date().toLocaleString('de-DE');
+
+            status.textContent = data.confirmationSent === false
+                ? '✓ Dein Widerruf ist eingegangen am ' + received + '. Die E-Mail-Bestätigung konnte technisch nicht versendet werden; dein Widerruf wurde trotzdem übermittelt.'
+                : '✓ Widerruf eingegangen am ' + received + '. Die Eingangsbestätigung wurde per E-Mail versendet.';
+            status.classList.add('erfolg');
+            form.reset();
+        } catch (error) {
+            console.error('Widerruf Fehler:', error);
+            status.textContent = error.message || 'Beim Übermitteln des Widerrufs ist ein Fehler aufgetreten.';
+            status.classList.add('fehler');
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Widerruf bestätigen';
+        }
+    }
 
     /* Hauptmenü & Untermenüs */
     function toggleMainMenu() {
