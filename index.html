@@ -6569,6 +6569,13 @@ async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
 
+  // Wenn Stripe bereits vorbereitet wurde, ist der zweite Klick eine echte
+  // Benutzeraktion und öffnet direkt die fertige Checkout-Adresse.
+  if(checkout?.dataset?.stripeUrl){
+    window.location.href=checkout.dataset.stripeUrl;
+    return;
+  }
+
   if(!dragemorCart.length) return;
 
   if(cartHasComingSoon()){
@@ -6612,28 +6619,21 @@ async function startStripeCheckout(){
       throw new Error('Die Checkout-Adresse von Stripe konnte nicht bestätigt werden.');
     }
 
-    checkout.textContent='Stripe wird geöffnet …';
+    // Auf mobilen Browsern kann eine Navigation, die erst nach mehreren
+    // asynchronen Prüfungen erfolgt, blockiert werden. Deshalb wird die fertige
+    // Stripe-Adresse gespeichert und mit einem zweiten echten Fingertipp geöffnet.
+    checkout.dataset.stripeUrl=stripeUrl.href;
+    checkout.disabled=false;
+    checkout.textContent='Stripe Checkout öffnen →';
 
     if(status){
-      status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
-
-      const directLink=document.createElement('a');
-      directLink.href=stripeUrl.href;
-      directLink.textContent='Falls nichts passiert: Stripe Checkout hier öffnen';
-      directLink.style.display='block';
-      directLink.style.marginTop='10px';
-      directLink.style.fontWeight='bold';
-      directLink.style.textDecoration='underline';
-      status.appendChild(directLink);
+      status.textContent='Checkout ist bereit. Tippe jetzt auf „Stripe Checkout öffnen →“.';
     }
-
-    // Automatische Weiterleitung. Der sichtbare Link darüber bleibt als
-    // zuverlässiger Fallback, falls der Browser die Script-Navigation blockiert.
-    window.location.href=stripeUrl.href;
 
   }catch(error){
     console.error('Stripe Checkout Fehler:',error);
     if(status) status.textContent=error.message || 'Checkout konnte nicht gestartet werden.';
+    if(checkout?.dataset) delete checkout.dataset.stripeUrl;
     checkout.disabled=false;
     checkout.textContent='Zur Kasse';
   }
