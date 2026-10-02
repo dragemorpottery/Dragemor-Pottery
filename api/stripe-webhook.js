@@ -70,8 +70,10 @@ function euro(amount) {
   );
 }
 
-async function getStripeLineItems(sessionId) {
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+async function getStripeLineItems(sessionId, livemode = true) {
+  const stripeSecretKey = livemode
+    ? process.env.STRIPE_SECRET_KEY
+    : (process.env.STRIPE_TEST_SECRET_KEY || process.env.STRIPE_SECRET_KEY);
 
   if (!stripeSecretKey) {
     throw new Error(
@@ -124,6 +126,131 @@ if (!productIds?.length) return;
     WHERE product_id = ANY(${productIds})
   `;
 } 
+
+async function ensureVoucherTables(sql) {
+  await sql`
+    CREATE TABLE IF NOT EXISTS vouchers (
+      code TEXT PRIMARY KEY,
+      initial_value INTEGER NOT NULL CHECK (initial_value > 0),
+      balance INTEGER NOT NULL CHECK (balance >= 0),
+      status TEXT NOT NULL DEFAULT 'prepared',
+      source TEXT NOT NULL DEFAULT 'market',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      activated_at TIMESTAMPTZ,
+      redeemed_at TIMESTAMPTZ,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      reserved_amount INTEGER NOT NULL DEFAULT 0,
+      reservation_token TEXT,
+      reserved_session_id TEXT,
+      reserved_until TIMESTAMPTZ
+    )
+  `;
+
+  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reserved_amount INTEGER NOT NULL DEFAULT 0`;
+  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reservation_token TEXT`;
+  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reserved_session_id TEXT`;
+  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reserved_until TIMESTAMPTZ`;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS voucher_redemptions (
+      stripe_session_id TEXT PRIMARY KEY,
+      voucher_code TEXT NOT NULL,
+      amount INTEGER NOT NULL CHECK (amount > 0),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+}
+
+async function releaseVoucherReservationFromSession(session) {
+  const code = session?.metadata?.dragemor_voucher_code;
+  const token = session?.metadata?.dragemor_voucher_reservation;
+  if (!code || !token || !process.env.DATABASE_URL) return;
+
+  const { neon } = await import('@neondatabase/serverless');
+  const sql = neon(process.env.DATABASE_URL);
+  await ensureVoucherTables(sql);
+
+  await sql`
+    UPDATE vouchers
+    SET
+      reserved_amount = 0,
+      reservation_token = NULL,
+      reserved_session_id = NULL,
+      reserved_until = NULL,
+      updated_at = NOW()
+    WHERE code = ${code}
+      AND reservation_token = ${token}
+  `;
+}
+
+async function redeemVoucherFromSession(session) {
+  const code = session?.metadata?.dragemor_voucher_code;
+  const token = session?.metadata?.dragemor_voucher_reservation;
+  const amount = Number(session?.metadata?.dragemor_voucher_amount || 0);
+
+  if (!code || !token || !Number.isInteger(amount) || amount <= 0) return;
+  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL ist nicht eingerichtet.');
+
+  const { neon } = await import('@neondatabase/serverless');
+  const sql = neon(process.env.DATABASE_URL);
+  await ensureVoucherTables(sql);
+
+  const result = await sql`
+    WITH inserted AS (
+      INSERT INTO voucher_redemptions (
+        stripe_session_id,
+        voucher_code,
+        amount
+      )
+      SELECT
+        ${session.id},
+        v.code,
+        ${amount}
+      FROM vouchers v
+      WHERE v.code = ${code}
+        AND v.reservation_token = ${token}
+        AND v.reserved_amount = ${amount}
+        AND v.balance >= ${amount}
+      ON CONFLICT (stripe_session_id) DO NOTHING
+      RETURNING voucher_code, amount
+    ),
+    updated AS (
+      UPDATE vouchers v
+      SET
+        balance = v.balance - i.amount,
+        status = CASE
+          WHEN v.balance - i.amount <= 0 THEN 'redeemed'
+          ELSE 'active'
+        END,
+        redeemed_at = CASE
+          WHEN v.balance - i.amount <= 0 THEN NOW()
+          ELSE v.redeemed_at
+        END,
+        reserved_amount = 0,
+        reservation_token = NULL,
+        reserved_session_id = NULL,
+        reserved_until = NULL,
+        updated_at = NOW()
+      FROM inserted i
+      WHERE v.code = i.voucher_code
+      RETURNING v.code, v.balance, v.status
+    )
+    SELECT * FROM updated
+  `;
+
+  if (result.length) return;
+
+  const alreadyProcessed = await sql`
+    SELECT stripe_session_id
+    FROM voucher_redemptions
+    WHERE stripe_session_id = ${session.id}
+    LIMIT 1
+  `;
+
+  if (alreadyProcessed.length) return;
+
+  throw new Error('Gutschein konnte nach der Zahlung nicht verbucht werden.');
+}
 async function getNextInvoiceNumber(sql) {
   const year = new Date().getFullYear();
 
@@ -197,7 +324,7 @@ async function createInvoice(session, lineItems) {
       item.description || 'Artikel',
     quantity: item.quantity || 1,
     amount_total:
-      item.amount_total || 0,
+      item.amount_subtotal ?? item.amount_total ?? 0,
   }));
 
   await sql`
@@ -371,7 +498,7 @@ async function createInvoicePdf(
       font,
     });
 
-    page.drawText(euro(item.amount_total), {
+    page.drawText(euro(item.amount_subtotal ?? item.amount_total), {
       x: 470,
       y: itemsY,
       size: 10,
@@ -415,6 +542,25 @@ async function createInvoicePdf(
       font,
     }
   );
+
+  const voucherDiscount = Number(session?.total_details?.amount_discount || 0);
+  if (voucherDiscount > 0) {
+    itemsY -= 18;
+
+    page.drawText('Gutschein:', {
+      x: 350,
+      y: itemsY,
+      size: 10,
+      font,
+    });
+
+    page.drawText(`-${euro(voucherDiscount)}`, {
+      x: 470,
+      y: itemsY,
+      size: 10,
+      font,
+    });
+  }
 
   itemsY -= 22;
 
@@ -533,12 +679,16 @@ async function sendInternalOrderEmail(
   const products = lineItems
     .map(item => {
       return `${item.description || 'Artikel'} – ${euro(
-        item.amount_total
+        item.amount_subtotal ?? item.amount_total
       )}`;
     })
     .join('\n');
 
   const total = euro(session?.amount_total);
+  const voucherDiscount = Number(session?.total_details?.amount_discount || 0);
+  const voucherLine = voucherDiscount > 0
+    ? `\nGutschein:\n-${euro(voucherDiscount)}\n`
+    : '';
 
   const emailText = `
 Neue bezahlte Bestellung bei Dragemor Pottery
@@ -554,7 +704,7 @@ ${euro(session?.amount_subtotal)}
 
 Versand:
 ${euro(session?.total_details?.amount_shipping)}
-
+${voucherLine}
 Gesamtbetrag:
 ${total}
 
@@ -619,7 +769,7 @@ async function sendCustomerOrderEmail(
       return `${
         item.description || 'Artikel'
       }${quantity > 1 ? ` × ${quantity}` : ''} – ${euro(
-        item.amount_total
+        item.amount_subtotal ?? item.amount_total
       )}`;
     })
     .join('\n');
@@ -650,7 +800,7 @@ async function sendCustomerOrderEmail(
             color:#354333;
             white-space:nowrap;
           ">
-            ${euro(item.amount_total)}
+            ${euro(item.amount_subtotal ?? item.amount_total)}
           </td>
         </tr>
       `;
@@ -662,6 +812,15 @@ async function sendCustomerOrderEmail(
 
   const shipping =
     euro(session?.total_details?.amount_shipping);
+
+  const voucherDiscountAmount = Number(session?.total_details?.amount_discount || 0);
+  const voucherDiscount = euro(voucherDiscountAmount);
+  const voucherTextLine = voucherDiscountAmount > 0
+    ? `\nGutschein: -${voucherDiscount}`
+    : '';
+  const voucherHtmlRow = voucherDiscountAmount > 0
+    ? `<tr><td style="padding-top:8px;">Gutschein</td><td style="padding-top:8px;text-align:right;">-${voucherDiscount}</td></tr>`
+    : '';
 
   const total =
     euro(session?.amount_total);
@@ -688,7 +847,7 @@ ${orderNumber}
 ${productText}
 
 Zwischensumme: ${subtotal}
-Versand: ${shipping}
+Versand: ${shipping}${voucherTextLine}
 Gesamtbetrag: ${total}
 
 Ich verpacke dein neues Lieblingsstück nun ganz behutsam, mit großer Sorgfalt und plastikfrei, damit es sicher bei dir ankommt.
@@ -841,6 +1000,8 @@ von Dragemor Pottery
               ${shipping}
             </td>
           </tr>
+
+          ${voucherHtmlRow}
 
           <tr>
             <td style="
@@ -1017,6 +1178,11 @@ export default async function handler(req, res) {
     const event =
       JSON.parse(rawBody.toString('utf8'));
 
+    if (event.type === 'checkout.session.expired') {
+      const expiredSession = event.data?.object;
+      await releaseVoucherReservationFromSession(expiredSession);
+    }
+
     if (
       event.type ===
       'checkout.session.completed'
@@ -1041,7 +1207,8 @@ export default async function handler(req, res) {
       ) {
         const lineItems =
           await getStripeLineItems(
-            session.id
+            session.id,
+            session?.livemode !== false
           );
         
 const productIds = (
@@ -1051,7 +1218,8 @@ const productIds = (
   .map(id => id.trim())
   .filter(Boolean);
 
-await markProductsAsSold(productIds); 
+await markProductsAsSold(productIds);
+        await redeemVoucherFromSession(session);
         const invoiceNumber = await createInvoice(session, lineItems); 
         
         await sendInternalOrderEmail(
