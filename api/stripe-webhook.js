@@ -1132,6 +1132,35 @@ von Dragemor Pottery
   });
 } 
 
+async function processPaidCheckoutSession(session) {
+  if (!session?.id) {
+    throw new Error('Stripe Session-ID fehlt.');
+  }
+
+  if (session?.payment_status !== 'paid') {
+    return;
+  }
+
+  const lineItems = await getStripeLineItems(
+    session.id,
+    session?.livemode !== false
+  );
+
+  const productIds = (session?.metadata?.dragemor_product_ids || '')
+    .split(',')
+    .map(id => id.trim())
+    .filter(Boolean);
+
+  await markProductsAsSold(productIds);
+  await redeemVoucherFromSession(session);
+
+  const invoiceNumber = await createInvoice(session, lineItems);
+
+  await sendInternalOrderEmail(session, lineItems);
+  await sendCustomerOrderEmail(session, lineItems);
+  await sendInvoiceEmail(session, lineItems, invoiceNumber);
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({
@@ -1178,65 +1207,38 @@ export default async function handler(req, res) {
     const event =
       JSON.parse(rawBody.toString('utf8'));
 
-    if (event.type === 'checkout.session.expired') {
-      const expiredSession = event.data?.object;
-      await releaseVoucherReservationFromSession(expiredSession);
+    if (
+      event.type === 'checkout.session.expired' ||
+      event.type === 'checkout.session.async_payment_failed'
+    ) {
+      const releasedSession = event.data?.object;
+      await releaseVoucherReservationFromSession(releasedSession);
     }
 
-    if (
-      event.type ===
-      'checkout.session.completed'
-    ) {
-      const session =
-        event.data?.object;
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data?.object;
 
-      console.log(
-        'Stripe Checkout abgeschlossen:',
-        {
-          sessionId: session?.id,
-          paymentStatus:
-            session?.payment_status,
-          productIds:
-            session?.metadata
-              ?.dragemor_product_ids,
-        }
-      );
+      console.log('Stripe Checkout abgeschlossen:', {
+        sessionId: session?.id,
+        paymentStatus: session?.payment_status,
+        productIds: session?.metadata?.dragemor_product_ids,
+      });
 
-      if (
-        session?.payment_status === 'paid'
-      ) {
-        const lineItems =
-          await getStripeLineItems(
-            session.id,
-            session?.livemode !== false
-          );
-        
-const productIds = (
-  session?.metadata?.dragemor_product_ids || ''
-)
-  .split(',')
-  .map(id => id.trim())
-  .filter(Boolean);
-
-await markProductsAsSold(productIds);
-        await redeemVoucherFromSession(session);
-        const invoiceNumber = await createInvoice(session, lineItems); 
-        
-        await sendInternalOrderEmail(
-          session,
-          lineItems
-        );
-
-        await sendCustomerOrderEmail(
-          session,
-          lineItems
-        );
-        await sendInvoiceEmail(
-  session,
-  lineItems,
-  invoiceNumber
-); 
+      if (session?.payment_status === 'paid') {
+        await processPaidCheckoutSession(session);
       }
+    }
+
+    if (event.type === 'checkout.session.async_payment_succeeded') {
+      const session = event.data?.object;
+
+      console.log('Asynchrone Stripe-Zahlung erfolgreich:', {
+        sessionId: session?.id,
+        paymentStatus: session?.payment_status,
+        productIds: session?.metadata?.dragemor_product_ids,
+      });
+
+      await processPaidCheckoutSession(session);
     }
 
     return res.status(200).json({
