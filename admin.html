@@ -131,7 +131,24 @@
   <div id="marktListe" style="margin-top:20px;"></div>
 </div>
 
-<hr style="margin:32px 0; opacity:.3;"> 
+
+<div id="gutscheinBereich" style="margin: 24px 0;">
+  <h2>Gutscheine</h2>
+  <p style="line-height:1.6; opacity:.8;">
+    15 vorbereitete Papiergutscheine: 5 × 15 €, 5 × 25 € und 5 × 50 €.
+    Erst nach der Aktivierung beim Verkauf kann der Code im Onlineshop eingelöst werden.
+  </p>
+
+  <button id="gutscheineNeuLadenButton" type="button">
+    Gutscheine neu laden
+  </button>
+
+  <div id="gutscheinListe" style="margin-top:20px;">
+    Gutscheine werden geladen …
+  </div>
+</div>
+
+<hr style="margin:32px 0; opacity:.3;">
 
 <div id="neuesProduktBereich" style="margin: 24px 0;">
 
@@ -542,6 +559,150 @@ const loginBox = document.querySelector(".login");
 const verwaltung = document.getElementById("verwaltung");
 const produktListe = document.getElementById("produktListe");
 
+
+function euroVonCent(cent) {
+  return (Number(cent || 0) / 100).toLocaleString("de-DE", {
+    style: "currency",
+    currency: "EUR"
+  });
+}
+
+function gutscheinStatusText(status) {
+  if (status === "prepared") return "Vorbereitet – noch nicht einlösbar";
+  if (status === "active") return "Aktiv ♡";
+  if (status === "redeemed") return "Vollständig eingelöst";
+  if (status === "disabled") return "Gesperrt";
+  return status || "–";
+}
+
+async function gutscheinAktion(action, code) {
+  try {
+    const response = await fetch("/api/admin-products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, code })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      alert(data.error || "Der Gutschein konnte nicht geändert werden.");
+      return;
+    }
+
+    await ladeGutscheine();
+  } catch (error) {
+    console.error(error);
+    alert("Der Gutschein konnte nicht geändert werden.");
+  }
+}
+
+async function ladeGutscheine() {
+  const liste = document.getElementById("gutscheinListe");
+  if (!liste) return;
+
+  liste.innerHTML = "Gutscheine werden geladen …";
+
+  try {
+    const response = await fetch("/api/admin-products?resource=vouchers", {
+      cache: "no-store"
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      liste.innerHTML = data.error || "Gutscheine konnten nicht geladen werden.";
+      return;
+    }
+
+    const vouchers = Array.isArray(data.vouchers) ? data.vouchers : [];
+    if (!vouchers.length) {
+      liste.innerHTML = "Noch keine Gutscheine vorhanden.";
+      return;
+    }
+
+    liste.innerHTML = "";
+
+    vouchers.forEach(voucher => {
+      const card = document.createElement("div");
+      card.style.background = "#f4f0e7";
+      card.style.padding = "18px";
+      card.style.marginBottom = "12px";
+      card.style.borderRadius = "14px";
+      card.style.border = "1px solid rgba(41,42,38,.12)";
+
+      const original = Number(voucher.initial_value || 0);
+      const rest = Number(voucher.balance || 0);
+      const unbenutzt = original === rest;
+
+      card.innerHTML = `
+        <strong style="font-size:1.05rem;">${voucher.code}</strong><br>
+        <div style="margin-top:10px; line-height:1.65;">
+          <div><strong>Wert:</strong> ${euroVonCent(original)}</div>
+          <div><strong>Restguthaben:</strong> ${euroVonCent(rest)}</div>
+          <div><strong>Status:</strong> ${gutscheinStatusText(voucher.status)}</div>
+        </div>
+      `;
+
+      const copyButton = document.createElement("button");
+      copyButton.type = "button";
+      copyButton.style.marginTop = "12px";
+      copyButton.textContent = "Code kopieren";
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(voucher.code);
+          copyButton.textContent = "Kopiert ♡";
+          setTimeout(() => { copyButton.textContent = "Code kopieren"; }, 1200);
+        } catch (error) {
+          alert(voucher.code);
+        }
+      });
+      card.appendChild(copyButton);
+
+      if (voucher.status === "prepared" || voucher.status === "disabled") {
+        const activate = document.createElement("button");
+        activate.type = "button";
+        activate.style.marginTop = "10px";
+        activate.textContent = "Beim Verkauf aktivieren ♡";
+        activate.addEventListener("click", async () => {
+          if (!confirm(`${voucher.code} wirklich aktivieren?\n\nDer Gutschein ist danach sofort online einlösbar.`)) return;
+          activate.disabled = true;
+          activate.textContent = "Wird aktiviert …";
+          await gutscheinAktion("activate-voucher", voucher.code);
+        });
+        card.appendChild(activate);
+      }
+
+      if (voucher.status === "active" && unbenutzt && !voucher.reserved_amount) {
+        const undo = document.createElement("button");
+        undo.type = "button";
+        undo.style.marginTop = "10px";
+        undo.textContent = "Aktivierung rückgängig";
+        undo.addEventListener("click", async () => {
+          if (!confirm(`${voucher.code} wieder auf „vorbereitet“ setzen?`)) return;
+          undo.disabled = true;
+          await gutscheinAktion("prepare-voucher", voucher.code);
+        });
+        card.appendChild(undo);
+      }
+
+      if (voucher.status === "active" && voucher.reserved_amount) {
+        const info = document.createElement("div");
+        info.style.marginTop = "10px";
+        info.style.fontSize = "14px";
+        info.style.opacity = ".75";
+        info.textContent = "Dieser Gutschein befindet sich gerade in einem Bezahlvorgang.";
+        card.appendChild(info);
+      }
+
+      liste.appendChild(card);
+    });
+  } catch (error) {
+    console.error(error);
+    liste.innerHTML = "Gutscheine konnten nicht geladen werden.";
+  }
+}
+
+document.getElementById("gutscheineNeuLadenButton")?.addEventListener("click", ladeGutscheine);
+
 async function ladeProdukte() {
   produktListe.innerHTML = "Produkte werden geladen …";
 
@@ -801,6 +962,7 @@ function zeigeVerwaltung() {
   verwaltung.style.display = "block";
   ladeProdukte();
   ladeMaerkte();
+  ladeGutscheine();
 } 
     
   async function checkLogin() {

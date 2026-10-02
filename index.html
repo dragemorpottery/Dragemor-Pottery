@@ -2562,6 +2562,7 @@
 .cart-item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid rgba(138,105,55,.2);align-items:center}.cart-item img{width:72px;height:72px;object-fit:cover;border-radius:10px}.cart-item h3{font-size:1rem;margin:0 0 4px;color:#354333}.cart-item p{margin:0;color:#8a6937;font-weight:700}.cart-remove{border:0;background:none;color:#7d5d2e;cursor:pointer;font:inherit;font-size:.9rem}
 .cart-footer{padding:20px 22px 26px;border-top:1px solid rgba(138,105,55,.25);background:#e9eee5}.cart-total{display:flex;justify-content:space-between;font-size:1.12rem;font-weight:700;margin-bottom:14px}.cart-checkout{width:100%;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.cart-checkout:disabled{opacity:.5;cursor:not-allowed}
 .add-to-cart{width:100%;margin-top:20px;padding:13px 18px;border:1px solid #b28a4b;border-radius:999px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.add-to-cart:disabled{opacity:.55;cursor:not-allowed}.cart-note{margin-top:9px;color:#657060;font-size:.86rem;line-height:1.45}
+.voucher-box{margin:0 0 16px;padding:14px;border:1px solid rgba(138,105,55,.28);border-radius:14px;background:#f8f6ef}.voucher-box label{display:block;margin-bottom:7px;color:#354333;font-weight:700}.voucher-row{display:flex;gap:8px}.voucher-row input{min-width:0;flex:1;margin:0;padding:11px 12px;border:1px solid rgba(53,67,51,.35);border-radius:10px;background:#fff;color:#273126;font:inherit;text-transform:uppercase}.voucher-apply,.voucher-remove{width:auto;padding:11px 13px;border:1px solid #b28a4b;border-radius:10px;background:#354333;color:#f4ead8;font:inherit;font-weight:700;cursor:pointer}.voucher-remove{margin-top:8px;background:transparent;color:#7d5d2e}.voucher-status{min-height:20px;margin:8px 0 0;color:#657060;font-size:.82rem;line-height:1.4}.voucher-status.ok{color:#354333;font-weight:700}.voucher-status.error{color:#8a493f}.cart-summary-row{display:flex;justify-content:space-between;gap:14px;margin:6px 0;color:#52604f}.cart-summary-row.discount{color:#7d5d2e}.cart-summary-row.final{padding-top:8px;margin-top:9px;border-top:1px solid rgba(138,105,55,.22);font-weight:700;color:#354333}
 .cart-backdrop{position:fixed;z-index:12999;inset:0;background:rgba(0,0,0,.45);display:none}.cart-backdrop.open{display:block}
 .product-card.coming-soon{position:relative}.product-card.coming-soon>img{opacity:.42;filter:saturate(.65)}.product-card.coming-soon::after{content:"Kommt bald wieder ♡";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);padding:8px 14px;border-radius:999px;background:rgba(53,67,51,.92);color:#f4ead8;font-weight:700;font-size:.9rem;box-shadow:0 5px 18px rgba(0,0,0,.18);pointer-events:none}.product-card.coming-soon .shop-card-price{display:none}.cart-item.coming-soon img{opacity:.42}.cart-item-coming{display:block;margin-top:4px;color:#7d5d2e;font-size:.82rem;font-weight:700}.cart-warning{display:block;margin:16px 0 0;padding:15px 16px;border:1px solid rgba(138,105,55,.28);border-radius:14px;background:#f8f6ef;color:#354333;font-size:.92rem;line-height:1.55;text-align:center}.cart-warning strong{display:block;margin-bottom:4px;color:#354333;font-size:1rem}
 @media(max-width:700px){.cart-open-button{top:88px;right:10px;padding:9px 12px}.cart-drawer{width:94vw}}
@@ -6391,15 +6392,28 @@ function navigateShop(kind, value){
   <div class="cart-head"><h2>Warenkorb</h2><button class="cart-close" type="button" onclick="closeCart()" aria-label="Warenkorb schließen">×</button></div>
   <div id="cartItems" class="cart-items"></div>
   <div class="cart-footer">
-    <div class="cart-total"><span>Gesamtsumme</span><span id="cartTotal">0,00 €</span></div>
+    <div class="voucher-box">
+      <label for="voucherCode">Gutscheincode</label>
+      <div class="voucher-row">
+        <input id="voucherCode" type="text" placeholder="z. B. DRG-…-15" autocomplete="off" maxlength="80">
+        <button id="voucherApplyButton" class="voucher-apply" type="button" onclick="applyVoucher()">Einlösen</button>
+      </div>
+      <p id="voucherStatus" class="voucher-status">Gutscheincode vollständig eingeben.</p>
+      <button id="voucherRemoveButton" class="voucher-remove" type="button" onclick="removeVoucher()" style="display:none;">Gutschein entfernen</button>
+    </div>
+    <div class="cart-summary-row"><span>Warenwert</span><span id="cartTotal">0,00 €</span></div>
+    <div id="voucherDiscountRow" class="cart-summary-row discount" style="display:none;"><span>Gutschein</span><span id="voucherDiscount">−0,00 €</span></div>
+    <div id="cartAfterVoucherRow" class="cart-summary-row final" style="display:none;"><span>Noch zu zahlen</span><span id="cartAfterVoucher">0,00 €</span></div>
     <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
-    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe.</p>
+    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe. Versand wird im Checkout ergänzt.</p>
   </div>
 </aside>
 <script>
 /* ===== WARENKORB – Einzelstücke, lokal im Browser gespeichert ===== */
 let dragemorCart = [];
 try { dragemorCart = JSON.parse(localStorage.getItem('dragemorCart') || '[]'); } catch(e) { dragemorCart = []; }
+let dragemorVoucher = null;
+try { dragemorVoucher = JSON.parse(localStorage.getItem('dragemorVoucher') || 'null'); } catch(e) { dragemorVoucher = null; }
 // Remove retired products from shopping carts saved before their deletion.
 const retiredProductIds = retiredLegacyIds;
 const previousCartSize = dragemorCart.length;
@@ -6411,6 +6425,84 @@ if (dragemorCart.length !== previousCartSize) {
 function numericEuroPrice(text){
   const m = String(text || '').trim().match(/^(\d+(?:[.,]\d{1,2})?)\s*€$/);
   return m ? Number(m[1].replace(',', '.')) : null;
+}
+function euroNumber(value){
+  return Number(value || 0).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+}
+function saveVoucher(){
+  try {
+    if(dragemorVoucher) localStorage.setItem('dragemorVoucher', JSON.stringify(dragemorVoucher));
+    else localStorage.removeItem('dragemorVoucher');
+  } catch(e) {}
+}
+function removeVoucher(){
+  dragemorVoucher=null;
+  saveVoucher();
+  const input=document.getElementById('voucherCode');
+  const status=document.getElementById('voucherStatus');
+  if(input) input.value='';
+  if(status){ status.textContent='Gutscheincode vollständig eingeben.'; status.className='voucher-status'; }
+  renderCart();
+}
+async function applyVoucher(){
+  const input=document.getElementById('voucherCode');
+  const status=document.getElementById('voucherStatus');
+  const button=document.getElementById('voucherApplyButton');
+  const code=String(input?.value || '').trim();
+  if(!code){
+    if(status){ status.textContent='Bitte gib den Gutscheincode ein.'; status.className='voucher-status error'; }
+    return;
+  }
+  if(button){ button.disabled=true; button.textContent='Prüfen …'; }
+  if(status){ status.textContent='Gutschein wird geprüft …'; status.className='voucher-status'; }
+  try{
+    const response=await fetch('/api/create-checkout-session',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'check-voucher',voucherCode:code})
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok || !data.valid) throw new Error(data.error || 'Gutschein konnte nicht geprüft werden.');
+    dragemorVoucher={code:data.code,balance:Number(data.balance || 0)};
+    saveVoucher();
+    if(input) input.value=data.code;
+    if(status){ status.textContent=`Gutschein aktiv – Guthaben ${euroNumber(Number(data.balance || 0)/100)} ♡`; status.className='voucher-status ok'; }
+    renderCart();
+  }catch(error){
+    dragemorVoucher=null;
+    saveVoucher();
+    if(status){ status.textContent=error.message || 'Gutschein konnte nicht geprüft werden.'; status.className='voucher-status error'; }
+    renderCart();
+  }finally{
+    if(button){ button.disabled=false; button.textContent='Einlösen'; }
+  }
+}
+function renderVoucherSummary(sum){
+  const input=document.getElementById('voucherCode');
+  const status=document.getElementById('voucherStatus');
+  const remove=document.getElementById('voucherRemoveButton');
+  const discountRow=document.getElementById('voucherDiscountRow');
+  const afterRow=document.getElementById('cartAfterVoucherRow');
+  const discountEl=document.getElementById('voucherDiscount');
+  const afterEl=document.getElementById('cartAfterVoucher');
+  if(!dragemorVoucher){
+    if(remove) remove.style.display='none';
+    if(discountRow) discountRow.style.display='none';
+    if(afterRow) afterRow.style.display='none';
+    return;
+  }
+  if(input && document.activeElement!==input) input.value=dragemorVoucher.code || '';
+  if(remove) remove.style.display='inline-block';
+  const balanceEuro=Number(dragemorVoucher.balance || 0)/100;
+  const discount=Math.max(0,Math.min(Number(sum || 0),balanceEuro));
+  if(discountRow) discountRow.style.display='flex';
+  if(afterRow) afterRow.style.display='flex';
+  if(discountEl) discountEl.textContent='−'+euroNumber(discount);
+  if(afterEl) afterEl.textContent=euroNumber(Math.max(0,Number(sum || 0)-discount));
+  if(status && !status.classList.contains('error')){
+    status.textContent=`Gutschein ${dragemorVoucher.code} – Guthaben ${euroNumber(balanceEuro)}. Versand wird separat berechnet.`;
+    status.className='voucher-status ok';
+  }
 }
 function saveCart(){ localStorage.setItem('dragemorCart', JSON.stringify(dragemorCart)); renderCart(); }
 function openCart(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartBackdrop').classList.add('open'); renderCart(); }
@@ -6467,6 +6559,7 @@ function renderCart(){
       getLiveProduct(item)?.available === true && !deletedProductIds.has(item.id));
   const sum=purchasableItems.reduce((a,x)=>a+Number(x.price||0),0);
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+  renderVoucherSummary(sum);
   checkout.disabled=!catalogSyncSucceeded || !dragemorCart.length ||
       hasMissing || hasComingSoon || cartHasPendingAvailability();
   const status=document.getElementById("checkoutStatus");
@@ -6498,7 +6591,7 @@ async function startStripeCheckout(){
     const response=await fetch('/api/create-checkout-session',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({items:dragemorCart.map(item=>({id:item.id,type:item.type}))})
+      body:JSON.stringify({items:dragemorCart.map(item=>({id:item.id,type:item.type})),voucherCode:dragemorVoucher?.code || ''})
     });
     const data=await response.json().catch(()=>({}));
     if(!response.ok || !data.url) throw new Error(data.error || 'Checkout konnte nicht gestartet werden.');
@@ -6636,9 +6729,13 @@ function handleCheckoutReturn(){
   if(checkoutResult==='success'){
     // Each optional cart operation must leave the confirmation usable on failure.
     try { localStorage.removeItem('dragemorCart'); } catch(e) {}
+    try { localStorage.removeItem('dragemorVoucher'); } catch(e) {}
     // A top-level let is not a window property and may still be uninitialized.
     try {
       if(typeof dragemorCart !== 'undefined') dragemorCart=[];
+    } catch(e) {}
+    try {
+      if(typeof dragemorVoucher !== 'undefined') dragemorVoucher=null;
     } catch(e) {}
     try { if(typeof renderCart === 'function') renderCart(); } catch(e) {}
     try { if(typeof closeCart === 'function') closeCart(); } catch(e) {}
@@ -6655,8 +6752,16 @@ function handleCheckoutReturn(){
       document.body.style.overflow='hidden';
     }
   } else if(checkoutResult==='cancel'){
+    const reservation=params.get('voucherReservation');
+    if(reservation){
+      fetch('/api/create-checkout-session',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'release-voucher',reservationToken:reservation})
+      }).catch(()=>{});
+    }
     const status=document.getElementById('checkoutStatus');
-    if(status) status.textContent='Die Zahlung wurde abgebrochen. Deine Artikel bleiben im Warenkorb.';
+    if(status) status.textContent='Die Zahlung wurde abgebrochen. Deine Artikel und dein Gutschein bleiben im Warenkorb.';
     openCart();
   }
 }
