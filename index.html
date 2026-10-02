@@ -6403,7 +6403,7 @@ function navigateShop(kind, value){
     </div>
     <div class="cart-summary-row"><span>Warenwert</span><span id="cartTotal">0,00 €</span></div>
     <div id="voucherDiscountRow" class="cart-summary-row discount" style="display:none;"><span>Gutschein</span><span id="voucherDiscount">−0,00 €</span></div>
-    <div id="cartAfterVoucherRow" class="cart-summary-row final" style="display:none;"><span>Noch zu zahlen</span><span id="cartAfterVoucher">0,00 €</span></div>
+    <div id="cartAfterVoucherRow" class="cart-summary-row final" style="display:none;"><span>Warenwert nach Gutschein</span><span id="cartAfterVoucher">0,00 €</span></div>
     <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
     <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe. Versand wird im Checkout ergänzt.</p>
   </div>
@@ -6568,34 +6568,40 @@ function renderCart(){
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
+
   if(!dragemorCart.length) return;
-  // Validate server data one more time before sending the cart to Stripe.
-  const beforeRefreshIds = dragemorCart.map(item => item.id);
-  const loaded = await refreshShopProductData(true);
-  if (!loaded || !catalogSyncSucceeded) {
-    if(status) status.textContent='Bitte versuche es erneut. Die Produktdaten konnten nicht geladen werden.';
+
+  if(cartHasComingSoon()){
+    if(status) status.innerHTML='<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>';
     return;
   }
-  if(beforeRefreshIds.length !== dragemorCart.length ||
-     dragemorCart.some(item => !getLiveProduct(item) || deletedProductIds.has(item.id))) {
-    if(status) status.textContent='Ein Artikel wurde inzwischen entfernt. Bitte prüfe deinen Warenkorb erneut.';
-    renderCart();
-    return;
-  }
-  if(cartHasComingSoon()){ if(status) status.innerHTML='<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>'; return; }
-  if(cartHasPendingAvailability()){ if(status) status.textContent='Die Verfügbarkeit wird noch geprüft. Bitte einen Moment warten.'; return; }
+
   checkout.disabled=true;
-  checkout.textContent='Checkout wird geöffnet …';
-  if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
+  checkout.textContent='Checkout wird vorbereitet …';
+  if(status) status.textContent='Warenkorb und Gutschein werden sicher geprüft …';
+
   try{
+    // Die API prüft Bestand, Produktstatus, Preis und Gutschein nochmals
+    // serverseitig direkt vor dem Erstellen der Stripe-Session.
     const response=await fetch('/api/create-checkout-session',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({items:dragemorCart.map(item=>({id:item.id,type:item.type})),voucherCode:dragemorVoucher?.code || ''})
+      body:JSON.stringify({
+        items:dragemorCart.map(item=>({id:item.id,type:item.type})),
+        voucherCode:dragemorVoucher?.code || ''
+      })
     });
+
     const data=await response.json().catch(()=>({}));
-    if(!response.ok || !data.url) throw new Error(data.error || 'Checkout konnte nicht gestartet werden.');
-    window.location.href=data.url;
+
+    if(!response.ok || !data.url){
+      throw new Error(data.error || 'Checkout konnte nicht gestartet werden.');
+    }
+
+    checkout.textContent='Stripe wird geöffnet …';
+    if(status) status.textContent='Du wirst sicher zu Stripe weitergeleitet.';
+    window.location.assign(data.url);
+
   }catch(error){
     console.error('Stripe Checkout Fehler:',error);
     if(status) status.textContent=error.message || 'Checkout konnte nicht gestartet werden.';
