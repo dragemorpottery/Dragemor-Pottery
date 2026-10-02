@@ -119,6 +119,32 @@ async function getStripeCheckoutSession(stripeSecretKey, sessionId) {
   return await response.json();
 }
 
+async function expireStripeCheckoutSession(stripeSecretKey, sessionId) {
+  if (!sessionId) return false;
+
+  const response = await fetch(
+    `https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}/expire`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${stripeSecretKey}`,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: ""
+    }
+  );
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data?.error?.message ||
+      "Der vorherige Stripe-Bezahlvorgang konnte nicht beendet werden."
+    );
+  }
+
+  return true;
+}
+
 async function createStripeCoupon(stripeSecretKey, voucher) {
   const params = new URLSearchParams();
   params.set("currency", "eur");
@@ -195,21 +221,6 @@ export default async function handler(req, res) {
         );
 
         if (
-          existingSession?.status === "open" &&
-          existingSession?.url &&
-          existingSession?.payment_status !== "paid"
-        ) {
-          return res.status(200).json({
-            valid: true,
-            code: voucher.code,
-            balance: Number(voucher.balance),
-            initialValue: Number(voucher.initial_value),
-            reserved: true,
-            checkoutUrl: existingSession.url
-          });
-        }
-
-        if (
           existingSession?.payment_status === "paid" ||
           existingSession?.status === "complete"
         ) {
@@ -218,7 +229,41 @@ export default async function handler(req, res) {
           });
         }
 
-        await releaseVoucherReservation(sql, voucher.reservation_token);
+        if (existingSession?.status === "open" && existingSession?.url) {
+          const requestItems = Array.isArray(req.body?.items) ? req.body.items : [];
+          const requestIds = requestItems
+            .map(item => String(item?.id || ""))
+            .filter(Boolean);
+
+          const sameProducts =
+            !requestIds.length ||
+            existingSession?.metadata?.dragemor_product_ids === requestIds.join(",");
+
+          if (sameProducts) {
+            return res.status(200).json({
+              valid: true,
+              code: voucher.code,
+              balance: Number(voucher.balance),
+              initialValue: Number(voucher.initial_value),
+              reserved: true,
+              checkoutUrl: existingSession.url
+            });
+          }
+
+          // Der Warenkorb wurde seit dem letzten Stripe-Aufruf verändert.
+          // Die alte Stripe-Session darf dann nicht mehr geöffnet werden.
+          await expireStripeCheckoutSession(
+            stripeSecretKey,
+            voucher.reserved_session_id
+          );
+          await releaseVoucherReservation(sql, voucher.reservation_token);
+        } else if (existingSession?.status === "expired") {
+          await releaseVoucherReservation(sql, voucher.reservation_token);
+        } else {
+          return res.status(409).json({
+            error: "Der vorherige Bezahlvorgang konnte gerade nicht geprüft werden. Bitte versuche es gleich noch einmal."
+          });
+        }
       } else {
         return res.status(409).json({
           error: "Dieser Gutschein wird gerade in einem anderen Bezahlvorgang verwendet."
@@ -374,6 +419,31 @@ export default async function handler(req, res) {
           return res.status(200).json({
             url: existingSession.url,
             reused: true
+          });
+        }
+
+        if (
+          existingSession?.payment_status === "paid" ||
+          existingSession?.status === "complete"
+        ) {
+          return res.status(409).json({
+            error: "Die Zahlung mit diesem Gutschein wird gerade verarbeitet."
+          });
+        }
+
+        if (existingSession?.status === "open" && !sameProducts) {
+          // Warenkorb geändert: alte Stripe-Session schließen und die
+          // Gutscheinreservierung sofort für den neuen Warenkorb freigeben.
+          await expireStripeCheckoutSession(
+            stripeSecretKey,
+            voucher.reserved_session_id
+          );
+          await releaseVoucherReservation(sql, voucher.reservation_token);
+        } else if (existingSession?.status === "expired") {
+          await releaseVoucherReservation(sql, voucher.reservation_token);
+        } else if (!existingSession) {
+          return res.status(409).json({
+            error: "Der vorherige Bezahlvorgang konnte gerade nicht geprüft werden. Bitte versuche es gleich noch einmal."
           });
         }
       }
