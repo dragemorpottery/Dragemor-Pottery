@@ -1137,9 +1137,12 @@ async function processPaidCheckoutSession(session) {
     throw new Error('Stripe Session-ID fehlt.');
   }
 
-  if (session?.payment_status !== 'paid') {
-    return;
-  }
+  if (
+  session?.payment_status !== 'paid' &&
+  session?.payment_status !== 'no_payment_required'
+) {
+  return;
+} 
 
   const lineItems = await getStripeLineItems(
     session.id,
@@ -1224,9 +1227,12 @@ export default async function handler(req, res) {
         productIds: session?.metadata?.dragemor_product_ids,
       });
 
-      if (session?.payment_status === 'paid') {
-        await processPaidCheckoutSession(session);
-      }
+    if (
+  session?.payment_status === 'paid' ||
+  session?.payment_status === 'no_payment_required'
+) {
+  await processPaidCheckoutSession(session);
+} 
     }
 
     if (event.type === 'checkout.session.async_payment_succeeded') {
