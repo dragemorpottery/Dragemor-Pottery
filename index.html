@@ -6479,7 +6479,11 @@ async function applyVoucher(){
     const response=await fetch('/api/create-checkout-session',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'check-voucher',voucherCode:code})
+      body:JSON.stringify({
+        action:'check-voucher',
+        voucherCode:code,
+        items:dragemorCart.map(item=>({id:item.id,type:item.type}))
+      })
     });
     const data=await response.json().catch(()=>({}));
     if(!response.ok || !data.valid) throw new Error(data.error || 'Gutschein konnte nicht geprüft werden.');
@@ -6762,6 +6766,13 @@ async function startStripeCheckout(){
     checkout.textContent='Zur Kasse';
   }
 }
+
+
+window.addEventListener('pageshow', function(){
+  if(typeof clearPreparedStripeCheckout === 'function'){
+    clearPreparedStripeCheckout();
+  }
+});
 
 function prepareCartButton(product){
   const detail=document.getElementById('product-detail'); if(!detail) return;
