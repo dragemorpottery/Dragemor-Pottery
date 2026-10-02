@@ -2568,6 +2568,118 @@
 @media(max-width:700px){.cart-open-button{top:88px;right:10px;padding:9px 12px}.cart-drawer{width:94vw}}
 </style>
 
+<style id="cart-visibility-improvements">
+/* ===== WARENKORB – besser lesbar auf Laptop & Handy ===== */
+.cart-drawer{
+  right:-590px;
+  width:min(560px,96vw);
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+.cart-head{
+  position:sticky;
+  top:0;
+  z-index:5;
+  padding:20px 26px;
+  background:#eef2ea;
+}
+
+.cart-items{
+  flex:0 0 auto;
+  overflow:visible;
+  padding:14px 26px 8px;
+}
+
+.cart-item{
+  grid-template-columns:88px minmax(0,1fr) auto;
+  gap:16px;
+  padding:16px 0;
+}
+
+.cart-item img{
+  width:88px;
+  height:88px;
+}
+
+.cart-item > div{
+  min-width:0;
+}
+
+.cart-item h3{
+  font-size:1.05rem;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+
+.cart-item p{
+  font-size:1rem;
+}
+
+.cart-remove{
+  align-self:center;
+  white-space:nowrap;
+}
+
+.cart-footer{
+  flex:0 0 auto;
+  padding:18px 26px 28px;
+}
+
+.voucher-box{
+  padding:16px;
+}
+
+@media(max-width:700px){
+  .cart-drawer{
+    right:-100vw;
+    width:100vw;
+    max-width:none;
+  }
+
+  .cart-head{
+    padding:18px 16px;
+  }
+
+  .cart-items{
+    padding:10px 16px 6px;
+  }
+
+  .cart-item{
+    grid-template-columns:70px minmax(0,1fr);
+    gap:12px;
+    padding:14px 0;
+  }
+
+  .cart-item img{
+    width:70px;
+    height:70px;
+  }
+
+  .cart-remove{
+    grid-column:2;
+    justify-self:start;
+    margin-top:2px;
+  }
+
+  .cart-footer{
+    padding:16px 16px 24px;
+  }
+
+  .voucher-row{
+    flex-wrap:wrap;
+  }
+
+  .voucher-row input{
+    flex-basis:100%;
+  }
+
+  .voucher-apply{
+    width:100%;
+  }
+}
+</style>
+
 
 <style id="shop-navigation-single-controller">
 /* Shop-Navigation: genau eine sichtbare Steuerung – das Hauptmenü. */
