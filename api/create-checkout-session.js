@@ -401,7 +401,9 @@ export default async function handler(req, res) {
     params.set("shipping_options[0][shipping_rate_data][fixed_amount][currency]", "eur");
     params.set("shipping_options[0][shipping_rate_data][display_name]", "DHL Paket – versicherter Versand");
     params.set("customer_creation", "always");
-    params.set("allow_promotion_codes", "false");
+    // WICHTIG: Stripe erlaubt `allow_promotion_codes` und `discounts`
+    // nicht gleichzeitig – auch nicht mit `allow_promotion_codes=false`.
+    // Ohne Gutschein ist der Parameter unnötig, weil false ohnehin Standard ist.
     params.set("metadata[dragemor_product_ids]", selected.map(({ id }) => id).join(","));
 
     if (voucherReservation) {
