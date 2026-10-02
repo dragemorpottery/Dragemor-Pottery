@@ -183,7 +183,47 @@ export default async function handler(req, res) {
       return res.status(409).json({ error: "Dieser Gutschein ist momentan nicht einlösbar." });
     }
     if (voucher.reservation_token && voucher.reserved_until) {
-      return res.status(409).json({ error: "Dieser Gutschein wird gerade in einem anderen Bezahlvorgang verwendet." });
+      const isPreview = process.env.VERCEL_ENV === "preview";
+      const stripeSecretKey = isPreview
+        ? process.env.STRIPE_TEST_SECRET_KEY
+        : process.env.STRIPE_SECRET_KEY;
+
+      if (stripeSecretKey && voucher.reserved_session_id) {
+        const existingSession = await getStripeCheckoutSession(
+          stripeSecretKey,
+          voucher.reserved_session_id
+        );
+
+        if (
+          existingSession?.status === "open" &&
+          existingSession?.url &&
+          existingSession?.payment_status !== "paid"
+        ) {
+          return res.status(200).json({
+            valid: true,
+            code: voucher.code,
+            balance: Number(voucher.balance),
+            initialValue: Number(voucher.initial_value),
+            reserved: true,
+            checkoutUrl: existingSession.url
+          });
+        }
+
+        if (
+          existingSession?.payment_status === "paid" ||
+          existingSession?.status === "complete"
+        ) {
+          return res.status(409).json({
+            error: "Die Zahlung mit diesem Gutschein wird gerade verarbeitet."
+          });
+        }
+
+        await releaseVoucherReservation(sql, voucher.reservation_token);
+      } else {
+        return res.status(409).json({
+          error: "Dieser Gutschein wird gerade in einem anderen Bezahlvorgang verwendet."
+        });
+      }
     }
 
     return res.status(200).json({
