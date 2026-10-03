@@ -43,7 +43,9 @@
       opacity: .7;
     }
 
-    input {
+    input,
+    select,
+    textarea {
       width: 100%;
       padding: 15px;
       margin-bottom: 14px;
@@ -51,6 +53,12 @@
       border-radius: 10px;
       background: white;
       font-size: 16px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
     }
 
     button {
@@ -69,6 +77,83 @@
       min-height: 22px;
       margin-top: 16px;
       font-size: 14px;
+    }
+
+    .hauptmenue {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 28px;
+    }
+
+    .hauptmenue button {
+      min-height: 68px;
+      padding: 14px 10px;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .adminBereich {
+      display: none;
+      margin: 24px 0;
+    }
+
+    .adminBereich.aktiv {
+      display: block;
+    }
+
+    .keramikKategorien {
+      display: none;
+      margin: 16px 0 22px;
+    }
+
+    .keramikKategorien.aktiv {
+      display: block;
+    }
+
+    .keramikKategorien button {
+      margin-bottom: 10px;
+      background: #f4f0e7;
+      color: #292a26;
+      border: 1px solid rgba(41,42,38,.18);
+    }
+
+    .keramikKategorien button.aktiv {
+      background: #292a26;
+      color: white;
+    }
+
+    .produktVorschau {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 16px;
+        align-items: flex-start;
+      }
+
+      #verwaltung {
+        padding-top: 12px;
+      }
+
+      .hauptmenue {
+        gap: 10px;
+      }
+
+      .hauptmenue button {
+        min-height: 72px;
+        font-size: 16px;
+      }
+
+      .produktVorschau {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -95,435 +180,553 @@
 
     <div id="message"></div>
   </div>
-  
-<div id="verwaltung" style="display:none; width:100%; max-width:700px;">
-    <h1>Produktverwaltung</h1>
+
+  <div id="verwaltung" style="display:none; width:100%; max-width:700px;">
+    <h1>Verwaltung</h1>
     <p class="subtitle">Dragemor Pottery ♡</p>
-<div id="marktBereich" style="margin: 24px 0;">
-  <h2>Markt-Termine</h2>
 
-  <button id="neuerMarktButton" type="button">
-    + Markt-Termin hinzufügen
-  </button>
-
-  <div id="marktFormular" style="display:none; margin-top:20px;">
-    <input type="text" id="marktName" placeholder="Name des Marktes">
-
-    <label for="marktDatum">Beginn:</label>
-<input type="date" id="marktDatum">
-
-<label for="marktEndDatum">Ende:</label>
-<input type="date" id="marktEndDatum"> 
-
-    <input type="text" id="marktUhrzeit" placeholder="Uhrzeit, z. B. 10:00–18:00 Uhr">
-
-    <input type="text" id="marktOrt" placeholder="Ort / Adresse">
-
-    <textarea id="marktInfo" placeholder="Zusatzinfo (optional)"></textarea>
-
-    <button type="button" id="marktSpeichernButton" style="margin-top:16px;">
-      Markt-Termin speichern ♡
-    </button>
-
-    <div id="marktSpeichernStatus" style="margin-top:10px;"></div>
-  </div>
-
-  <div id="marktListe" style="margin-top:20px;"></div>
-</div>
-
-
-<div id="gutscheinBereich" style="margin: 24px 0;">
-  <h2>Gutscheine</h2>
-  <p style="line-height:1.6; opacity:.8;">
-    15 vorbereitete Papiergutscheine: 5 × 15 €, 5 × 25 € und 5 × 50 €.
-    Erst nach der Aktivierung beim Verkauf kann der Code im Onlineshop eingelöst werden.
-  </p>
-
-  <button id="gutscheineNeuLadenButton" type="button">
-    Gutscheine neu laden
-  </button>
-
-  <div id="gutscheinListe" style="margin-top:20px;">
-    Gutscheine werden geladen …
-  </div>
-</div>
-
-<hr style="margin:32px 0; opacity:.3;">
-
-<div id="neuesProduktBereich" style="margin: 24px 0;">
-
-  <div id="neuesProduktFormular" style="display:none; margin-top:20px;">
-    <h2>Neues Produkt</h2>
-
-    <input type="text" id="produktName" placeholder="Name / Serie">
-
-    <select id="produktKategorie">
-        <option value="">Kategorie auswählen</option>
-        <option value="Momente des Innehaltens">Momente des Innehaltens</option>
-        <option value="Gemeinsame Zeit">Gemeinsame Zeit</option>
-        <option value="Raum für Natur">Raum für Natur</option>
-        <option value="Kleine Schätze">Kleine Schätze</option>
-        <option value="Weihnachtswerkstatt">Weihnachtswerkstatt</option>
-        <option value="Leder">Leder</option>
-    </select>
-
-    <input type="number" id="produktPreis" placeholder="Preis in €" step="0.01">
-
-    <input type="text" id="produktMass" placeholder="Volumen / Durchmesser / Größe">
-
-    <textarea id="produktBeschreibung" placeholder="Beschreibung"></textarea>
-
-<label for="produktBilder">Produktbilder auswählen:</label>
-<input type="file" id="produktBilder" accept="image/*" multiple>
-<button type="button" id="produktSpeichernButton" style="margin-top:16px;">
-    Produkt speichern ♡
-</button>
-
-<div id="produktSpeichernStatus" style="margin-top:10px;"></div> 
-</div> 
-</div> 
-  
-<button id="neuesProduktButton" type="button">+ Produkt hinzufügen</button> 
-    <div id="produktListe">
-      Produkte werden geladen …
+    <div class="hauptmenue">
+      <button type="button" data-bereich="gutscheine">Gutscheine</button>
+      <button type="button" data-bereich="keramik">Keramik</button>
+      <button type="button" data-bereich="leder">Leder</button>
+      <button type="button" data-bereich="maerkte">Markttermine</button>
     </div>
-  </div> 
-  
+
+    <div id="marktBereich" class="adminBereich">
+      <h2>Markt-Termine</h2>
+
+      <button id="neuerMarktButton" type="button">
+        + Markt-Termin hinzufügen
+      </button>
+
+      <div id="marktFormular" style="display:none; margin-top:20px;">
+        <input type="text" id="marktName" placeholder="Name des Marktes">
+
+        <label for="marktDatum">Beginn:</label>
+        <input type="date" id="marktDatum">
+
+        <label for="marktEndDatum">Ende:</label>
+        <input type="date" id="marktEndDatum">
+
+        <input type="text" id="marktUhrzeit" placeholder="Uhrzeit, z. B. 10:00–18:00 Uhr">
+
+        <input type="text" id="marktOrt" placeholder="Ort / Adresse">
+
+        <textarea id="marktInfo" placeholder="Zusatzinfo (optional)"></textarea>
+
+        <button type="button" id="marktSpeichernButton" style="margin-top:16px;">
+          Markt-Termin speichern ♡
+        </button>
+
+        <div id="marktSpeichernStatus" style="margin-top:10px;"></div>
+      </div>
+
+      <div id="marktListe" style="margin-top:20px;"></div>
+    </div>
+
+    <div id="gutscheinBereich" class="adminBereich">
+      <h2>Gutscheine</h2>
+      <p style="line-height:1.6; opacity:.8;">
+        15 vorbereitete Papiergutscheine: 5 × 15 €, 5 × 25 € und 5 × 50 €.
+        Erst nach der Aktivierung beim Verkauf kann der Code im Onlineshop eingelöst werden.
+      </p>
+
+      <button id="gutscheineNeuLadenButton" type="button">
+        Gutscheine neu laden
+      </button>
+
+      <div id="gutscheinListe" style="margin-top:20px;">
+        Gutscheine werden geladen …
+      </div>
+    </div>
+
+    <div id="produktBereich" class="adminBereich">
+      <h2 id="produktBereichTitel">Produkte</h2>
+
+      <div id="keramikKategorien" class="keramikKategorien">
+        <button type="button" data-kategorie="Momente des Innehaltens">Momente des Innehaltens</button>
+        <button type="button" data-kategorie="Gemeinsame Zeit">Gemeinsame Zeit</button>
+        <button type="button" data-kategorie="Raum für Natur">Raum für Natur</button>
+        <button type="button" data-kategorie="Kleine Schätze">Kleine Schätze</button>
+        <button type="button" data-kategorie="Weihnachtswerkstatt">Weihnachtswerkstatt</button>
+      </div>
+
+      <div id="neuesProduktBereich" style="margin: 24px 0;">
+        <div id="neuesProduktFormular" style="display:none; margin-top:20px;">
+          <h2>Neues Produkt</h2>
+
+          <input type="text" id="produktName" placeholder="Name / Serie">
+
+          <select id="produktKategorie">
+            <option value="">Kategorie auswählen</option>
+            <option value="Momente des Innehaltens">Momente des Innehaltens</option>
+            <option value="Gemeinsame Zeit">Gemeinsame Zeit</option>
+            <option value="Raum für Natur">Raum für Natur</option>
+            <option value="Kleine Schätze">Kleine Schätze</option>
+            <option value="Weihnachtswerkstatt">Weihnachtswerkstatt</option>
+            <option value="Leder">Leder</option>
+          </select>
+
+          <input type="number" id="produktPreis" placeholder="Preis in €" step="0.01">
+
+          <input type="text" id="produktMass" placeholder="Volumen / Durchmesser / Größe">
+
+          <textarea id="produktBeschreibung" placeholder="Beschreibung"></textarea>
+
+          <label for="produktBilder">Produktbilder auswählen:</label>
+          <input type="file" id="produktBilder" accept="image/*" multiple>
+
+          <button type="button" id="produktSpeichernButton" style="margin-top:16px;">
+            Produkt speichern ♡
+          </button>
+
+          <div id="produktSpeichernStatus" style="margin-top:10px;"></div>
+        </div>
+      </div>
+
+      <button id="neuesProduktButton" type="button">+ Produkt hinzufügen</button>
+
+      <div id="produktListe" style="margin-top:20px;">
+        Produkte werden geladen …
+      </div>
+    </div>
+  </div>
+
   <script>
-document.getElementById("neuerMarktButton")?.addEventListener("click", () => {
-  const formular = document.getElementById("marktFormular");
+    let aktiveProduktAnsicht = null;
+    let aktiveKeramikKategorie = null;
+    let produktDatenCache = null;
 
-  if (formular.style.display === "none") {
-    marktInBearbeitung = null;
+    function alleBereicheSchliessen() {
+      document.querySelectorAll(".adminBereich").forEach(bereich => {
+        bereich.classList.remove("aktiv");
+      });
+    }
 
-    document.getElementById("marktName").value = "";
-    document.getElementById("marktDatum").value = "";
-    document.getElementById("marktEndDatum").value = "";
-    document.getElementById("marktUhrzeit").value = "";
-    document.getElementById("marktOrt").value = "";
-    document.getElementById("marktInfo").value = "";
-    document.getElementById("marktSpeichernStatus").textContent = "";
+    function setzeAktivenHauptbutton(name) {
+      document.querySelectorAll(".hauptmenue button").forEach(button => {
+        button.style.opacity =
+          button.dataset.bereich === name ? "1" : ".72";
+      });
+    }
 
-    formular.style.display = "block";
-  } else {
-    formular.style.display = "none";
-  }
-}); 
+    function zeigeBereich(name) {
+      alleBereicheSchliessen();
+      setzeAktivenHauptbutton(name);
+
+      const keramikKategorien =
+        document.getElementById("keramikKategorien");
+      const produktTitel =
+        document.getElementById("produktBereichTitel");
+
+      if (name === "gutscheine") {
+        document.getElementById("gutscheinBereich").classList.add("aktiv");
+        return;
+      }
+
+      if (name === "maerkte") {
+        document.getElementById("marktBereich").classList.add("aktiv");
+        return;
+      }
+
+      document.getElementById("produktBereich").classList.add("aktiv");
+
+      if (name === "leder") {
+        aktiveProduktAnsicht = "leder";
+        aktiveKeramikKategorie = null;
+        keramikKategorien.classList.remove("aktiv");
+        produktTitel.textContent = "Leder";
+        ladeProdukte();
+        return;
+      }
+
+      if (name === "keramik") {
+        aktiveProduktAnsicht = "keramik";
+        aktiveKeramikKategorie = null;
+        keramikKategorien.classList.add("aktiv");
+        produktTitel.textContent = "Keramik";
+
+        keramikKategorien
+          .querySelectorAll("button")
+          .forEach(button => button.classList.remove("aktiv"));
+
+        produktListe.innerHTML =
+          "Bitte eine Keramik-Kategorie auswählen.";
+      }
+    }
+
+    document.querySelectorAll(".hauptmenue button").forEach(button => {
+      button.addEventListener("click", () => {
+        zeigeBereich(button.dataset.bereich);
+      });
+    });
+
+    document.querySelectorAll("#keramikKategorien button").forEach(button => {
+      button.addEventListener("click", () => {
+        aktiveProduktAnsicht = "keramik";
+        aktiveKeramikKategorie = button.dataset.kategorie;
+
+        document
+          .querySelectorAll("#keramikKategorien button")
+          .forEach(kategorieButton =>
+            kategorieButton.classList.remove("aktiv")
+          );
+
+        button.classList.add("aktiv");
+        ladeProdukte();
+      });
+    });
+
+    document.getElementById("neuerMarktButton")?.addEventListener("click", () => {
+      const formular = document.getElementById("marktFormular");
+
+      if (formular.style.display === "none") {
+        marktInBearbeitung = null;
+
+        document.getElementById("marktName").value = "";
+        document.getElementById("marktDatum").value = "";
+        document.getElementById("marktEndDatum").value = "";
+        document.getElementById("marktUhrzeit").value = "";
+        document.getElementById("marktOrt").value = "";
+        document.getElementById("marktInfo").value = "";
+        document.getElementById("marktSpeichernStatus").textContent = "";
+
+        formular.style.display = "block";
+      } else {
+        formular.style.display = "none";
+      }
+    });
 
     let marktInBearbeitung = null;
-document.getElementById("marktSpeichernButton")?.addEventListener("click", async () => {
-  const status = document.getElementById("marktSpeichernStatus");
 
-  const name = document.getElementById("marktName").value.trim();
-  const market_date = document.getElementById("marktDatum").value;
-  const end_date = document.getElementById("marktEndDatum").value; 
-  const time_text = document.getElementById("marktUhrzeit").value.trim();
-  const location = document.getElementById("marktOrt").value.trim();
-  const info = document.getElementById("marktInfo").value.trim();
+    document.getElementById("marktSpeichernButton")?.addEventListener("click", async () => {
+      const status = document.getElementById("marktSpeichernStatus");
 
-  if (!name || !market_date || !location) {
-    status.textContent = "Bitte Marktname, Datum und Ort ausfüllen.";
-    return;
-  }
+      const name = document.getElementById("marktName").value.trim();
+      const market_date = document.getElementById("marktDatum").value;
+      const end_date = document.getElementById("marktEndDatum").value;
+      const time_text = document.getElementById("marktUhrzeit").value.trim();
+      const location = document.getElementById("marktOrt").value.trim();
+      const info = document.getElementById("marktInfo").value.trim();
 
-  status.textContent = "Markt-Termin wird gespeichert …";
+      if (!name || !market_date || !location) {
+        status.textContent = "Bitte Marktname, Datum und Ort ausfüllen.";
+        return;
+      }
 
-  try {
-    const response = await fetch("/api/admin-markets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      
-    body: JSON.stringify({
-  action: marktInBearbeitung ? "update-market" : undefined,
-  id: marktInBearbeitung,
-  name,
-  market_date,
-  end_date,
-  time_text,
-  location,
-  info
-}) 
-    });
+      status.textContent = "Markt-Termin wird gespeichert …";
 
-    const data = await response.json();
+      try {
+        const response = await fetch("/api/admin-markets", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-    if (!response.ok) {
-      status.textContent =
-        data.error || "Markt-Termin konnte nicht gespeichert werden.";
-      return;
-    }
-
-    status.textContent = "Markt-Termin wurde gespeichert ♡";
-    marktInBearbeitung = null;
-    await ladeMaerkte();
-
-    document.getElementById("marktName").value = "";
-    document.getElementById("marktDatum").value = "";
-    document.getElementById("marktUhrzeit").value = "";
-    document.getElementById("marktOrt").value = "";
-    document.getElementById("marktInfo").value = "";
-
-  } catch (error) {
-    console.error(error);
-    status.textContent = "Markt-Termin konnte nicht gespeichert werden.";
-  }
-}); 
-async function ladeMaerkte() {
-  const marktListe = document.getElementById("marktListe");
-
-  marktListe.innerHTML = "Markt-Termine werden geladen …";
-
-  try {
-    const response = await fetch("/api/admin-markets", {
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      marktListe.innerHTML =
-        "Markt-Termine konnten nicht geladen werden.";
-      return;
-    }
-
-    const data = await response.json();
-
-    if (!data.markets || data.markets.length === 0) {
-      marktListe.innerHTML =
-        "Noch keine Markt-Termine eingetragen.";
-      return;
-    }
-
-    marktListe.innerHTML = "";
-
-    data.markets.forEach(markt => {
-      const card = document.createElement("div");
-
-      card.style.background = "#f4f0e7";
-      card.style.padding = "18px";
-      card.style.marginBottom = "12px";
-      card.style.borderRadius = "14px";
-
-      const datum = new Date(
-        markt.market_date
-      ).toLocaleDateString("de-DE");
-
-      const endDatum = markt.end_date
-        ? new Date(markt.end_date).toLocaleDateString("de-DE")
-        : null;
-
-      const datumText = endDatum
-        ? `${datum} – ${endDatum}`
-        : datum;
-
-      card.innerHTML = `
-        <strong>${markt.name}</strong><br>
-
-        <div style="margin-top:10px; line-height:1.6;">
-          <div><strong>Datum:</strong> ${datumText}</div>
-          <div><strong>Uhrzeit:</strong> ${markt.time_text || "–"}</div>
-          <div><strong>Ort:</strong> ${markt.location}</div>
-          <div><strong>Info:</strong> ${markt.info || "–"}</div>
-        </div>
-
-        <button
-          type="button"
-          class="marktBearbeitenButton"
-          style="margin-top:14px;"
-        >
-          Markt-Termin bearbeiten ✎
-        </button>
-
-        <button
-          type="button"
-          class="marktLoeschenButton"
-          style="margin-top:10px;"
-        >
-          Markt-Termin löschen 🗑
-        </button>
-      `;
-
-      const bearbeitenButton =
-        card.querySelector(".marktBearbeitenButton");
-
-      const loeschenButton =
-        card.querySelector(".marktLoeschenButton");
-
-      bearbeitenButton.addEventListener("click", () => {
-        document.getElementById("marktFormular").style.display = "block";
-
-        marktInBearbeitung = markt.id;
-
-        document.getElementById("marktName").value =
-          markt.name || "";
-
-        document.getElementById("marktDatum").value =
-          markt.market_date
-            ? String(markt.market_date).slice(0, 10)
-            : "";
-
-        document.getElementById("marktEndDatum").value =
-          markt.end_date
-            ? String(markt.end_date).slice(0, 10)
-            : "";
-
-        document.getElementById("marktUhrzeit").value =
-          markt.time_text || "";
-
-        document.getElementById("marktOrt").value =
-          markt.location || "";
-
-        document.getElementById("marktInfo").value =
-          markt.info || "";
-
-        document.getElementById("marktSpeichernStatus").textContent =
-          "Markt-Termin wird bearbeitet.";
-
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
+          body: JSON.stringify({
+            action: marktInBearbeitung ? "update-market" : undefined,
+            id: marktInBearbeitung,
+            name,
+            market_date,
+            end_date,
+            time_text,
+            location,
+            info
+          })
         });
-      });
 
-      loeschenButton.addEventListener("click", async () => {
-        const wirklichLoeschen = confirm(
-          `${markt.name} wirklich endgültig löschen?`
-        );
+        const data = await response.json();
 
-        if (!wirklichLoeschen) {
+        if (!response.ok) {
+          status.textContent =
+            data.error || "Markt-Termin konnte nicht gespeichert werden.";
           return;
         }
 
-        loeschenButton.disabled = true;
-        loeschenButton.textContent = "Wird gelöscht …";
+        status.textContent = "Markt-Termin wurde gespeichert ♡";
+        marktInBearbeitung = null;
+        await ladeMaerkte();
 
-        try {
-          const response = await fetch("/api/admin-markets", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              action: "delete-market",
-              id: markt.id
-            })
-          });
+        document.getElementById("marktName").value = "";
+        document.getElementById("marktDatum").value = "";
+        document.getElementById("marktEndDatum").value = "";
+        document.getElementById("marktUhrzeit").value = "";
+        document.getElementById("marktOrt").value = "";
+        document.getElementById("marktInfo").value = "";
 
-          const data = await response.json();
-
-          if (!response.ok) {
-            alert(
-              data.error ||
-              "Markt-Termin konnte nicht gelöscht werden."
-            );
-
-            loeschenButton.disabled = false;
-            loeschenButton.textContent =
-              "Markt-Termin löschen 🗑";
-
-            return;
-          }
-
-          await ladeMaerkte();
-
-        } catch (error) {
-          console.error(error);
-
-          alert("Markt-Termin konnte nicht gelöscht werden.");
-
-          loeschenButton.disabled = false;
-          loeschenButton.textContent =
-            "Markt-Termin löschen 🗑";
-        }
-      });
-
-      marktListe.appendChild(card);
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Markt-Termin konnte nicht gespeichert werden.";
+      }
     });
 
-  } catch (error) {
-    console.error(error);
+    async function ladeMaerkte() {
+      const marktListe = document.getElementById("marktListe");
 
-    marktListe.innerHTML =
-      "Markt-Termine konnten nicht geladen werden.";
-  }
-}
-  
- document.getElementById("neuesProduktButton")?.addEventListener("click", () => {
-    const formular = document.getElementById("neuesProduktFormular");
+      marktListe.innerHTML = "Markt-Termine werden geladen …";
 
-    if (formular.style.display === "none") {
-        formular.style.display = "block";
-    } else {
-        formular.style.display = "none";
-    }
-}); 
-let produktInBearbeitung = null;
-document.getElementById("produktSpeichernButton").addEventListener("click", async () => {
-  const status = document.getElementById("produktSpeichernStatus");
+      try {
+        const response = await fetch("/api/admin-markets", {
+          cache: "no-store"
+        });
 
-  const name = document.getElementById("produktName").value.trim();
-  const category = document.getElementById("produktKategorie").value;
-  const priceEuro = document.getElementById("produktPreis").value;
-  const measure = document.getElementById("produktMass").value.trim();
-  const description = document.getElementById("produktBeschreibung").value.trim();
-  const imageFiles = Array.from(document.getElementById("produktBilder").files);
-
-  if (!name || !category || !priceEuro) {
-    status.textContent = "Bitte Name, Kategorie und Preis ausfüllen.";
-    return;
-  }
-
-  status.textContent = "Produkt wird gespeichert …";
-  const productId = produktInBearbeitung || `produkt-${Date.now()}`; 
-  const price = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
-
- const images = await Promise.all(
-  imageFiles.map(file => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = event => {
-      const img = new Image();
-
-      img.onload = () => {
-        const maxSize = 1400;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height && width > maxSize) {
-          height = Math.round(height * maxSize / width);
-          width = maxSize;
-        } else if (height > maxSize) {
-          width = Math.round(width * maxSize / height);
-          height = maxSize;
+        if (!response.ok) {
+          marktListe.innerHTML =
+            "Markt-Termine konnten nicht geladen werden.";
+          return;
         }
 
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
+        const data = await response.json();
 
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
+        if (!data.markets || data.markets.length === 0) {
+          marktListe.innerHTML =
+            "Noch keine Markt-Termine eingetragen.";
+          return;
+        }
 
-        resolve(canvas.toDataURL("image/jpeg", 0.8));
-      };
+        marktListe.innerHTML = "";
 
-      img.onerror = reject;
-      img.src = event.target.result;
-    };
+        data.markets.forEach(markt => {
+          const card = document.createElement("div");
 
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  }))
-); 
+          card.style.background = "#f4f0e7";
+          card.style.padding = "18px";
+          card.style.marginBottom = "12px";
+          card.style.borderRadius = "14px";
 
+          const datum = new Date(
+            markt.market_date
+          ).toLocaleDateString("de-DE");
 
-try {
-    const response = await fetch("/api/admin-products", {
-        method: "POST",
-        headers: {
+          const endDatum = markt.end_date
+            ? new Date(markt.end_date).toLocaleDateString("de-DE")
+            : null;
+
+          const datumText = endDatum
+            ? `${datum} – ${endDatum}`
+            : datum;
+
+          card.innerHTML = `
+            <strong>${markt.name}</strong><br>
+
+            <div style="margin-top:10px; line-height:1.6;">
+              <div><strong>Datum:</strong> ${datumText}</div>
+              <div><strong>Uhrzeit:</strong> ${markt.time_text || "–"}</div>
+              <div><strong>Ort:</strong> ${markt.location}</div>
+              <div><strong>Info:</strong> ${markt.info || "–"}</div>
+            </div>
+
+            <button
+              type="button"
+              class="marktBearbeitenButton"
+              style="margin-top:14px;"
+            >
+              Markt-Termin bearbeiten ✎
+            </button>
+
+            <button
+              type="button"
+              class="marktLoeschenButton"
+              style="margin-top:10px;"
+            >
+              Markt-Termin löschen 🗑
+            </button>
+          `;
+
+          const bearbeitenButton =
+            card.querySelector(".marktBearbeitenButton");
+
+          const loeschenButton =
+            card.querySelector(".marktLoeschenButton");
+
+          bearbeitenButton.addEventListener("click", () => {
+            document.getElementById("marktFormular").style.display = "block";
+
+            marktInBearbeitung = markt.id;
+
+            document.getElementById("marktName").value =
+              markt.name || "";
+
+            document.getElementById("marktDatum").value =
+              markt.market_date
+                ? String(markt.market_date).slice(0, 10)
+                : "";
+
+            document.getElementById("marktEndDatum").value =
+              markt.end_date
+                ? String(markt.end_date).slice(0, 10)
+                : "";
+
+            document.getElementById("marktUhrzeit").value =
+              markt.time_text || "";
+
+            document.getElementById("marktOrt").value =
+              markt.location || "";
+
+            document.getElementById("marktInfo").value =
+              markt.info || "";
+
+            document.getElementById("marktSpeichernStatus").textContent =
+              "Markt-Termin wird bearbeitet.";
+
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+          });
+
+          loeschenButton.addEventListener("click", async () => {
+            const wirklichLoeschen = confirm(
+              `${markt.name} wirklich endgültig löschen?`
+            );
+
+            if (!wirklichLoeschen) {
+              return;
+            }
+
+            loeschenButton.disabled = true;
+            loeschenButton.textContent = "Wird gelöscht …";
+
+            try {
+              const response = await fetch("/api/admin-markets", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  action: "delete-market",
+                  id: markt.id
+                })
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                alert(
+                  data.error ||
+                  "Markt-Termin konnte nicht gelöscht werden."
+                );
+
+                loeschenButton.disabled = false;
+                loeschenButton.textContent =
+                  "Markt-Termin löschen 🗑";
+
+                return;
+              }
+
+              await ladeMaerkte();
+
+            } catch (error) {
+              console.error(error);
+
+              alert("Markt-Termin konnte nicht gelöscht werden.");
+
+              loeschenButton.disabled = false;
+              loeschenButton.textContent =
+                "Markt-Termin löschen 🗑";
+            }
+          });
+
+          marktListe.appendChild(card);
+        });
+
+      } catch (error) {
+        console.error(error);
+
+        marktListe.innerHTML =
+          "Markt-Termine konnten nicht geladen werden.";
+      }
+    }
+
+    document.getElementById("neuesProduktButton")?.addEventListener("click", () => {
+      const formular = document.getElementById("neuesProduktFormular");
+
+      if (formular.style.display === "none") {
+        formular.style.display = "block";
+
+        if (!produktInBearbeitung) {
+          if (aktiveProduktAnsicht === "leder") {
+            document.getElementById("produktKategorie").value = "Leder";
+          } else if (
+            aktiveProduktAnsicht === "keramik" &&
+            aktiveKeramikKategorie
+          ) {
+            document.getElementById("produktKategorie").value =
+              aktiveKeramikKategorie;
+          }
+        }
+      } else {
+        formular.style.display = "none";
+      }
+    });
+
+    let produktInBearbeitung = null;
+
+    document.getElementById("produktSpeichernButton").addEventListener("click", async () => {
+      const status = document.getElementById("produktSpeichernStatus");
+
+      const name = document.getElementById("produktName").value.trim();
+      const category = document.getElementById("produktKategorie").value;
+      const priceEuro = document.getElementById("produktPreis").value;
+      const measure = document.getElementById("produktMass").value.trim();
+      const description = document.getElementById("produktBeschreibung").value.trim();
+      const imageFiles = Array.from(document.getElementById("produktBilder").files);
+
+      if (!name || !category || !priceEuro) {
+        status.textContent = "Bitte Name, Kategorie und Preis ausfüllen.";
+        return;
+      }
+
+      status.textContent = "Produkt wird gespeichert …";
+      const productId = produktInBearbeitung || `produkt-${Date.now()}`;
+      const price = Math.round(parseFloat(priceEuro.replace(",", ".")) * 100);
+
+      const images = await Promise.all(
+        imageFiles.map(file => new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = event => {
+            const img = new Image();
+
+            img.onload = () => {
+              const maxSize = 1400;
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height && width > maxSize) {
+                height = Math.round(height * maxSize / width);
+                width = maxSize;
+              } else if (height > maxSize) {
+                width = Math.round(width * maxSize / height);
+                height = maxSize;
+              }
+
+              const canvas = document.createElement("canvas");
+              canvas.width = width;
+              canvas.height = height;
+
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, width, height);
+
+              resolve(canvas.toDataURL("image/jpeg", 0.8));
+            };
+
+            img.onerror = reject;
+            img.src = event.target.result;
+          };
+
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        }))
+      );
+
+      try {
+        const response = await fetch("/api/admin-products", {
+          method: "POST",
+          headers: {
             "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+          },
+          body: JSON.stringify({
             action: produktInBearbeitung ? "update-product" : "create-product",
             product_id: productId,
             name,
@@ -531,501 +734,553 @@ try {
             price,
             measure,
             description,
-      images: images.length > 0 ? images : undefined
-        })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        status.textContent = data.error || "Produkt konnte nicht gespeichert werden.";
-        return;
-    }
-
-    status.textContent = "Produkt wurde gespeichert ♡";
-  produktInBearbeitung = null;
-    await ladeProdukte();
-
-} catch (error) {
-    console.error(error);
-    status.textContent = "Produkt konnte nicht gespeichert werden.";
-} 
-}); 
-
-  const form = document.getElementById("loginForm");
-  const message = document.getElementById("message");
-
-const loginBox = document.querySelector(".login");
-const verwaltung = document.getElementById("verwaltung");
-const produktListe = document.getElementById("produktListe");
-
-
-function euroVonCent(cent) {
-  return (Number(cent || 0) / 100).toLocaleString("de-DE", {
-    style: "currency",
-    currency: "EUR"
-  });
-}
-
-function gutscheinStatusText(status) {
-  if (status === "prepared") return "Vorbereitet – noch nicht einlösbar";
-  if (status === "active") return "Aktiv ♡";
-  if (status === "redeemed") return "Vollständig eingelöst";
-  if (status === "disabled") return "Gesperrt";
-  return status || "–";
-}
-
-async function gutscheinAktion(action, code) {
-  try {
-    const response = await fetch("/api/admin-products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, code })
-    });
-
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      alert(data.error || "Der Gutschein konnte nicht geändert werden.");
-      return;
-    }
-
-    await ladeGutscheine();
-  } catch (error) {
-    console.error(error);
-    alert("Der Gutschein konnte nicht geändert werden.");
-  }
-}
-
-async function ladeGutscheine() {
-  const liste = document.getElementById("gutscheinListe");
-  if (!liste) return;
-
-  liste.innerHTML = "Gutscheine werden geladen …";
-
-  try {
-    const response = await fetch("/api/admin-products?resource=vouchers", {
-      cache: "no-store"
-    });
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      liste.innerHTML = data.error || "Gutscheine konnten nicht geladen werden.";
-      return;
-    }
-
-    const vouchers = Array.isArray(data.vouchers) ? data.vouchers : [];
-    if (!vouchers.length) {
-      liste.innerHTML = "Noch keine Gutscheine vorhanden.";
-      return;
-    }
-
-    liste.innerHTML = "";
-
-    vouchers.forEach(voucher => {
-      const card = document.createElement("div");
-      card.style.background = "#f4f0e7";
-      card.style.padding = "18px";
-      card.style.marginBottom = "12px";
-      card.style.borderRadius = "14px";
-      card.style.border = "1px solid rgba(41,42,38,.12)";
-
-      const original = Number(voucher.initial_value || 0);
-      const rest = Number(voucher.balance || 0);
-      const unbenutzt = original === rest;
-
-      card.innerHTML = `
-        <strong style="font-size:1.05rem;">${voucher.code}</strong><br>
-        <div style="margin-top:10px; line-height:1.65;">
-          <div><strong>Wert:</strong> ${euroVonCent(original)}</div>
-          <div><strong>Restguthaben:</strong> ${euroVonCent(rest)}</div>
-          <div><strong>Status:</strong> ${gutscheinStatusText(voucher.status)}</div>
-        </div>
-      `;
-
-      const copyButton = document.createElement("button");
-      copyButton.type = "button";
-      copyButton.style.marginTop = "12px";
-      copyButton.textContent = "Code kopieren";
-      copyButton.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(voucher.code);
-          copyButton.textContent = "Kopiert ♡";
-          setTimeout(() => { copyButton.textContent = "Code kopieren"; }, 1200);
-        } catch (error) {
-          alert(voucher.code);
-        }
-      });
-      card.appendChild(copyButton);
-
-      if (voucher.status === "prepared" || voucher.status === "disabled") {
-        const activate = document.createElement("button");
-        activate.type = "button";
-        activate.style.marginTop = "10px";
-        activate.textContent = "Beim Verkauf aktivieren ♡";
-        activate.addEventListener("click", async () => {
-          if (!confirm(`${voucher.code} wirklich aktivieren?\n\nDer Gutschein ist danach sofort online einlösbar.`)) return;
-          activate.disabled = true;
-          activate.textContent = "Wird aktiviert …";
-          await gutscheinAktion("activate-voucher", voucher.code);
+            images: images.length > 0 ? images : undefined
+          })
         });
-        card.appendChild(activate);
-      }
 
-      if (voucher.status === "active" && unbenutzt && !voucher.reserved_amount) {
-        const undo = document.createElement("button");
-        undo.type = "button";
-        undo.style.marginTop = "10px";
-        undo.textContent = "Aktivierung rückgängig";
-        undo.addEventListener("click", async () => {
-          if (!confirm(`${voucher.code} wieder auf „vorbereitet“ setzen?`)) return;
-          undo.disabled = true;
-          await gutscheinAktion("prepare-voucher", voucher.code);
-        });
-        card.appendChild(undo);
-      }
-
-      if (voucher.status === "active" && voucher.reserved_amount) {
-        const info = document.createElement("div");
-        info.style.marginTop = "10px";
-        info.style.fontSize = "14px";
-        info.style.opacity = ".75";
-        info.textContent = "Dieser Gutschein befindet sich gerade in einem Bezahlvorgang.";
-        card.appendChild(info);
-      }
-
-      liste.appendChild(card);
-    });
-  } catch (error) {
-    console.error(error);
-    liste.innerHTML = "Gutscheine konnten nicht geladen werden.";
-  }
-}
-
-document.getElementById("gutscheineNeuLadenButton")?.addEventListener("click", ladeGutscheine);
-
-async function ladeProdukte() {
-  produktListe.innerHTML = "Produkte werden geladen …";
-
-  try {
-    const response = await fetch("/api/admin-products", {
-  cache: "no-store"
-}); 
-
-    if (!response.ok) {
-      produktListe.innerHTML = "Produkte konnten nicht geladen werden.";
-      return;
-    }
-
-    const data = await response.json();
-
-    produktListe.innerHTML = "";
-const keramikVorschaubilder = {
-  "keramik-1": "bilder/Keramik01.jpg",
-  "keramik-4": "bilder/Keramik04.jpg",
-  "keramik-7": "bilder/Keramik07.jpg",
-  "keramik-9": "bilder/Keramik09.jpg",
-  "keramik-12": "bilder/Keramik012.jpg",
-  "keramik-14": "bilder/Keramik014.jpg",
-  "keramik-22": "bilder/Keramik022.jpg",
-  "keramik-24": "bilder/Keramik024.jpg",
-  "keramik-30": "bilder/Keramik030.jpg",
-  "keramik-33": "bilder/Keramik033.jpg",
-  "keramik-37": "bilder/Keramik037.jpg",
-  "keramik-40": "bilder/Keramik040.jpg",
-  "keramik-49": "bilder/Keramik049.jpg",
-  "keramik-56": "bilder/Keramik056.jpg",
-  "keramik-58": "bilder/Keramik058.jpg"
-}; 
-    const lederVorschaubilder = {
-  "leder-1": "bilder/leder-galerie-01.jpg",
-  "leder-2": "bilder/leder-galerie-02.jpg",
-  "leder-3": "bilder/leder-galerie-03.jpg",
-  "leder-4": "bilder/leder-galerie-04.jpg",
-  "leder-5": "bilder/leder-galerie-05.jpg",
-  "leder-6": "bilder/leder-galerie-06.jpg",
-  "leder-7": "bilder/leder-galerie-07.jpg",
-  "leder-8": "bilder/leder-galerie-08.jpg",
-  "leder-9": "bilder/leder-galerie-09.jpg",
-  "leder-10": "bilder/leder-galerie-10.jpg",
-  "leder-11": "bilder/leder-galerie-11.jpg",
-  "leder-12": "bilder/leder-galerie-12.jpg"
-}; 
-
-
-const keramikProdukte = [
-  "keramik-1",
-  "keramik-4",
-  "keramik-7",
-  "keramik-9",
-  "keramik-12",
-  "keramik-14",
-  "keramik-22",
-  "keramik-24",
-  "keramik-26",
-  "keramik-30",
-  "keramik-33",
-  "keramik-37",
-  "keramik-40",
-  "keramik-49",
-  "keramik-53",
-  "keramik-56",
-  "keramik-58"
-];
-    const lederProdukte = [
-"leder-1",
-  "leder-2",
-  "leder-3",
-  "leder-4",
-  "leder-5",
-  "leder-6",
-  "leder-7",
-  "leder-8",
-  "leder-9",
-  "leder-10",
-  "leder-11",
-  "leder-12" 
-    ];
-    
-const sichtbareProdukte = data.products.filter(product =>
-    keramikProdukte.includes(product.product_id) ||
-    lederProdukte.includes(product.product_id) ||
-    product.product_id.startsWith("produkt-")
-); 
-    
-    sichtbareProdukte.forEach(product => {
-      const card = document.createElement("div");
-
-      card.style.background = "#f4f0e7";
-      card.style.padding = "18px";
-      card.style.marginBottom = "12px";
-      card.style.borderRadius = "14px";
-
-      const istVerfuegbar = product.status === "available";
-
-const statusText = istVerfuegbar
-  ? "Verfügbar ♡"
-  : "Mitgenommen ♡";
-
-const buttonText = istVerfuegbar
-  ? "Mitgenommen ♡"
-  : "Wieder verfügbar";
-
-card.innerHTML = `
-
- <strong>${product.name || product.product_id}</strong> 
-<br>
-<small>Produkt-ID: ${product.product_id}</small><br> 
-
-  <span>${statusText}</span>
-  
-<div style="margin-top:10px;line-height:1.6;">
-  <div><strong>Kategorie:</strong> ${product.category || "–"}</div>
-  <div><strong>Preis:</strong> ${product.price ? (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €" : "–"}</div>
-  <div><strong>Maß:</strong> ${product.measure || "–"}</div>
-  <div><strong>Beschreibung:</strong> ${product.description || "–"}</div>
-</div> 
-  <button class="statusButton"
-    type="button"
-    style="margin-top:14px;"
-    data-product-id="${product.product_id}"
-    data-new-status="${istVerfuegbar ? "sold" : "available"}"
-  >
-    ${buttonText}
-</button>
-
-<button class="editButton" type="button" style="margin-top:10px;">
-  Produkt bearbeiten ✎
-</button> 
-
-<button class="deleteButton" type="button" style="margin-top:10px;">
-  Produkt löschen 🗑
-</button> 
-${(product.images?.[0] || keramikVorschaubilder[product.product_id] || lederVorschaubilder[product.product_id]) ? `<img src="${product.images?.[0] || keramikVorschaubilder[product.product_id] || lederVorschaubilder[product.product_id]}" alt="${product.name || 'Produkt'}" style="width:100%;max-width:180px;border-radius:10px;margin-top:12px;">` : ""} 
-
-`;
-
-const button = card.querySelector(".statusButton");
-const editButton = card.querySelector(".editButton");
-const deleteButton = card.querySelector(".deleteButton");
-
-button.addEventListener("click", async () => {
-  const productId = button.dataset.productId;
-  const newStatus = button.dataset.newStatus;
-
-  const frage = newStatus === "sold"
-    ? `${productId} wirklich als mitgenommen markieren?`
-    : `${productId} wieder verfügbar machen?`;
-
-  if (!confirm(frage)) {
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Wird gespeichert …";
-
-  try {
-    const response = await fetch("/api/admin-products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        product_id: productId,
-        status: newStatus
-      })
-    });
-
-    if (!response.ok) {
-      alert("Der Status konnte nicht gespeichert werden.");
-      button.disabled = false;
-      return;
-    }
-
-    await ladeProdukte();
-
-  } catch (error) {
-    alert("Der Status konnte nicht gespeichert werden.");
-    button.disabled = false;
-  }
-});
-   editButton.addEventListener("click", () => {
-     document.getElementById("neuesProduktFormular").style.display = "block";
-     produktInBearbeitung = product.product_id;
-  document.getElementById("produktName").value = product.name || "";
-  document.getElementById("produktKategorie").value = product.category || "";
-  document.getElementById("produktPreis").value = product.price
-    ? (Number(product.price) / 100).toFixed(2)
-    : "";
-  document.getElementById("produktMass").value = product.measure || "";
-  document.getElementById("produktBeschreibung").value = product.description || "";
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}); 
-   
-
-deleteButton.addEventListener("click", async () => {
-  const wirklichLoeschen = confirm(
-    `${product.name || product.product_id} wirklich endgültig löschen?`
-  );
-
-  if (!wirklichLoeschen) {
-    return;
-  }
-
-  deleteButton.disabled = true;
-  deleteButton.textContent = "Wird gelöscht …";
-
-  try {
-    const response = await fetch("/api/admin-products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        action: "delete-product",
-        product_id: product.product_id
-        
-      })
-    });
-    
-
-    if (!response.ok) {
-      alert("Produkt konnte nicht gelöscht werden.");
-      deleteButton.disabled = false;
-      deleteButton.textContent = "Produkt löschen 🗑";
-      return;
-    }
-
-    await ladeProdukte();
-
-  } catch (error) {
-    alert("Produkt konnte nicht gelöscht werden.");
-    deleteButton.disabled = false;
-    deleteButton.textContent = "Produkt löschen 🗑";
-  }
-}); 
-      produktListe.appendChild(card); 
-
-    });
-
-  } catch (error) {
-    produktListe.innerHTML =
-      "Produkte konnten nicht geladen werden.";
-  }
-}
-
-function zeigeVerwaltung() {
-  loginBox.style.display = "none";
-  verwaltung.style.display = "block";
-  ladeProdukte();
-  ladeMaerkte();
-  ladeGutscheine();
-} 
-    
-  async function checkLogin() {
-    try {
-      const response = await fetch("/api/admin-check");
-
-      if (response.ok) {
         const data = await response.json();
 
-        if (data.authenticated) {
-          message.textContent = "Geschützte Sitzung aktiv ♡";
-          zeigeVerwaltung();
-          return true;
+        if (!response.ok) {
+          status.textContent = data.error || "Produkt konnte nicht gespeichert werden.";
+          return;
         }
+
+        status.textContent = "Produkt wurde gespeichert ♡";
+        produktInBearbeitung = null;
+        produktDatenCache = null;
+        await ladeProdukte();
+
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Produkt konnte nicht gespeichert werden.";
       }
-    } catch (error) {
-      console.error(error);
+    });
+
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    const loginBox = document.querySelector(".login");
+    const verwaltung = document.getElementById("verwaltung");
+    const produktListe = document.getElementById("produktListe");
+
+    function euroVonCent(cent) {
+      return (Number(cent || 0) / 100).toLocaleString("de-DE", {
+        style: "currency",
+        currency: "EUR"
+      });
     }
 
-    return false;
-  }
+    function gutscheinStatusText(status) {
+      if (status === "prepared") return "Vorbereitet – noch nicht einlösbar";
+      if (status === "active") return "Aktiv ♡";
+      if (status === "redeemed") return "Vollständig eingelöst";
+      if (status === "disabled") return "Gesperrt";
+      return status || "–";
+    }
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    async function gutscheinAktion(action, code) {
+      try {
+        const response = await fetch("/api/admin-products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, code })
+        });
 
-    const password = document.getElementById("password").value;
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          alert(data.error || "Der Gutschein konnte nicht geändert werden.");
+          return;
+        }
 
-    message.textContent = "Anmeldung wird geprüft …";
+        await ladeGutscheine();
+      } catch (error) {
+        console.error(error);
+        alert("Der Gutschein konnte nicht geändert werden.");
+      }
+    }
 
-    try {
-      const response = await fetch("/api/admin-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ password })
-      });
+    async function ladeGutscheine() {
+      const liste = document.getElementById("gutscheinListe");
+      if (!liste) return;
 
-      const data = await response.json();
+      liste.innerHTML = "Gutscheine werden geladen …";
 
-      if (response.ok && data.ok) {
-        document.getElementById("password").value = "";
+      try {
+        const response = await fetch("/api/admin-products?resource=vouchers", {
+          cache: "no-store"
+        });
+        const data = await response.json().catch(() => ({}));
 
-        const authenticated = await checkLogin();
+        if (!response.ok) {
+          liste.innerHTML = data.error || "Gutscheine konnten nicht geladen werden.";
+          return;
+        }
 
-        if (authenticated) {
-          message.textContent = "Geschützte Anmeldung erfolgreich ♡";
+        const vouchers = Array.isArray(data.vouchers) ? data.vouchers : [];
+        if (!vouchers.length) {
+          liste.innerHTML = "Noch keine Gutscheine vorhanden.";
+          return;
+        }
+
+        liste.innerHTML = "";
+
+        vouchers.forEach(voucher => {
+          const card = document.createElement("div");
+          card.style.background = "#f4f0e7";
+          card.style.padding = "18px";
+          card.style.marginBottom = "12px";
+          card.style.borderRadius = "14px";
+          card.style.border = "1px solid rgba(41,42,38,.12)";
+
+          const original = Number(voucher.initial_value || 0);
+          const rest = Number(voucher.balance || 0);
+          const unbenutzt = original === rest;
+
+          card.innerHTML = `
+            <strong style="font-size:1.05rem;">${voucher.code}</strong><br>
+            <div style="margin-top:10px; line-height:1.65;">
+              <div><strong>Wert:</strong> ${euroVonCent(original)}</div>
+              <div><strong>Restguthaben:</strong> ${euroVonCent(rest)}</div>
+              <div><strong>Status:</strong> ${gutscheinStatusText(voucher.status)}</div>
+            </div>
+          `;
+
+          const copyButton = document.createElement("button");
+          copyButton.type = "button";
+          copyButton.style.marginTop = "12px";
+          copyButton.textContent = "Code kopieren";
+          copyButton.addEventListener("click", async () => {
+            try {
+              await navigator.clipboard.writeText(voucher.code);
+              copyButton.textContent = "Kopiert ♡";
+              setTimeout(() => { copyButton.textContent = "Code kopieren"; }, 1200);
+            } catch (error) {
+              alert(voucher.code);
+            }
+          });
+          card.appendChild(copyButton);
+
+          if (voucher.status === "prepared" || voucher.status === "disabled") {
+            const activate = document.createElement("button");
+            activate.type = "button";
+            activate.style.marginTop = "10px";
+            activate.textContent = "Beim Verkauf aktivieren ♡";
+            activate.addEventListener("click", async () => {
+              if (!confirm(`${voucher.code} wirklich aktivieren?\n\nDer Gutschein ist danach sofort online einlösbar.`)) return;
+              activate.disabled = true;
+              activate.textContent = "Wird aktiviert …";
+              await gutscheinAktion("activate-voucher", voucher.code);
+            });
+            card.appendChild(activate);
+          }
+
+          if (voucher.status === "active" && unbenutzt && !voucher.reserved_amount) {
+            const undo = document.createElement("button");
+            undo.type = "button";
+            undo.style.marginTop = "10px";
+            undo.textContent = "Aktivierung rückgängig";
+            undo.addEventListener("click", async () => {
+              if (!confirm(`${voucher.code} wieder auf „vorbereitet“ setzen?`)) return;
+              undo.disabled = true;
+              await gutscheinAktion("prepare-voucher", voucher.code);
+            });
+            card.appendChild(undo);
+          }
+
+          if (voucher.status === "active" && voucher.reserved_amount) {
+            const info = document.createElement("div");
+            info.style.marginTop = "10px";
+            info.style.fontSize = "14px";
+            info.style.opacity = ".75";
+            info.textContent = "Dieser Gutschein befindet sich gerade in einem Bezahlvorgang.";
+            card.appendChild(info);
+          }
+
+          liste.appendChild(card);
+        });
+      } catch (error) {
+        console.error(error);
+        liste.innerHTML = "Gutscheine konnten nicht geladen werden.";
+      }
+    }
+
+    document.getElementById("gutscheineNeuLadenButton")?.addEventListener("click", ladeGutscheine);
+
+    async function ladeProdukte() {
+      if (!aktiveProduktAnsicht) {
+        return;
+      }
+
+      if (
+        aktiveProduktAnsicht === "keramik" &&
+        !aktiveKeramikKategorie
+      ) {
+        produktListe.innerHTML =
+          "Bitte eine Keramik-Kategorie auswählen.";
+        return;
+      }
+
+      produktListe.innerHTML = "Produkte werden geladen …";
+
+      try {
+        let data = produktDatenCache;
+
+        if (!data) {
+          const response = await fetch("/api/admin-products", {
+            cache: "no-store"
+          });
+
+          if (!response.ok) {
+            produktListe.innerHTML = "Produkte konnten nicht geladen werden.";
+            return;
+          }
+
+          data = await response.json();
+          produktDatenCache = data;
+        }
+
+        produktListe.innerHTML = "";
+
+        const keramikVorschaubilder = {
+          "keramik-1": "bilder/Keramik01.jpg",
+          "keramik-4": "bilder/Keramik04.jpg",
+          "keramik-7": "bilder/Keramik07.jpg",
+          "keramik-9": "bilder/Keramik09.jpg",
+          "keramik-12": "bilder/Keramik012.jpg",
+          "keramik-14": "bilder/Keramik014.jpg",
+          "keramik-22": "bilder/Keramik022.jpg",
+          "keramik-24": "bilder/Keramik024.jpg",
+          "keramik-30": "bilder/Keramik030.jpg",
+          "keramik-33": "bilder/Keramik033.jpg",
+          "keramik-37": "bilder/Keramik037.jpg",
+          "keramik-40": "bilder/Keramik040.jpg",
+          "keramik-49": "bilder/Keramik049.jpg",
+          "keramik-56": "bilder/Keramik056.jpg",
+          "keramik-58": "bilder/Keramik058.jpg"
+        };
+
+        const lederVorschaubilder = {
+          "leder-1": "bilder/leder-galerie-01.jpg",
+          "leder-2": "bilder/leder-galerie-02.jpg",
+          "leder-3": "bilder/leder-galerie-03.jpg",
+          "leder-4": "bilder/leder-galerie-04.jpg",
+          "leder-5": "bilder/leder-galerie-05.jpg",
+          "leder-6": "bilder/leder-galerie-06.jpg",
+          "leder-7": "bilder/leder-galerie-07.jpg",
+          "leder-8": "bilder/leder-galerie-08.jpg",
+          "leder-9": "bilder/leder-galerie-09.jpg",
+          "leder-10": "bilder/leder-galerie-10.jpg",
+          "leder-11": "bilder/leder-galerie-11.jpg",
+          "leder-12": "bilder/leder-galerie-12.jpg"
+        };
+
+        const keramikProdukte = [
+          "keramik-1",
+          "keramik-4",
+          "keramik-7",
+          "keramik-9",
+          "keramik-12",
+          "keramik-14",
+          "keramik-22",
+          "keramik-24",
+          "keramik-26",
+          "keramik-30",
+          "keramik-33",
+          "keramik-37",
+          "keramik-40",
+          "keramik-49",
+          "keramik-53",
+          "keramik-56",
+          "keramik-58"
+        ];
+
+        const lederProdukte = [
+          "leder-1",
+          "leder-2",
+          "leder-3",
+          "leder-4",
+          "leder-5",
+          "leder-6",
+          "leder-7",
+          "leder-8",
+          "leder-9",
+          "leder-10",
+          "leder-11",
+          "leder-12"
+        ];
+
+        const sichtbareProdukte = data.products.filter(product =>
+          keramikProdukte.includes(product.product_id) ||
+          lederProdukte.includes(product.product_id) ||
+          product.product_id.startsWith("produkt-")
+        );
+
+        const gefilterteProdukte = sichtbareProdukte.filter(product => {
+          const istLeder =
+            lederProdukte.includes(product.product_id) ||
+            product.product_id.startsWith("leder-") ||
+            product.category === "Leder";
+
+          if (aktiveProduktAnsicht === "leder") {
+            return istLeder;
+          }
+
+          if (aktiveProduktAnsicht === "keramik") {
+            return !istLeder &&
+              product.category === aktiveKeramikKategorie;
+          }
+
+          return false;
+        });
+
+        if (gefilterteProdukte.length === 0) {
+          produktListe.innerHTML =
+            "In diesem Bereich sind derzeit keine Produkte vorhanden.";
+          return;
+        }
+
+        gefilterteProdukte.forEach(product => {
+          const card = document.createElement("div");
+
+          card.style.background = "#f4f0e7";
+          card.style.padding = "18px";
+          card.style.marginBottom = "12px";
+          card.style.borderRadius = "14px";
+
+          const istVerfuegbar = product.status === "available";
+
+          const statusText = istVerfuegbar
+            ? "Verfügbar ♡"
+            : "Mitgenommen ♡";
+
+          const buttonText = istVerfuegbar
+            ? "Mitgenommen ♡"
+            : "Wieder verfügbar";
+
+          card.innerHTML = `
+            <strong>${product.name || product.product_id}</strong>
+            <br>
+            <small>Produkt-ID: ${product.product_id}</small><br>
+
+            <span>${statusText}</span>
+
+            <div style="margin-top:10px;line-height:1.6;">
+              <div><strong>Kategorie:</strong> ${product.category || "–"}</div>
+              <div><strong>Preis:</strong> ${product.price ? (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €" : "–"}</div>
+              <div><strong>Maß:</strong> ${product.measure || "–"}</div>
+              <div><strong>Beschreibung:</strong> ${product.description || "–"}</div>
+            </div>
+
+            <button class="statusButton"
+              type="button"
+              style="margin-top:14px;"
+              data-product-id="${product.product_id}"
+              data-new-status="${istVerfuegbar ? "sold" : "available"}"
+            >
+              ${buttonText}
+            </button>
+
+            <button class="editButton" type="button" style="margin-top:10px;">
+              Produkt bearbeiten ✎
+            </button>
+
+            <button class="deleteButton" type="button" style="margin-top:10px;">
+              Produkt löschen 🗑
+            </button>
+
+            ${(product.images?.[0] || keramikVorschaubilder[product.product_id] || lederVorschaubilder[product.product_id])
+              ? `<img class="produktVorschau" src="${product.images?.[0] || keramikVorschaubilder[product.product_id] || lederVorschaubilder[product.product_id]}" alt="${product.name || 'Produkt'}">`
+              : ""}
+          `;
+
+          const button = card.querySelector(".statusButton");
+          const editButton = card.querySelector(".editButton");
+          const deleteButton = card.querySelector(".deleteButton");
+
+          button.addEventListener("click", async () => {
+            const productId = button.dataset.productId;
+            const newStatus = button.dataset.newStatus;
+
+            const frage = newStatus === "sold"
+              ? `${productId} wirklich als mitgenommen markieren?`
+              : `${productId} wieder verfügbar machen?`;
+
+            if (!confirm(frage)) {
+              return;
+            }
+
+            button.disabled = true;
+            button.textContent = "Wird gespeichert …";
+
+            try {
+              const response = await fetch("/api/admin-products", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  product_id: productId,
+                  status: newStatus
+                })
+              });
+
+              if (!response.ok) {
+                alert("Der Status konnte nicht gespeichert werden.");
+                button.disabled = false;
+                return;
+              }
+
+              produktDatenCache = null;
+              await ladeProdukte();
+
+            } catch (error) {
+              alert("Der Status konnte nicht gespeichert werden.");
+              button.disabled = false;
+            }
+          });
+
+          editButton.addEventListener("click", () => {
+            document.getElementById("neuesProduktFormular").style.display = "block";
+            produktInBearbeitung = product.product_id;
+
+            document.getElementById("produktName").value = product.name || "";
+            document.getElementById("produktKategorie").value = product.category || "";
+            document.getElementById("produktPreis").value = product.price
+              ? (Number(product.price) / 100).toFixed(2)
+              : "";
+            document.getElementById("produktMass").value = product.measure || "";
+            document.getElementById("produktBeschreibung").value = product.description || "";
+
+            document.getElementById("neuesProduktFormular").scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+          });
+
+          deleteButton.addEventListener("click", async () => {
+            const wirklichLoeschen = confirm(
+              `${product.name || product.product_id} wirklich endgültig löschen?`
+            );
+
+            if (!wirklichLoeschen) {
+              return;
+            }
+
+            deleteButton.disabled = true;
+            deleteButton.textContent = "Wird gelöscht …";
+
+            try {
+              const response = await fetch("/api/admin-products", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  action: "delete-product",
+                  product_id: product.product_id
+                })
+              });
+
+              if (!response.ok) {
+                alert("Produkt konnte nicht gelöscht werden.");
+                deleteButton.disabled = false;
+                deleteButton.textContent = "Produkt löschen 🗑";
+                return;
+              }
+
+              produktDatenCache = null;
+              await ladeProdukte();
+
+            } catch (error) {
+              alert("Produkt konnte nicht gelöscht werden.");
+              deleteButton.disabled = false;
+              deleteButton.textContent = "Produkt löschen 🗑";
+            }
+          });
+
+          produktListe.appendChild(card);
+        });
+
+      } catch (error) {
+        produktListe.innerHTML =
+          "Produkte konnten nicht geladen werden.";
+      }
+    }
+
+    function zeigeVerwaltung() {
+      loginBox.style.display = "none";
+      verwaltung.style.display = "block";
+
+      // Die bisherigen Daten werden weiterhin wie bisher geladen.
+      // Sichtbar wird aber nur der Bereich, den du anklickst.
+      ladeMaerkte();
+      ladeGutscheine();
+
+      // Produkte werden erst geladen, sobald Keramik oder Leder geöffnet wird.
+      // Das ändert weder Upload noch Website-Bilder.
+    }
+
+    async function checkLogin() {
+      try {
+        const response = await fetch("/api/admin-check");
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.authenticated) {
+            message.textContent = "Geschützte Sitzung aktiv ♡";
+            zeigeVerwaltung();
+            return true;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      return false;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const password = document.getElementById("password").value;
+
+      message.textContent = "Anmeldung wird geprüft …";
+
+      try {
+        const response = await fetch("/api/admin-login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.ok) {
+          document.getElementById("password").value = "";
+
+          const authenticated = await checkLogin();
+
+          if (authenticated) {
+            message.textContent = "Geschützte Anmeldung erfolgreich ♡";
+          } else {
+            message.textContent =
+              "Anmeldung war erfolgreich, Sitzung konnte aber nicht bestätigt werden.";
+          }
         } else {
           message.textContent =
-            "Anmeldung war erfolgreich, Sitzung konnte aber nicht bestätigt werden.";
+            data.message || "Passwort ist nicht korrekt.";
         }
-      } else {
+      } catch (error) {
         message.textContent =
-          data.message || "Passwort ist nicht korrekt.";
+          "Die Anmeldung konnte nicht geprüft werden.";
       }
-    } catch (error) {
-      message.textContent =
-        "Die Anmeldung konnte nicht geprüft werden.";
-    }
-  });
+    });
 
-  checkLogin();
-</script> 
-  
+    checkLogin();
+  </script>
+
 </body>
-</html> 
+</html>
