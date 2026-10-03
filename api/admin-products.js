@@ -116,6 +116,18 @@ async function clearExpiredVoucherReservations(sql) {
   `;
 }
 
+function nurErstesVorschaubild(images) {
+  if (Array.isArray(images)) {
+    return images.length ? [images[0]] : [];
+  }
+
+  if (images) {
+    return [images];
+  }
+
+  return [];
+}
+
 export default async function handler(req, res) {
   if (!isAdmin(req)) {
     return res.status(401).json({ error: "Nicht angemeldet." });
@@ -239,13 +251,30 @@ export default async function handler(req, res) {
 
     // ===== PRODUKTE =====
     if (req.method === "GET") {
-      const products = await sql`
-        SELECT product_id, status, updated_at, name, category, price, measure, description, images
-        FROM products
-        ORDER BY product_id
-      `;
+      const category = String(req.query?.category || "").trim();
+      const previewOnly = String(req.query?.preview || "") === "1";
 
-      return res.status(200).json({ products });
+      const products = category
+        ? await sql`
+            SELECT product_id, status, updated_at, name, category, price, measure, description, images
+            FROM products
+            WHERE category = ${category}
+            ORDER BY product_id
+          `
+        : await sql`
+            SELECT product_id, status, updated_at, name, category, price, measure, description, images
+            FROM products
+            ORDER BY product_id
+          `;
+
+      const responseProducts = previewOnly
+        ? products.map(product => ({
+            ...product,
+            images: nurErstesVorschaubild(product.images)
+          }))
+        : products;
+
+      return res.status(200).json({ products: responseProducts });
     }
 
     if (req.method === "POST" && req.body?.action === "create-product") {
