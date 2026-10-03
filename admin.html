@@ -126,10 +126,12 @@
     .produktVorschau {
       display: block;
       width: 100%;
-      max-width: 320px;
+      max-width: 180px;
+      max-height: 210px;
       height: auto;
+      object-fit: contain;
       border-radius: 10px;
-      margin-top: 12px;
+      margin: 12px auto 0;
     }
 
     @media (max-width: 520px) {
@@ -152,7 +154,8 @@
       }
 
       .produktVorschau {
-        max-width: 100%;
+        max-width: 180px;
+        max-height: 210px;
       }
     }
   </style>
@@ -295,7 +298,7 @@
   <script>
     let aktiveProduktAnsicht = null;
     let aktiveKeramikKategorie = null;
-    let produktDatenCache = null;
+    let produktDatenCache = {};
 
     function alleBereicheSchliessen() {
       document.querySelectorAll(".adminBereich").forEach(bereich => {
@@ -321,11 +324,13 @@
 
       if (name === "gutscheine") {
         document.getElementById("gutscheinBereich").classList.add("aktiv");
+        ladeGutscheine();
         return;
       }
 
       if (name === "maerkte") {
         document.getElementById("marktBereich").classList.add("aktiv");
+        ladeMaerkte();
         return;
       }
 
@@ -747,7 +752,7 @@
 
         status.textContent = "Produkt wurde gespeichert ♡";
         produktInBearbeitung = null;
-        produktDatenCache = null;
+        produktDatenCache = {};
         await ladeProdukte();
 
       } catch (error) {
@@ -923,10 +928,21 @@
       produktListe.innerHTML = "Produkte werden geladen …";
 
       try {
-        let data = produktDatenCache;
+        const serverKategorie =
+          aktiveProduktAnsicht === "leder"
+            ? "Leder"
+            : aktiveKeramikKategorie;
+
+        const cacheKey = serverKategorie;
+        let data = produktDatenCache[cacheKey];
 
         if (!data) {
-          const response = await fetch("/api/admin-products", {
+          const params = new URLSearchParams({
+            category: serverKategorie,
+            preview: "1"
+          });
+
+          const response = await fetch(`/api/admin-products?${params.toString()}`, {
             cache: "no-store"
           });
 
@@ -936,7 +952,7 @@
           }
 
           data = await response.json();
-          produktDatenCache = data;
+          produktDatenCache[cacheKey] = data;
         }
 
         produktListe.innerHTML = "";
@@ -1130,7 +1146,7 @@
                 return;
               }
 
-              produktDatenCache = null;
+              produktDatenCache = {};
               await ladeProdukte();
 
             } catch (error) {
@@ -1188,7 +1204,7 @@
                 return;
               }
 
-              produktDatenCache = null;
+              produktDatenCache = {};
               await ladeProdukte();
 
             } catch (error) {
@@ -1211,13 +1227,8 @@
       loginBox.style.display = "none";
       verwaltung.style.display = "block";
 
-      // Die bisherigen Daten werden weiterhin wie bisher geladen.
-      // Sichtbar wird aber nur der Bereich, den du anklickst.
-      ladeMaerkte();
-      ladeGutscheine();
-
-      // Produkte werden erst geladen, sobald Keramik oder Leder geöffnet wird.
-      // Das ändert weder Upload noch Website-Bilder.
+      // Daten werden erst geladen, wenn der jeweilige Bereich angeklickt wird.
+      // Upload, Produktbilder und Website-Darstellung bleiben unverändert.
     }
 
     async function checkLogin() {
