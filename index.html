@@ -4480,6 +4480,60 @@ section,
 }
 </style>
 
+
+<style id="dragemor-shop-karten-ohne-weissrand">
+/* Desktop/Laptop: keine weißen Kartenflächen – nur der Taupe-Hintergrund bleibt sichtbar. */
+@media (min-width: 900px) {
+    #collection-grid .collection-grid-item.product-card {
+        background: transparent !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        align-items: center !important;
+    }
+
+    #collection-grid .collection-grid-item.product-card:hover {
+        box-shadow: none !important;
+    }
+
+    #collection-grid .collection-grid-item.product-card > img {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100% !important;
+        max-height: 165px !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+        background: transparent !important;
+        border-radius: 8px;
+    }
+
+    #collection-grid .product-card-info {
+        background: transparent !important;
+        padding: 7px 2px 10px !important;
+        text-align: left;
+        box-sizing: border-box;
+    }
+
+    #collection-grid .product-card-info h3 {
+        margin: 0 0 3px !important;
+        font-size: .92rem !important;
+        line-height: 1.18 !important;
+    }
+
+    #collection-grid .product-card-info p {
+        margin: 1px 0 !important;
+        font-size: .76rem !important;
+        line-height: 1.18 !important;
+    }
+}
+
+@media (min-width: 900px) and (max-height: 850px) {
+    #collection-grid .collection-grid-item.product-card > img {
+        max-height: 145px !important;
+    }
+}
+</style>
+
 </head>
 
 
@@ -7628,6 +7682,49 @@ function toggleCustomerAccount() {
     var source=document.querySelector('.cart-count');
     if(source) new MutationObserver(syncHeaderCart).observe(source,{childList:true,subtree:true,characterData:true});
   });
+})();
+</script>
+
+
+<script id="dragemor-produkttext-an-bildbreite">
+(function () {
+  const desktop = () => window.matchMedia("(min-width: 900px)").matches;
+
+  function passeTexteAn() {
+    document.querySelectorAll("#collection-grid .collection-grid-item.product-card").forEach(card => {
+      const img = card.querySelector(":scope > img");
+      const info = card.querySelector(".product-card-info");
+      if (!img || !info) return;
+
+      if (!desktop()) {
+        info.style.width = "";
+        return;
+      }
+
+      const breite = Math.round(img.getBoundingClientRect().width);
+      if (breite > 0) {
+        info.style.width = Math.max(135, breite) + "px";
+        info.style.maxWidth = "100%";
+      }
+
+      if (!img.dataset.dragemorWidthListener) {
+        img.dataset.dragemorWidthListener = "1";
+        img.addEventListener("load", passeTexteAn, { passive: true });
+      }
+    });
+  }
+
+  const observer = new MutationObserver(() => {
+    requestAnimationFrame(passeTexteAn);
+  });
+
+  const grid = document.getElementById("collection-grid");
+  if (grid) {
+    observer.observe(grid, { childList: true, subtree: true });
+  }
+
+  window.addEventListener("resize", passeTexteAn, { passive: true });
+  requestAnimationFrame(passeTexteAn);
 })();
 </script>
 
