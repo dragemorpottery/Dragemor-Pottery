@@ -255,18 +255,25 @@ export default async function handler(req, res) {
       const previewOnly = String(req.query?.preview || "") === "1";
 
       const products = category
-        ? await sql`
-            SELECT product_id, status, updated_at, name, category, price, measure, description, images
-            FROM products
-            WHERE category = ${category}
-            ORDER BY product_id
-          `
-        : await sql`
-            SELECT product_id, status, updated_at, name, category, price, measure, description, images
-            FROM products
-            ORDER BY product_id
-          `;
-
+  ? category === "Leder"
+    ? await sql`
+        SELECT product_id, status, updated_at, name, category, price, measure, description, images
+        FROM products
+        WHERE category = 'Leder'
+           OR product_id LIKE 'leder-%'
+        ORDER BY product_id
+      `
+    : await sql`
+        SELECT product_id, status, updated_at, name, category, price, measure, description, images
+        FROM products
+        WHERE category = ${category}
+        ORDER BY product_id
+      `
+  : await sql`
+      SELECT product_id, status, updated_at, name, category, price, measure, description, images
+      FROM products
+      ORDER BY product_id
+    `;
       const responseProducts = previewOnly
         ? products.map(product => ({
             ...product,
