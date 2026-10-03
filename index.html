@@ -4398,6 +4398,90 @@ section,
 }
 </style>
 
+
+<style id="dragemor-shop-produktansicht-kompakt">
+/* Produktdetail: das große Foto vollständig zeigen, ohne Randbeschnitt. */
+.product-gallery-main {
+    background: #e9eee5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.product-gallery-main img {
+    width: 100% !important;
+    aspect-ratio: 1 / 1;
+    object-fit: contain !important;
+    object-position: center center !important;
+}
+
+/* Laptop/Desktop: 3 Produkte pro Reihe, so kompakt,
+   dass auf typischen Laptop-Höhen etwa 2 Reihen (= 6 Produkte) sichtbar sind. */
+@media (min-width: 900px) {
+    #collection-grid.collection-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    #collection-grid .collection-grid-item.product-card {
+        display: grid !important;
+        grid-template-rows: 150px auto;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    #collection-grid .collection-grid-item.product-card > img {
+        width: 100% !important;
+        height: 150px !important;
+        aspect-ratio: auto !important;
+        object-fit: cover !important;
+        object-position: center center;
+    }
+
+    #collection-grid .product-card-info {
+        padding: 10px 12px 11px !important;
+        min-width: 0;
+    }
+
+    #collection-grid .product-card-info h3 {
+        margin: 0 0 4px !important;
+        font-size: 1rem !important;
+        line-height: 1.2;
+    }
+
+    #collection-grid .product-card-info p {
+        margin: 2px 0 !important;
+        font-size: .82rem !important;
+        line-height: 1.25;
+    }
+}
+
+/* Für typische kleinere Laptop-Höhen noch etwas kompakter. */
+@media (min-width: 900px) and (max-height: 850px) {
+    #collection-grid .collection-grid-item.product-card {
+        grid-template-rows: 125px auto;
+    }
+
+    #collection-grid .collection-grid-item.product-card > img {
+        height: 125px !important;
+    }
+
+    #collection-grid .product-card-info {
+        padding: 8px 10px 9px !important;
+    }
+
+    #collection-grid .product-card-info h3 {
+        font-size: .95rem !important;
+    }
+
+    #collection-grid .product-card-info p {
+        font-size: .78rem !important;
+    }
+}
+</style>
+
 </head>
 
 
@@ -5855,7 +5939,7 @@ async function loadDatabaseProducts() {
             const img = document.createElement("img");
             img.src = product.images[0];
             img.alt = product.name;
-            img.loading = index < 4 ? "eager" : "lazy";
+            img.loading = index < 6 ? "eager" : "lazy";
             img.decoding = "async";
 
             const info = document.createElement("div");
