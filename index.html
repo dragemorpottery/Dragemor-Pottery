@@ -4398,14 +4398,6 @@ section,
 }
 </style>
 
-
-<style id="dragemor-detailbild-vollstaendig">
-.product-gallery-main img {
-    object-fit: contain !important;
-    object-position: center center !important;
-}
-</style>
-
 </head>
 
 
@@ -5788,6 +5780,14 @@ async function loadDatabaseProducts() {
         detail.classList.remove("active");
         grid.style.display = "grid";
         grid.innerHTML = "";
+
+        // Leder und Weihnachtswerkstatt zeigen beim ersten Laden dieselbe
+        // Ladeanzeige wie die Keramik-Kategorien. Sobald die Datenbankdaten
+        // angekommen sind, rendert refreshVisibleShopProducts() die Ansicht neu.
+        if ((type === "leder" || type === "weihnachten") && !catalogSyncSucceeded) {
+            grid.innerHTML = '<div class="christmas-intro"><h3>Produkte werden geladen …</h3><p>Einen kleinen Moment bitte.</p></div>';
+            return;
+        }
 
         if (type === "keramik") {
             const intro = document.createElement("div");
