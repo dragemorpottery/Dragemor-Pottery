@@ -4677,7 +4677,7 @@ section,
                 <img
                     src="bilder/markt1.jpg"
                     alt="Dragemor Pottery auf einem Markt"
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                     onclick="openLightbox(this.src)"
                 >
@@ -4690,7 +4690,7 @@ section,
                 <img
                     src="bilder/markt2.jpg"
                     alt="Marktstand von Dragemor Pottery"
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                     onclick="openLightbox(this.src)"
                 >
@@ -4703,7 +4703,7 @@ section,
                 <img
                     src="bilder/markt3.jpg"
                     alt="Handwerk auf einem Markt"
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                     onclick="openLightbox(this.src)"
                 >
@@ -6157,10 +6157,11 @@ if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-hom
 
     // Bei jedem vollständigen Seitenaufruf den aktuellen Datenbankstand laden.
     // Der Warenkorb wird danach unabhängig vom Login mit den Live-Daten abgeglichen.
-    await refreshShopProductData(true);
-    if (typeof synchronizeCartWithLiveProducts === "function") {
-        synchronizeCartWithLiveProducts();
-    }
+    void refreshShopProductData(true).then(() => {
+        if (typeof synchronizeCartWithLiveProducts === "function") {
+            synchronizeCartWithLiveProducts();
+        }
+    });
 
   const hash = decodeURIComponent(window.location.hash);
 
