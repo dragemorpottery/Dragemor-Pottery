@@ -5539,7 +5539,7 @@ section,
             price: product.price,
             available: product.available === null ? null : product.available !== false
         })),
-        leder: Array.from({length:14}, (_, i) => {
+        leder: Array.from({length:12}, (_, i) => {
             const n = String(i + 1).padStart(2, "0");
             return {
                 id: `leder-${i + 1}`,
