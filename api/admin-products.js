@@ -173,8 +173,13 @@ export default async function handler(req, res) {
       await seedPreparedVouchers(sql);
 
       for (let attempt = 0; attempt < 5; attempt += 1) {
-        const randomPart = crypto.randomBytes(9).toString("hex").toUpperCase();
-        const code = `DRG-${randomPart.slice(0, 6)}-${randomPart.slice(6, 12)}-${randomPart.slice(12)}-05`;
+        // Acht zufaellige, gut lesbare Zeichen; -05 kennzeichnet den Wert.
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        const randomPart = Array.from(
+          crypto.randomBytes(8),
+          byte => alphabet[byte % alphabet.length]
+        ).join("");
+        const code = `DRG-${randomPart.slice(0, 4)}-${randomPart.slice(4)}-05`;
 
         const created = await sql`
           INSERT INTO vouchers (code, initial_value, balance, status, source)
