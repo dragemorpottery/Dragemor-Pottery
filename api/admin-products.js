@@ -168,6 +168,29 @@ export default async function handler(req, res) {
       return res.status(200).json({ vouchers });
     }
 
+    // Individuelle 5-Euro-Gutscheine: Codes werden ausschließlich serverseitig erzeugt.
+    if (req.method === "POST" && req.body?.action === "create-five-euro-voucher") {
+      await seedPreparedVouchers(sql);
+
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        const randomPart = crypto.randomBytes(9).toString("hex").toUpperCase();
+        const code = `DRG-${randomPart.slice(0, 6)}-${randomPart.slice(6, 12)}-${randomPart.slice(12)}-05`;
+
+        const created = await sql`
+          INSERT INTO vouchers (code, initial_value, balance, status, source)
+          VALUES (${code}, 500, 500, 'prepared', 'market')
+          ON CONFLICT (code) DO NOTHING
+          RETURNING code, initial_value, balance, status
+        `;
+
+        if (created.length) {
+          return res.status(201).json({ ok: true, voucher: created[0] });
+        }
+      }
+
+      return res.status(503).json({ error: "Ein neuer Gutscheincode konnte nicht erzeugt werden." });
+    }
+
     if (req.method === "POST" && req.body?.action === "activate-voucher") {
       await seedPreparedVouchers(sql);
       await clearExpiredVoucherReservations(sql);
