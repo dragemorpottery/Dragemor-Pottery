@@ -782,14 +782,20 @@
     }
 
     // Druckvorlage für einzeln erstellte 5-Euro-Gutscheine.
-    function fuenfEuroGutscheinDrucken(voucher) {
-      const code = String(voucher.code || "").toUpperCase();
-      if (!/^DRG-[A-Z0-9-]+$/.test(code)) {
-        alert("Der Gutscheincode ist ungültig.");
+    // Druck mit der Original-Gutscheinvorlage und individuellem Wert/Code.
+    function gutscheinDrucken(voucher) {
+      const code = String(voucher.code || "").trim().toUpperCase();
+      const cent = Number(voucher.initial_value);
+      if (!/^DRG-[A-Z0-9-]+$/.test(code) || !Number.isInteger(cent) || cent <= 0) {
+        alert("Gutscheincode oder Wert ist ungültig.");
         return;
       }
-
-      const druckFenster = window.open("", "_blank", "width=850,height=650");
+      const wert = (cent / 100).toLocaleString("de-DE", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      }) + " €";
+      const bildUrl = new URL("/bilder/gutschein-vorlage-dragemor.png", window.location.origin).href;
+      const druckFenster = window.open("", "_blank", "width=900,height=700");
       if (!druckFenster) {
         alert("Bitte Pop-ups erlauben, um den Gutschein zu drucken.");
         return;
@@ -799,38 +805,42 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<title>Dragemor Pottery – 5 € Gutschein</title>
+<title>Dragemor Pottery – Gutschein ${wert}</title>
 <style>
   @page { size: A6 landscape; margin: 0; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #fff; color: #3a372f; font-family: Georgia, serif; }
-  .karte {
-    width: 148mm; height: 105mm; padding: 9mm;
-    background: #f2eee4; border: 2mm solid #e4d9c6;
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: space-between; text-align: center;
+  html, body { margin: 0; padding: 0; width: 148mm; height: 105mm; }
+  .karte { position: relative; width: 148mm; height: 105mm; overflow: hidden; }
+  .vorlage { display: block; width: 100%; height: 100%; }
+  .eintrag {
+    position: absolute; left: 49%; top: 54.9%;
+    display: flex; align-items: baseline; gap: 2mm;
+    padding: 0.1mm 1.1mm 0.7mm;
+    background: #f8f3e9; color: #443b2e;
+    white-space: nowrap;
+    font: 10.3pt/1.2 Georgia, 'Times New Roman', serif;
   }
-  .marke { font-size: 19pt; font-weight: bold; letter-spacing: 2px; }
-  .untertitel { font-size: 10pt; letter-spacing: 2.5px; text-transform: uppercase; }
-  .wert { font-size: 55pt; line-height: 1; color: #705b45; }
-  .zeile { font-size: 11pt; line-height: 1.4; }
-  .code { font: bold 11pt Arial, sans-serif; letter-spacing: 1px; padding: 2mm 5mm; border: 1px solid #aa9a84; }
-  .url { font: 9pt Arial, sans-serif; }
+  .eintrag .code { font-weight: 600; letter-spacing: 0.05mm; }
+  @media screen { body { background: #fff; } }
 </style>
 </head>
-<body><div class="karte">
-  <div class="marke">DRAGEMOR POTTERY</div>
-  <div class="untertitel">Geschenkgutschein</div>
-  <div class="wert">5 €</div>
-  <div class="zeile">Für einen besonderen Moment.<br>Handgemachte Keramik &amp; Leder</div>
-  <div class="code">${code}</div>
-  <div class="url">dragemor-pottery.de · Im Warenkorb einlösen</div>
-</div></body></html>`);
+<body>
+  <div class="karte">
+    <img class="vorlage" id="gutscheinVorlage" src="${bildUrl}" alt="Dragemor Pottery Gutscheinvorlage">
+    <div class="eintrag"><span>${wert}</span><span>Code:</span><span class="code">${code}</span></div>
+  </div>
+</body></html>`);
       druckFenster.document.close();
-      druckFenster.onload = () => {
-        druckFenster.focus();
-        druckFenster.print();
-      };
+      const bild = druckFenster.document.getElementById("gutscheinVorlage");
+      const drucken = () => { druckFenster.focus(); druckFenster.print(); };
+      const fehler = () => { druckFenster.alert("Gutscheinvorlage konnte nicht geladen werden. Bitte Bild in GitHub prüfen."); };
+      if (bild.complete) {
+        if (bild.naturalWidth > 0) drucken();
+        else fehler();
+      } else {
+        bild.addEventListener("load", drucken, { once: true });
+        bild.addEventListener("error", fehler, { once: true });
+      }
     }
 
     async function erstelleFuenfEuroGutschein() {
@@ -948,14 +958,12 @@
           });
           card.appendChild(copyButton);
 
-          if (Number(voucher.initial_value) === 500) {
-            const printButton = document.createElement("button");
-            printButton.type = "button";
-            printButton.style.marginTop = "10px";
-            printButton.textContent = "5-€-Gutschein drucken";
-            printButton.addEventListener("click", () => fuenfEuroGutscheinDrucken(voucher));
-            card.appendChild(printButton);
-          }
+          const printButton = document.createElement("button");
+          printButton.type = "button";
+          printButton.style.marginTop = "10px";
+          printButton.textContent = "Gutschein drucken";
+          printButton.addEventListener("click", () => gutscheinDrucken(voucher));
+          card.appendChild(printButton);
 
           if (voucher.status === "prepared" || voucher.status === "disabled") {
             const activate = document.createElement("button");
