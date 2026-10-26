@@ -827,7 +827,7 @@
 <body>
   <div class="karte">
     <img class="vorlage" id="gutscheinVorlage" src="${bildUrl}" alt="Dragemor Pottery Gutscheinvorlage">
-    <div class="eintrag"><span>${wert}</span><span>Code:</span><span class="code">${code}</span></div>
+<div class="eintrag"><span>${wert}</span><span>Code:</span><span class="code" style="font-size:${code.length > 20 ? '6.5pt' : '10.3pt'};letter-spacing:0">${code}</span></div>
   </div>
 </body></html>`);
       druckFenster.document.close();
