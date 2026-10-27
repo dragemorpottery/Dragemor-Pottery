@@ -6165,6 +6165,19 @@ if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-hom
 
   const hash = decodeURIComponent(window.location.hash);
 
+  // Direct product links (e.g. from Instagram) must wait for the live catalog.
+  // Do not change normal category navigation or the checkout flow.
+  if (/^#produkt-[A-Za-z0-9_-]+$/.test(hash)) {
+    const productId = hash.slice(1);
+    const loaded = catalogSyncSucceeded || await refreshShopProductData();
+    if (loaded) {
+      await openProductById(productId);
+    } else {
+      console.warn("Produktlink konnte nicht geladen werden:", productId);
+    }
+    return;
+  }
+
   if (hash === "#shop-keramik" || hash === "#keramik") {
     openCollection("keramik", false);
     return;
