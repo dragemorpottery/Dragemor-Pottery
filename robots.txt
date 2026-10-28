@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.dragemor-pottery.de/sitemap.xml
+Sitemap: https://www.dragemor-pottery.de/sitemap-produkte.xml
