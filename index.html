@@ -6734,7 +6734,7 @@ async function applyVoucher(){
       clearPreparedStripeCheckout();
     }
 
-    if(status){ status.textContent=error.message || 'Gutschein konnte nicht gepr��ft werden.'; status.className='voucher-status error'; }
+    if(status){ status.textContent=error.message || 'Gutschein konnte nicht geprüft werden.'; status.className='voucher-status error'; }
     renderCart();
   }finally{
     if(button){ button.disabled=false; button.textContent='Einlösen'; }
