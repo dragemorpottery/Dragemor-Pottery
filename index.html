@@ -1752,6 +1752,30 @@
 .product-thumbs { display:flex; gap:8px; padding:10px; overflow-x:auto; background:#dfe6da; }
 .product-thumbs img { width:74px; height:74px; object-fit:cover; border-radius:9px; cursor:pointer; border:2px solid transparent; }
 .product-thumbs img.active { border-color:#b28a4b; }
+.product-seo-link {
+    display:inline-block;
+    margin-top:10px;
+    color:#354333;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    font-size:.87rem;
+    font-weight:600;
+}
+.product-seo-link:hover { color:#8a6937; }
+.product-share-button {
+    display:block;
+    margin-top:16px;
+    padding:10px 16px;
+    border:1px solid #8a6937;
+    border-radius:12px;
+    background:#f8f6ef;
+    color:#354333;
+    font:inherit;
+    font-weight:600;
+    cursor:pointer;
+}
+.product-share-button:hover { background:#e0e8dc; }
+.product-share-status { min-height:1.2em; margin-top:5px; color:#536a52; font-size:.83rem; }
 .product-info { padding:34px; }
 .product-info h3 { color:#354333; font-size:1.7rem; margin-bottom:8px; }
 .product-info .placeholder { color:#6c7768; margin:10px 0; }
@@ -5783,6 +5807,20 @@ async function loadDatabaseProducts() {
 } 
     }
 
+    // Ein normaler, crawlbarer Link zur Google-freundlichen Produktseite.
+    // Der Klick auf die restliche Karte öffnet weiterhin den gewohnten Shop.
+    function appendShareableProductPageLink(info, product) {
+        if (!info || !product || product.available !== true ||
+            !/^[A-Za-z0-9_-]{1,100}$/.test(String(product.id || ""))) return;
+        const link = document.createElement("a");
+        link.className = "product-seo-link";
+        link.href = "/produkt/" + encodeURIComponent(product.id);
+        link.textContent = "Produktseite ansehen ↗";
+        link.setAttribute("aria-label", "Eigene Produktseite für " + product.name + " öffnen");
+        link.addEventListener("click", event => event.stopPropagation());
+        info.appendChild(link);
+    }
+
     function renderCollection(type) {
         currentCollection = type;
         const title = document.getElementById("collection-title");
@@ -5889,6 +5927,7 @@ async function loadDatabaseProducts() {
             info.className = "product-card-info";
             info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
 
+            appendShareableProductPageLink(info, product);
             card.append(img, info);
             target.appendChild(card);
         };
@@ -6514,6 +6553,7 @@ function renderCeramicCategory(category){
         const info = document.createElement("div");
         info.className = "product-card-info";
         info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+        appendShareableProductPageLink(info, product);
         card.append(img, info);
         grid.appendChild(card);
     });
@@ -6551,6 +6591,7 @@ function renderAllCeramics(pushHistory = true){
         const info = document.createElement("div");
         info.className = "product-card-info";
         info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+        appendShareableProductPageLink(info, product);
         card.append(img, info);
         grid.appendChild(card);
     });
@@ -6992,6 +7033,38 @@ function prepareCartButton(product){
     btn=document.createElement('button'); btn.id='addToCartButton'; btn.className='add-to-cart'; btn.type='button'; btn.onclick=addCurrentProductToCart;
     note=document.createElement('p'); note.id='addToCartNote'; note.className='cart-note';
     const info=detail.querySelector('.product-info'); info.append(btn,note);
+  }
+  // Den neuen Produktlink direkt aus der Shop-Produktansicht kopieren.
+  const info=detail.querySelector('.product-info');
+  if(info && /^[A-Za-z0-9_-]{1,100}$/.test(String(product.id || ''))){
+    let share=detail.querySelector('#shareProductLink');
+    let shareStatus=detail.querySelector('#shareProductLinkStatus');
+    if(!share){
+      share=document.createElement('button');
+      share.id='shareProductLink';
+      share.className='product-share-button';
+      share.type='button';
+      share.textContent='Produktlink kopieren';
+      shareStatus=document.createElement('p');
+      shareStatus.id='shareProductLinkStatus';
+      shareStatus.className='product-share-status';
+      shareStatus.setAttribute('role','status');
+      info.append(share,shareStatus);
+    }
+    share.hidden=product.available!==true;
+    shareStatus.hidden=product.available!==true;
+    shareStatus.textContent='';
+    share.onclick=async function(){
+      const url=window.location.origin+'/produkt/'+encodeURIComponent(product.id);
+      try{
+        if(!navigator.clipboard?.writeText) throw new Error('Clipboard nicht verfügbar');
+        await navigator.clipboard.writeText(url);
+        shareStatus.textContent='Link kopiert ♡';
+      }catch(error){
+        window.prompt('Diesen Produktlink zum Teilen kopieren:',url);
+        shareStatus.textContent='';
+      }
+    };
   }
   const price=numericEuroPrice(product.price);
   const already=dragemorCart.some(x=>x.id===product.id);
