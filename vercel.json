@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/produkt/:id",
-      "destination": "/api/produkt?id=:id"
+      "destination": "/api/produkt"
     },
     {
       "source": "/sitemap-produkte.xml",
