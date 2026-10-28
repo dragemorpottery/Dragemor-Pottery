@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/produkt/:id",
-      "destination": "/api/produkt"
+      "destination": "/api/products?seo=1&id=:id"
     },
     {
       "source": "/sitemap-produkte.xml",
-      "destination": "/api/sitemap-produkte"
+      "destination": "/api/products?sitemap=1"
     }
   ]
 }
