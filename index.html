@@ -5511,11 +5511,12 @@ section,
                 <button class="product-back" type="button" onclick="backToCollection()">← Zurück zur Übersicht</button>
                 <h3 id="product-name"></h3>
                 <div class="product-detail-facts">
-                    <p><strong>Material:</strong> Steinzeugkeramik</p>
+                    <p><strong>Material:</strong> <span id="product-material">Steinzeugkeramik</span></p>
                     <p><strong>Details / Farbe & Glasur:</strong></p>
                     <p id="product-description" class="placeholder">Beschreibung folgt.</p>
                     <p><strong>Maße / Volumen:</strong> <span id="product-measure"></span></p>
                     <p><strong>Preis:</strong> <span id="product-price"></span></p>
+                    <p class="shop-shipping-info" style="font-size:.9rem;line-height:1.55;color:#52604f;margin:6px 0 12px;">zzgl. 6,99 € Versand pro Bestellung innerhalb Deutschlands (DHL Paket, versichert).</p>
                     <p><strong>Herstellung:</strong> handgefertigtes Einzelstück</p>
                 </div>
                 <span class="product-status">Verfügbarkeit wird ergänzt</span>
@@ -5752,6 +5753,7 @@ async function loadDatabaseProducts() {
                     } else renderCollection(currentCollection);
                 } else {
                     document.getElementById("product-name").textContent = product.name;
+        document.getElementById("product-material").textContent = currentCollection === "leder" ? "Leder – Einzelheiten siehe Beschreibung" : "Steinzeugkeramik";
                     document.getElementById("product-description").textContent = product.description;
                     document.getElementById("product-measure").textContent = product.measure;
                     document.getElementById("product-price").textContent = product.price;
@@ -6096,6 +6098,7 @@ async function openProductById(productId) {
         document.getElementById("collection-title").textContent =
             type === "keramik" ? "Keramik" : type === "leder" ? "Lederarbeiten" : "Weihnachtswerkstatt ✦";
         document.getElementById("product-name").textContent = product.name;
+        document.getElementById("product-material").textContent = currentCollection === "leder" ? "Leder – Einzelheiten siehe Beschreibung" : "Steinzeugkeramik";
         document.getElementById("product-description").textContent = product.description;
         document.getElementById("product-measure").textContent = product.measure;
         document.getElementById("product-price").textContent = product.price;
@@ -6698,8 +6701,9 @@ function navigateShop(kind, value){
     <div class="cart-summary-row"><span>Warenwert</span><span id="cartTotal">0,00 €</span></div>
     <div id="voucherDiscountRow" class="cart-summary-row discount" style="display:none;"><span>Gutschein</span><span id="voucherDiscount">−0,00 €</span></div>
     <div id="cartAfterVoucherRow" class="cart-summary-row final" style="display:none;"><span>Warenwert nach Gutschein</span><span id="cartAfterVoucher">0,00 €</span></div>
+    <p class="cart-note" style="margin:10px 0 13px;">Versand: 6,99 € pro Bestellung innerhalb Deutschlands (DHL Paket, versichert). Der Gesamtbetrag wird im Checkout vor der Zahlung angezeigt.</p>
     <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
-    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe. Versand wird im Checkout ergänzt.</p>
+    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe.</p>
   </div>
 </aside>
 <script>
