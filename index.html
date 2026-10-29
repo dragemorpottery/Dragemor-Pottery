@@ -5753,7 +5753,7 @@ async function loadDatabaseProducts() {
                         else renderCeramicCategory(currentShopCategory);
                     } else renderCollection(currentCollection);
                 } else {
-                    document.getElementById("product-name").textContent = product.name;
+                    document.getElementById("product-name").textContent = dragemorDisplayName(product);
         document.getElementById("product-material").textContent = currentCollection === "leder" ? "Leder – Einzelheiten siehe Beschreibung" : "Steinzeugkeramik";
         const dispatchNote = document.getElementById("product-dispatch-note");
         if (dispatchNote) dispatchNote.hidden = currentCollection === "leder" || product.available !== true;
@@ -5854,6 +5854,42 @@ async function loadDatabaseProducts() {
 
     // Ein normaler, crawlbarer Link zur Google-freundlichen Produktseite.
     // Der Klick auf die restliche Karte öffnet weiterhin den gewohnten Shop.
+// Dragemor product types: add the type only if one specific form can be found.
+const dragemorProductKindRules = [
+ ['Keramiklöffel', /\b(?:tee|kaffee|keramik)?löffel(?:n)?\b/i],
+ ['Seifenschale', /\bseifenschale(?:n)?\b/i],
+ ['Teeschale', /\bteeschale(?:n)?\b/i],
+ ['Blumentopf', /\bblumentopf\b|\bblumentöpfe\b/i],
+ ['Keramikbecher', /\b(?:keramik|trink|cappuccino|latte)?becher(?:n)?\b/i],
+ ['Keramiktasse', /\b(?:keramik|espresso|kaffee|cappuccino|tee)?tasse(?:n)?\b/i],
+ ['Keramikschale', /\b(?:keramik)?schale(?:n)?\b/i],
+ ['Keramikteller', /\b(?:keramik)?teller(?:n)?\b/i],
+ ['Keramikvase', /\b(?:keramik)?vase(?:n)?\b/i],
+ ['Keramikkrug', /\b(?:keramik)?krug\b|\bkrüge\b/i],
+ ['Keramikkännchen', /\bkännchen\b/i],
+ ['Keramikkanne', /\b(?:keramik)?kanne(?:n)?\b/i],
+ ['Keramikschüssel', /\b(?:keramik)?schüssel(?:n)?\b/i],
+ ['Kerzenhalter', /\bkerzenhalter\b/i],
+ ['Windlicht', /\bwindlicht(?:er)?\b/i],
+ ['Adventskranz', /\badventskranz\b|\badventskränze\b/i]
+];
+function dragemorReadableProductName(name, description, isLeather = false) {
+ const original = String(name || '').replace(/\s+/g, ' ').trim();
+ if (!original || isLeather || /\b(?:set|ensemble)\b/i.test(original)) return original;
+ if (dragemorProductKindRules.some(([,rx]) => rx.test(original))) return original;
+ const evidence = String(description || '').replace(/<[^>]*>/g, ' ').slice(0,320);
+ const matches = dragemorProductKindRules.filter(([,rx]) => rx.test(evidence));
+ return matches.length === 1 ? original + ' – ' + matches[0][0] : original;
+}
+
+
+function dragemorDisplayName(product) {
+  if (!product) return '';
+  const leather = String(product.id || '').startsWith('leder-') ||
+    String(product.category || '').toLowerCase() === 'leder';
+  return dragemorReadableProductName(product.name, product.description, leather);
+}
+
     function appendShareableProductPageLink(info, product) {
         if (!info || !product || product.available !== true ||
             !/^[A-Za-z0-9_-]{1,100}$/.test(String(product.id || ""))) return;
@@ -5964,13 +6000,13 @@ async function loadDatabaseProducts() {
 
             const img = document.createElement("img");
             img.src = product.images[0];
-            img.alt = product.name;
+            img.alt = dragemorDisplayName(product);
             img.loading = index < 4 ? "eager" : "lazy";
             img.decoding = "async";
 
             const info = document.createElement("div");
             info.className = "product-card-info";
-            info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+            info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
 
             appendShareableProductPageLink(info, product);
             card.append(img, info);
@@ -6012,12 +6048,12 @@ async function loadDatabaseProducts() {
         if (!main || !thumbs || !product.images?.length) return;
         main.src = product.images[0];
         main.dataset.imageIndex = "0";
-        main.alt = product.name;
+        main.alt = dragemorDisplayName(product);
         thumbs.innerHTML = "";
         product.images.forEach((src, i) => {
             const thumb = document.createElement("img");
             thumb.src = src;
-            thumb.alt = `${product.name} – Ansicht ${i + 1}`;
+            thumb.alt = `${dragemorDisplayName(product)} – Ansicht ${i + 1}`;
             if (i === 0) thumb.classList.add("active");
             thumb.loading = i === 0 ? "eager" : "lazy";
             thumb.onclick = () => {
@@ -6100,7 +6136,7 @@ async function openProductById(productId) {
 
         document.getElementById("collection-title").textContent =
             type === "keramik" ? "Keramik" : type === "leder" ? "Lederarbeiten" : "Weihnachtswerkstatt ✦";
-        document.getElementById("product-name").textContent = product.name;
+        document.getElementById("product-name").textContent = dragemorDisplayName(product);
         document.getElementById("product-material").textContent = currentCollection === "leder" ? "Leder – Einzelheiten siehe Beschreibung" : "Steinzeugkeramik";
         const dispatchNote = document.getElementById("product-dispatch-note");
         if (dispatchNote) dispatchNote.hidden = currentCollection === "leder" || product.available !== true;
@@ -6137,7 +6173,7 @@ async function openProductById(productId) {
                     preview.loading = "lazy";
 
                     const label = document.createElement("span");
-                    label.textContent = item.name;
+                    label.textContent = dragemorDisplayName(item);
                     const price = document.createElement("small");
                     price.textContent = item.price;
 
@@ -6593,14 +6629,14 @@ function renderCeramicCategory(category){
 
         const img = document.createElement("img");
         img.src = product.images[0];
-        img.alt = product.name;
+        img.alt = dragemorDisplayName(product);
         img.loading = position < 4 ? "eager" : "lazy";
         if (position < 2) img.fetchPriority = "high";
         img.decoding = "async";
 
         const info = document.createElement("div");
         info.className = "product-card-info";
-        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+        info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
         appendShareableProductPageLink(info, product);
         card.append(img, info);
         grid.appendChild(card);
@@ -6632,13 +6668,13 @@ function renderAllCeramics(pushHistory = true){
         card.onclick = ()=>openProduct("keramik", index);
         const img = document.createElement("img");
         img.src = product.images[0];
-        img.alt = product.name;
+        img.alt = dragemorDisplayName(product);
         img.loading = index < 4 ? "eager" : "lazy";
         if (index < 2) img.fetchPriority = "high";
         img.decoding = "async";
         const info = document.createElement("div");
         info.className = "product-card-info";
-        info.innerHTML = `<h3>${product.name}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+        info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
         appendShareableProductPageLink(info, product);
         card.append(img, info);
         grid.appendChild(card);
@@ -6964,7 +7000,7 @@ function renderCart(){
     const row=document.createElement('div'); row.className='cart-item';
     const liveProduct=getLiveProduct(item); const comingSoon=liveProduct?.available === false;
     if(comingSoon) row.classList.add("coming-soon");
-    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${item.name}</h3><p>${comingSoon ? "" : item.priceText}</p>${comingSoon ? '<span class="cart-item-coming">Kommt bald wieder ♡</span>' : ''}</div><button class="cart-remove" type="button">Entfernen</button>`;
+    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${liveProduct ? dragemorDisplayName(liveProduct) : item.name}</h3><p>${comingSoon ? "" : item.priceText}</p>${comingSoon ? '<span class="cart-item-coming">Kommt bald wieder ♡</span>' : ''}</div><button class="cart-remove" type="button">Entfernen</button>`;
     row.querySelector('button').onclick=()=>removeCartItem(item.id); box.appendChild(row);
   });
   const hasComingSoon=cartHasComingSoon();
