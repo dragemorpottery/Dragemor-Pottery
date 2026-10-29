@@ -1761,7 +1761,7 @@
     border-radius:22px; overflow:hidden;
 }
 .product-detail.active { display:grid; grid-template-columns:1.2fr .8fr; }
-.product-gallery-main img { width:100%; aspect-ratio:1/1; object-fit:cover; cursor:pointer; }
+.product-gallery-main img { width:100%; aspect-ratio:1/1; object-fit:contain; cursor:zoom-in; background:#f2f0e9; }
 .product-gallery-main {
     position: relative;
 } 
@@ -1787,11 +1787,22 @@
 
 .product-image-next {
     right: 12px;
-} 
+}
+.product-image-arrow[hidden]{display:none !important}
+.product-image-arrow:focus-visible,#product-main-image:focus-visible,
+.product-thumbs button:focus-visible {outline:3px solid #b28a4b;outline-offset:3px}
+#product-main-image {touch-action:pan-y}
+.product-thumbs {display:flex;gap:9px;padding:10px;overflow-x:auto;background:#dfe6da;scrollbar-width:thin}
+.product-thumbs button{flex:0 0 76px;width:76px;height:76px;overflow:hidden;border:2px solid transparent;border-radius:10px;padding:0;background:#f2f0e9;cursor:pointer}
+.product-thumbs button.active{border-color:#8a6937;box-shadow:0 0 0 1px #8a6937}
+.product-thumbs button img{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:700px){
+ .product-image-arrow{width:42px;height:42px;font-size:30px}
+ .product-image-prev{left:9px}.product-image-next{right:9px}
+ .product-thumbs{gap:8px;padding:10px}
+ .product-thumbs button{flex-basis:66px;width:66px;height:66px}
+}
 
-.product-thumbs { display:flex; gap:8px; padding:10px; overflow-x:auto; background:#dfe6da; }
-.product-thumbs img { width:74px; height:74px; object-fit:cover; border-radius:9px; cursor:pointer; border:2px solid transparent; }
-.product-thumbs img.active { border-color:#b28a4b; }
 .product-seo-link {
     display:inline-block;
     margin-top:10px;
@@ -5542,11 +5553,11 @@ section,
         <div id="product-detail" class="product-detail">
             <div>
                 <div class="product-gallery-main">
-                    <button class="product-image-arrow product-image-prev" type="button" onclick="changeProductImage(-1)">‹</button>
+                    <button class="product-image-arrow product-image-prev" type="button" aria-label="Vorheriges Produktfoto" onclick="changeProductImage(-1)" hidden>‹</button>
 
-<img id="product-main-image" src="" alt="" onclick="openLightbox(this.src)">
+<img id="product-main-image" src="" alt="" tabindex="0" role="button" aria-label="Produktfoto vergrößern" decoding="async" onclick="openLightbox(this.src)" onkeydown="if(event.key === 'Enter' || event.key === ' '){ event.preventDefault(); openLightbox(this.src); }">
 
-<button class="product-image-arrow product-image-next" type="button" onclick="changeProductImage(1)">›</button> 
+<button class="product-image-arrow product-image-next" type="button" aria-label="Nächstes Produktfoto" onclick="changeProductImage(1)" hidden>›</button> 
                 </div>
                 <div id="product-thumbs" class="product-thumbs"></div>
             </div>
@@ -6100,26 +6111,45 @@ function dragemorDisplayName(product) {
     function renderProductGallery(product) {
         const main = document.getElementById("product-main-image");
         const thumbs = document.getElementById("product-thumbs");
-        if (!main || !thumbs || !product.images?.length) return;
-        main.src = product.images[0];
+        if (!main || !thumbs) return;
+        const images = Array.isArray(product?.images) ? product.images.filter(Boolean) : [];
+        const multiple = images.length > 1;
+        document.querySelectorAll("#product-detail .product-image-arrow").forEach(button => {
+            button.hidden = !multiple;
+        });
+        thumbs.replaceChildren();
+        thumbs.style.display = multiple ? "flex" : "none";
+        if (!images.length) {
+            main.removeAttribute("src");
+            main.alt = "Für dieses Produkt ist noch kein Foto hinterlegt";
+            return;
+        }
+        main.src = images[0];
         main.dataset.imageIndex = "0";
         main.alt = dragemorDisplayName(product);
-        thumbs.innerHTML = "";
-        product.images.forEach((src, i) => {
+        images.forEach((src, i) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.setAttribute("aria-label", `${dragemorDisplayName(product)} – Foto ${i + 1} von ${images.length} anzeigen`);
+            button.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+            if (i === 0) button.classList.add("active");
             const thumb = document.createElement("img");
             thumb.src = src;
-            thumb.alt = `${dragemorDisplayName(product)} – Ansicht ${i + 1}`;
-            if (i === 0) thumb.classList.add("active");
-            thumb.loading = i === 0 ? "eager" : "lazy";
-            thumb.onclick = () => {
+            thumb.alt = "";
+            thumb.loading = "lazy";
+            thumb.decoding = "async";
+            button.onclick = () => {
                 main.src = src;
                 main.dataset.imageIndex = String(i);
-                thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active"));
-                thumb.classList.add("active");
+                thumbs.querySelectorAll("button").forEach(other => {
+                    const selected = other === button;
+                    other.classList.toggle("active", selected);
+                    other.setAttribute("aria-pressed", selected ? "true" : "false");
+                });
             };
-            thumbs.appendChild(thumb);
+            button.appendChild(thumb);
+            thumbs.appendChild(button);
         });
-        thumbs.style.display = product.images.length > 1 ? "flex" : "none";
     }
 
     async function loadFullDatabaseGallery(product) {
@@ -6244,31 +6274,22 @@ async function openProductById(productId) {
     }
 
 function changeProductImage(direction) {
+    const detail = document.getElementById("product-detail");
     const product = shopProducts[currentCollection]?.find(
-        p => p.id === window.location.hash.replace("#", "")
+        item => item.id === detail?.dataset.productId
     );
-
-    if (!product || !product.images || product.images.length < 2) return;
-
+    const images = product?.images;
+    if (!Array.isArray(images) || images.length < 2) return;
     const main = document.getElementById("product-main-image");
-    let imageIndex = Number(main.dataset.imageIndex || 0);
-
-    imageIndex += direction;
-
-    if (imageIndex < 0) {
-        imageIndex = product.images.length - 1;
-    }
-
-    if (imageIndex >= product.images.length) {
-        imageIndex = 0;
-    }
-
-    main.src = product.images[imageIndex];
-    main.dataset.imageIndex = imageIndex;
-
-    const thumbs = document.getElementById("product-thumbs");
-    thumbs?.querySelectorAll("img").forEach((thumb, i) => {
-        thumb.classList.toggle("active", i === imageIndex);
+    if (!main) return;
+    const current = Number(main.dataset.imageIndex || 0);
+    const next = ((current + direction) % images.length + images.length) % images.length;
+    main.src = images[next];
+    main.dataset.imageIndex = String(next);
+    document.querySelectorAll("#product-thumbs button").forEach((thumb, i) => {
+        const selected = i === next;
+        thumb.classList.toggle("active", selected);
+        thumb.setAttribute("aria-pressed", selected ? "true" : "false");
     });
 } 
 
@@ -6429,7 +6450,7 @@ if (initialHash.startsWith("#shop-")) document.getElementById("shop-category-hom
 
         image.src = "";
 
-        document.body.style.overflow = "";
+        document.body.style.overflow = document.getElementById("collection-modal")?.classList.contains("active") ? "hidden" : "";
     }
 
 
