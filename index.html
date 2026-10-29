@@ -5651,14 +5651,14 @@ section,
             { category: "Momente des Innehaltens", name: "Nebelwald", images: ["014","015","016"], measure: "ca. 200 ml", price: "15 €" },
             { category: "Momente des Innehaltens", name: "Erdtanz", images: ["022","023"], measure: "ca. 500 ml", price: "19 €" },
             { category: "Momente des Innehaltens", name: "des Drachens Wasser", images: ["030","031","032","033"], measure: "ca. 400 ml", price: "19 €" },
-            { category: "Momente des Innehaltens", name: "DragonGold", images: ["034","035","036"], measure: "ca. 200 ml", price: "15 €" },
+            { id: "keramik-33", category: "Momente des Innehaltens", name: "DragonGold", images: ["034","035","036"], measure: "ca. 200 ml", price: "15 €" },
             { category: "Gemeinsame Zeit", name: "Erdtanz", images: ["047","048"], measure: "Ø ca. 18 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "Meeresgrund", images: ["049","050","051"], measure: "Ø ca. 19 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["052","053","054"], measure: "Ø ca. 19 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["056","057"], measure: "Ø ca. 19 cm", price: "18 €" },
             { category: "Gemeinsame Zeit", name: "des Drachens Wasser", images: ["058","059"], measure: "Ø ca. 17 cm", price: "15 €" }
         ].map((product, i) => ({
-            id: `keramik-${parseInt(product.images[0], 10)}`, 
+            id: product.id || `keramik-${parseInt(product.images[0], 10)}`, 
             name: product.name,
             category: product.category,
             images: product.images.map(n => `bilder/Keramik${n}.jpg`),
@@ -5693,8 +5693,8 @@ section,
     const managedLegacyIds = new Set([
         "keramik-1", "keramik-4", "keramik-7", "keramik-9", "keramik-12",
         "keramik-14", "keramik-22", "keramik-24", "keramik-26",
-        "keramik-29", "keramik-30", "keramik-33", "keramik-37",
-        "keramik-40", "keramik-49", "keramik-53", "keramik-56", "keramik-58",
+        "keramik-29", "keramik-30", "keramik-33", "keramik-34", "keramik-37",
+        "keramik-40", "keramik-47", "keramik-49", "keramik-52", "keramik-53", "keramik-56", "keramik-58",
         ...Array.from({ length: 12 }, (_, i) => `leder-${i + 1}`)
     ]);
     const retiredLegacyIds = new Set([
