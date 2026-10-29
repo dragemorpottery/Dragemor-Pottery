@@ -4596,6 +4596,110 @@ section,
   }
 }
 </style>
+
+<style id="dragemor-mobile-shop-cards-2026">
+/* Produktübersicht am Handy: Unikate vollständig zeigen, Preise klar hervorheben. */
+@media (max-width:700px) {
+  #collection-modal #collection-grid.collection-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    gap:12px;
+    align-items:stretch;
+  }
+  #collection-modal #collection-grid .collection-grid-item.product-card {
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    overflow:hidden;
+    border-radius:16px;
+    background:#f4f5ee;
+    border:1px solid rgba(126,140,109,.35);
+    box-shadow:0 3px 10px rgba(45,57,40,.06);
+  }
+  #collection-modal #collection-grid .collection-grid-item.product-card > img {
+    display:block;
+    width:100%;
+    min-width:0;
+    height:auto;
+    aspect-ratio:1/1;
+    object-fit:contain;
+    object-position:center;
+    padding:7px;
+    background:#f4f1ea;
+    border-bottom:1px solid rgba(126,140,109,.16);
+  }
+  #collection-modal #collection-grid .product-card-info {
+    display:flex;
+    flex-direction:column;
+    flex:1 1 auto;
+    min-width:0;
+    padding:11px 11px 13px;
+    text-align:left;
+  }
+  #collection-modal #collection-grid .product-card-info h3 {
+    margin:0;
+    font-size:.98rem;
+    line-height:1.4;
+    font-weight:600;
+    color:#354333;
+    overflow-wrap:anywhere;
+    hyphens:auto;
+  }
+  #collection-modal #collection-grid .product-card-info .shop-card-price {
+    display:block;
+    margin-top:auto !important;
+    padding-top:10px;
+    font-size:1.19rem !important;
+    line-height:1.35;
+    font-weight:700;
+    letter-spacing:.01em;
+    color:#6e512a !important;
+  }
+  #collection-modal #collection-grid .product-card-info p:not(.shop-card-price) {
+    margin-top:7px;
+    font-size:.78rem;
+    line-height:1.45;
+    color:#53624f;
+    overflow-wrap:anywhere;
+  }
+  #collection-modal #collection-grid .product-seo-link {
+    display:inline-block;
+    margin-top:8px;
+    font-size:.75rem;
+    line-height:1.4;
+    overflow-wrap:anywhere;
+    text-underline-offset:3px;
+  }
+  #collection-modal #collection-grid .product-card.coming-soon .shop-card-price {
+    display:none !important;
+  }
+  #collection-modal #collection-grid .product-card.coming-soon::after {
+    top:10px;
+    left:50%;
+    max-width:calc(100% - 12px);
+    padding:7px 10px;
+    font-size:.72rem;
+    line-height:1.25;
+    text-align:center;
+    white-space:normal;
+  }
+  #collection-modal .product-detail-facts #product-price {
+    color:#6e512a;
+    font-weight:700;
+    font-size:1.2rem;
+  }
+}
+@media (max-width:375px) {
+  #collection-modal #collection-grid.collection-grid {gap:9px}
+  #collection-modal #collection-grid .product-card-info {padding:10px 9px 12px}
+  #collection-modal #collection-grid .product-card-info h3 {font-size:.92rem}
+  #collection-modal #collection-grid .product-card-info .shop-card-price {font-size:1.12rem !important}
+}
+</style>
 </head>
 
 
