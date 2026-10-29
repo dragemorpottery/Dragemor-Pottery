@@ -1,4 +1,4 @@
-import { serveProductPage, serveProductSitemap } from '../lib/seo.js';
+import { serveProductPage, serveProductSitemap, serveMerchantFeed } from '../lib/seo.js';
 
 // Dragemor Pottery: schneller Produktkatalog mit Bildern über dieselbe API.
 // Funktioniert mit Vercel Hobby: keine zusätzliche api/product-image.js nötig.
@@ -10,6 +10,7 @@ export default async function handler(req, res) {
   // SEO-Seiten über dieselbe bestehende API ausliefern; unverändertes Katalogverhalten darunter.
   if (req.query?.seo === '1') return serveProductPage(req, res);
   if (req.query?.sitemap === '1') return serveProductSitemap(req, res);
+  if (req.query?.merchant === '1') return serveMerchantFeed(req, res);
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Methode nicht erlaubt.' });
   }
