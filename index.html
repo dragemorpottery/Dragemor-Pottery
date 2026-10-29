@@ -5854,40 +5854,46 @@ async function loadDatabaseProducts() {
 
     // Ein normaler, crawlbarer Link zur Google-freundlichen Produktseite.
     // Der Klick auf die restliche Karte öffnet weiterhin den gewohnten Shop.
-// Dragemor product types: add the type only if one specific form can be found.
+// Stückart aus eindeutigem Produkttext, ohne Seriennamen zu ersetzen.
 const dragemorProductKindRules = [
- ['Keramiklöffel', /\b(?:tee|kaffee|keramik)?löffel(?:n)?\b/i],
- ['Seifenschale', /\bseifenschale(?:n)?\b/i],
- ['Teeschale', /\bteeschale(?:n)?\b/i],
+ ['Keramiklöffel', /\b(?:tee|kaffee|keramik)?löffel(?:s|n)?\b/i],
+ ['Seifenschale', /\bseifenschale(?:n|s)?\b/i],
+ ['Teeschale', /\bteeschale(?:n|s)?\b/i],
  ['Blumentopf', /\bblumentopf\b|\bblumentöpfe\b/i],
- ['Keramikbecher', /\b(?:keramik|trink|cappuccino|latte)?becher(?:n)?\b/i],
- ['Keramiktasse', /\b(?:keramik|espresso|kaffee|cappuccino|tee)?tasse(?:n)?\b/i],
- ['Keramikschale', /\b(?:keramik)?schale(?:n)?\b/i],
- ['Keramikteller', /\b(?:keramik)?teller(?:n)?\b/i],
- ['Keramikvase', /\b(?:keramik)?vase(?:n)?\b/i],
- ['Keramikkrug', /\b(?:keramik)?krug\b|\bkrüge\b/i],
+ ['Keramikbecher', /\b(?:keramik|trink|cappuccino|latte)?becher(?:n|s)?\b/i],
+ ['Keramiktasse', /\b(?:keramik|espresso|kaffee|cappuccino|tee)?tasse(?:n|s)?\b/i],
+ ['Keramikschale', /\b(?:keramik|steinzeug|müsli|salat)?schale(?:n|s)?\b/i],
+ ['Keramikteller', /\b(?:keramik|steinzeug)?teller(?:n|s)?\b/i],
+ ['Keramikvase', /\b(?:keramik|steinzeug)?vase(?:n|s)?\b/i],
+ ['Keramikkrug', /\b(?:keramik|steinzeug)?krug(?:s|e)?\b|\bkrüge\b/i],
  ['Keramikkännchen', /\bkännchen\b/i],
- ['Keramikkanne', /\b(?:keramik)?kanne(?:n)?\b/i],
- ['Keramikschüssel', /\b(?:keramik)?schüssel(?:n)?\b/i],
+ ['Keramikkanne', /\b(?:keramik)?kanne(?:n|s)?\b/i],
+ ['Keramikschüssel', /\b(?:keramik)?schüssel(?:n|s)?\b/i],
  ['Kerzenhalter', /\bkerzenhalter\b/i],
  ['Windlicht', /\bwindlicht(?:er)?\b/i],
  ['Adventskranz', /\badventskranz\b|\badventskränze\b/i]
 ];
-function dragemorReadableProductName(name, description, isLeather = false) {
- const original = String(name || '').replace(/\s+/g, ' ').trim();
+function dragemorReadableProductName(name, description, isLeather = false, productId = '') {
+ const original = String(name || '').replace(/\s+/g,' ').trim();
  if (!original || isLeather || /\b(?:set|ensemble)\b/i.test(original)) return original;
+ const evidence = String(description || '').replace(/<[^>]*>/g,' ').slice(0,950);
+ if (/\b(?:tassen[- ]*)?stövchen\b/i.test(evidence)) {
+   return /\bstövchen\b/i.test(original) ? original : original + ' – Tassen-Stövchen';
+ }
+ if (/\bhenkelschale(?:n|s)?\b/i.test(evidence)) {
+   return /\bhenkelschale\b/i.test(original) ? original : original + ' – Henkelschale';
+ }
  if (dragemorProductKindRules.some(([,rx]) => rx.test(original))) return original;
- const evidence = String(description || '').replace(/<[^>]*>/g, ' ').slice(0,320);
+ if (productId === 'keramik-7' && original === 'Erdtanz') return original + ' – Keramikbecher';
  const matches = dragemorProductKindRules.filter(([,rx]) => rx.test(evidence));
  return matches.length === 1 ? original + ' – ' + matches[0][0] : original;
 }
-
 
 function dragemorDisplayName(product) {
   if (!product) return '';
   const leather = String(product.id || '').startsWith('leder-') ||
     String(product.category || '').toLowerCase() === 'leder';
-  return dragemorReadableProductName(product.name, product.description, leather);
+  return dragemorReadableProductName(product.name, product.description, leather, product.id);
 }
 
     function appendShareableProductPageLink(info, product) {
