@@ -3,6 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <script>
+      // Vercel Web Analytics: product hash views should appear as individual pages.
+      // This changes only the reported URL, not the address or navigation in the shop.
+      window.va = window.va || function () {
+        (window.vaq = window.vaq || []).push(arguments);
+      };
+      window.va('beforeSend', function (event) {
+        if (event.type !== 'pageview') return event;
+        try {
+          const url = new URL(event.url, window.location.origin);
+          if (url.pathname !== '/' && url.pathname !== '/index.html') return event;
+          const hash = url.hash || window.location.hash;
+          const match = /^#((?:produkt|keramik|leder)-[A-Za-z0-9_-]{1,100})$/.exec(hash);
+          if (!match) return event;
+          url.pathname = '/produkt/' + encodeURIComponent(match[1]);
+          url.hash = '';
+          return { ...event, url: url.toString() };
+        } catch (_) {
+          return event;
+        }
+      });
+    </script>
+    <script>
       // Start one product request as soon as the document begins loading.
       // A handled failure allows a retry when the shop initializes.
       window.dragemorInitialProductFetch = fetch("/api/products", { cache: "no-store" })
