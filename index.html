@@ -23,6 +23,31 @@
           return event;
         }
       });
+
+      // Install after Analytics has initialized and sent the initial pageview.
+      window.dragemorTrackProductNavigation = function () {
+        let previousUrl = new URL(window.location.href);
+        function trackProductHashChange() {
+          const currentUrl = new URL(window.location.href);
+          const oldUrl = previousUrl;
+          previousUrl = currentUrl;
+          // Analytics already handles pathname changes. Only fill its hash gap.
+          if (currentUrl.pathname !== oldUrl.pathname || currentUrl.hash === oldUrl.hash) return;
+          if (currentUrl.pathname !== '/' && currentUrl.pathname !== '/index.html') return;
+          if (!/^#((?:produkt|keramik|leder)-[A-Za-z0-9_-]{1,100})$/.test(currentUrl.hash)) return;
+          window.va('pageview', {});
+        }
+        for (const method of ['pushState', 'replaceState']) {
+          const original = window.history[method];
+          window.history[method] = function (...args) {
+            const result = original.apply(this, args);
+            trackProductHashChange();
+            return result;
+          };
+        }
+        window.addEventListener('popstate', trackProductHashChange);
+        window.addEventListener('hashchange', trackProductHashChange);
+      };
     </script>
     <script>
       // Start one product request as soon as the document begins loading.
@@ -85,7 +110,7 @@
       }
     </script>
 
-    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+    <script defer src="https://cdn.vercel-insights.com/v1/script.js" onload="dragemorTrackProductNavigation()"></script>
 
     <style>
 
