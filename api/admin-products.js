@@ -1,3 +1,4 @@
+import { marketHandler } from '../lib/market.js';
 import crypto from "crypto";
 
 const preparedVouchers = [
@@ -142,6 +143,8 @@ export default async function handler(req, res) {
   try {
     const { neon } = await import("@neondatabase/serverless");
     const sql = neon(databaseUrl);
+
+    if (req.query?.resource === "market") return await marketHandler(req, res, sql);
 
     // ===== GUTSCHEINE =====
     if (req.method === "GET" && req.query?.resource === "vouchers") {
