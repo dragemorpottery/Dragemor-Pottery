@@ -9,7 +9,7 @@ Im [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applicati
 Für dieselbe App einen Webhook einrichten:
 
 ```
-https://dragemor-pottery.de/api/stripe-webhook?provider=paypal
+https://www.dragemor-pottery.de/api/stripe-webhook?provider=paypal
 ```
 
 Der historische URL-Name wird beibehalten, um keine weitere Vercel-Funktion zu benötigen. Die Nachricht wird ausschließlich mit PayPal geprüft, unabhängig von Stripe-Schlüsseln. Diese Ereignisse auswählen:
@@ -18,7 +18,7 @@ Der historische URL-Name wird beibehalten, um keine weitere Vercel-Funktion zu b
 - `PAYMENT.CAPTURE.PENDING`
 - `PAYMENT.CAPTURE.DENIED`
 
-Die zurückgegebene Webhook-ID ebenfalls hinterlegen. Ein Webhook muss ohne interaktive Anmeldung erreichbar sein.
+Die zurückgegebene Webhook-ID ebenfalls hinterlegen. Ein Webhook muss ohne interaktive Anmeldung und ohne Weiterleitung erreichbar sein. Live verwendet die kanonische www-Domain; Sandbox verwendet ausschließlich die Branch-Preview-URL.
 
 ## 2. Zugangsdaten sicher in Vercel hinterlegen
 

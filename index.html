@@ -4985,7 +4985,7 @@ section,
     </div>
     <div class="dp-trust-item">
       <span class="dp-trust-symbol" aria-hidden="true">◇</span>
-      <div class="dp-trust-text"><strong>Sicher bezahlen</strong><span>Über Stripe · Zahlarten an der Kasse</span></div>
+      <div class="dp-trust-text"><strong>Sicher bezahlen</strong><span>Zahlarten an der Kasse</span></div>
     </div>
     <div class="dp-trust-item">
       <span class="dp-trust-symbol" aria-hidden="true">♡</span>
@@ -5833,7 +5833,7 @@ section,
                 </div>
                 <div class="dp-shop-assurance">
                     <h4>Gut zu wissen</h4>
-                    <p><strong>Sicher bezahlen:</strong> Die Zahlungsabwicklung erfolgt über Stripe. Die verfügbaren Zahlarten siehst du an der Kasse.</p>
+                    <p><strong>Sicher bezahlen:</strong> Die verfügbaren sicheren Zahlarten siehst du im Warenkorb und an der Kasse.</p>
                     <p><strong>Widerruf:</strong> Grundsätzlich gilt ein 14-tägiges Widerrufsrecht. <a href="#widerruf" onclick="return dragemorOpenInfoSection(event,'widerruf')">Details zum Widerruf</a></p>
                     <p>Eine Frage zu diesem Stück? <a href="#kontakt" onclick="return dragemorOpenInfoSection(event,'kontakt')">Schreib uns persönlich</a>.</p>
                 </div>
@@ -7103,7 +7103,7 @@ function navigateShop(kind, value){
     <div id="cartAfterVoucherRow" class="cart-summary-row final" style="display:none;"><span>Warenwert nach Gutschein</span><span id="cartAfterVoucher">0,00 €</span></div>
     <p class="cart-note" style="margin:10px 0 13px;">Versand: 6,99 € pro Bestellung innerhalb Deutschlands (DHL Paket, versichert). Vorrätige Keramik wird in der Regel innerhalb von 1–2 Werktagen nach Bestelleingang verschickt; die DHL-Laufzeit kommt hinzu. Der Gesamtbetrag wird im Checkout vor der Zahlung angezeigt.</p>
     <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
-    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe.</p>
+    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung.</p>
     <div id="paypalCheckout" hidden style="margin:12px 0;">
       <button id="paypalChoose" type="button" class="cart-checkout" style="background:#ffc439;color:#172c4b;" disabled>Mit PayPal bezahlen</button>
       <div id="paypalButtons"></div>
@@ -7112,7 +7112,7 @@ function navigateShop(kind, value){
       <button id="paypalCancel" type="button" class="voucher-remove" hidden>Offenen PayPal-Vorgang schließen</button>
     </div>
     <div class="dp-cart-assurance">
-      <p>Sichere Zahlung über Stripe. Welche Zahlungsarten für dich verfügbar sind, siehst du an der Kasse.</p>
+      <p>Welche sicheren Zahlungsarten für dich verfügbar sind, siehst du im Warenkorb und an der Kasse.</p>
       <p><a href="#widerruf" onclick="return dragemorOpenInfoSection(event,'widerruf')">Informationen zum Widerrufsrecht</a> · <a href="#kontakt" onclick="return dragemorOpenInfoSection(event,'kontakt')">Fragen zur Bestellung?</a></p>
     </div>
 
@@ -7384,7 +7384,7 @@ function renderCart(){
   checkout.disabled=!catalogSyncSucceeded || !dragemorCart.length ||
       hasMissing || hasComingSoon || cartHasPendingAvailability();
   const status=document.getElementById("checkoutStatus");
-  if(status) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung über Stripe.';
+  if(status) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung.';
   if(window.refreshPayPalCheckout) window.refreshPayPalCheckout(checkout.disabled);
 }
 async function startStripeCheckout(){
