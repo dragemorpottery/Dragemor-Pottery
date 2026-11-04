@@ -229,4 +229,15 @@ test('market sale respects an open Stripe checkout and succeeds after its confir
   assert.equal((await sql`SELECT status FROM products WHERE product_id='tasse-1'`)[0].status,'sold');
 });
 
+test('sandbox accepts its branch preview origin and returns to that same test shop', async()=>{
+  await fixture();const prior=process.env.VERCEL_BRANCH_URL;process.env.VERCEL_BRANCH_URL='shop-git-paypal-example.vercel.app';
+  let payload;const req=post({action:'create',items:[{id:'tasse-1'}]});req.headers.origin='https://'+process.env.VERCEL_BRANCH_URL;
+  const res=response();
+  try{await paypalCheckout(req,res,{cfg,sql,api:async(_cfg,_path,options)=>{payload=options.body;return{id:'PREVIEWORDER123'};}});}
+  finally{if(prior===undefined)delete process.env.VERCEL_BRANCH_URL;else process.env.VERCEL_BRANCH_URL=prior;}
+  assert.equal(res.code,200);
+  assert.equal(payload.payment_source.paypal.experience_context.return_url,req.headers.origin+'/?paypal=return');
+  assert.equal(payload.payment_source.paypal.experience_context.cancel_url,req.headers.origin+'/?paypal=cancel');
+});
+
 test.after(async()=>{await db.close();});
