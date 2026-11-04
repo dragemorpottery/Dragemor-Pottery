@@ -5560,6 +5560,12 @@ section,
                 Zahlung notwendigen Daten an Stripe und – abhängig von der gewählten Zahlungsmethode – an weitere
                 im Checkout angezeigte Zahlungsdienstleister übermittelt. Zahlungsdaten wie vollständige
                 Karteninformationen werden nicht von uns selbst gespeichert.
+                Wenn du die direkte Zahlung mit PayPal wählst, erfolgt die Abwicklung über PayPal
+                (Europe) S.à r.l. et Cie, S.C.A. Die hierfür erforderlichen Bestell-, Kontakt- und
+                Lieferdaten werden an PayPal übermittelt. Die PayPal-Zahlungsfunktionen werden erst geladen,
+                wenn du PayPal im Warenkorb auswählst.
+                Weitere Informationen findest du in der
+                <a href="https://www.paypal.com/de/legalhub/paypal/privacy-full" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von PayPal</a>.
             </p>
             <p>
                 Bestell- und Rechnungsdaten werden außerdem verarbeitet, soweit dies zur Vertragserfüllung sowie
@@ -7098,6 +7104,13 @@ function navigateShop(kind, value){
     <p class="cart-note" style="margin:10px 0 13px;">Versand: 6,99 € pro Bestellung innerhalb Deutschlands (DHL Paket, versichert). Vorrätige Keramik wird in der Regel innerhalb von 1–2 Werktagen nach Bestelleingang verschickt; die DHL-Laufzeit kommt hinzu. Der Gesamtbetrag wird im Checkout vor der Zahlung angezeigt.</p>
     <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
     <p id="checkoutStatus" class="cart-note">Sichere Bezahlung über Stripe.</p>
+    <div id="paypalCheckout" hidden style="margin:12px 0;">
+      <button id="paypalChoose" type="button" class="cart-checkout" style="background:#ffc439;color:#172c4b;" disabled>Mit PayPal bezahlen</button>
+      <div id="paypalButtons"></div>
+      <p id="paypalStatus" class="cart-note" role="status" aria-live="polite"></p>
+      <button id="paypalRetry" type="button" class="voucher-apply" hidden>Zahlung fortsetzen / Status prüfen</button>
+      <button id="paypalCancel" type="button" class="voucher-remove" hidden>Offenen PayPal-Vorgang schließen</button>
+    </div>
     <div class="dp-cart-assurance">
       <p>Sichere Zahlung über Stripe. Welche Zahlungsarten für dich verfügbar sind, siehst du an der Kasse.</p>
       <p><a href="#widerruf" onclick="return dragemorOpenInfoSection(event,'widerruf')">Informationen zum Widerrufsrecht</a> · <a href="#kontakt" onclick="return dragemorOpenInfoSection(event,'kontakt')">Fragen zur Bestellung?</a></p>
@@ -7372,6 +7385,7 @@ function renderCart(){
       hasMissing || hasComingSoon || cartHasPendingAvailability();
   const status=document.getElementById("checkoutStatus");
   if(status) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung über Stripe.';
+  if(window.refreshPayPalCheckout) window.refreshPayPalCheckout(checkout.disabled);
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
@@ -7647,6 +7661,11 @@ function handleCheckoutReturn(){
       document.body.style.overflow='hidden';
     }
   } else if(checkoutResult==='cancel'){
+    const stockReservation=params.get('stockReservation');
+    if(stockReservation){
+      fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'release-stock',stockReservation})}).catch(()=>{});
+    }
     const reservation=params.get('voucherReservation');
     if(reservation){
       fetch('/api/create-checkout-session',{
@@ -8106,5 +8125,6 @@ function toggleCustomerAccount() {
 })();
 </script>
 
+<script src="/paypal-checkout.js" defer></script>
 </body>
 </html> 

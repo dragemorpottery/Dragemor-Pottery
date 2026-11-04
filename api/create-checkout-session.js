@@ -1,3 +1,6 @@
+import { reserveStripeStock, releaseStripeStock } from '../lib/checkout-stock.js';
+import { ensureVoucherTables } from '../lib/vouchers.js';
+import { paypalCheckout } from '../lib/paypal.js';
 import crypto from "crypto";
 
 // The original legacy catalog is retained for items which have NEVER been
@@ -14,40 +17,6 @@ function normalizeVoucherInput(value) {
     .toUpperCase()
     .replace(/[^A-Z0-9]/g, "")
     .slice(0, 80);
-}
-
-async function ensureVoucherTables(sql) {
-  await sql`
-    CREATE TABLE IF NOT EXISTS vouchers (
-      code TEXT PRIMARY KEY,
-      initial_value INTEGER NOT NULL CHECK (initial_value > 0),
-      balance INTEGER NOT NULL CHECK (balance >= 0),
-      status TEXT NOT NULL DEFAULT 'prepared',
-      source TEXT NOT NULL DEFAULT 'market',
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      activated_at TIMESTAMPTZ,
-      redeemed_at TIMESTAMPTZ,
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      reserved_amount INTEGER NOT NULL DEFAULT 0,
-      reservation_token TEXT,
-      reserved_session_id TEXT,
-      reserved_until TIMESTAMPTZ
-    )
-  `;
-
-  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reserved_amount INTEGER NOT NULL DEFAULT 0`;
-  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reservation_token TEXT`;
-  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reserved_session_id TEXT`;
-  await sql`ALTER TABLE vouchers ADD COLUMN IF NOT EXISTS reserved_until TIMESTAMPTZ`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS voucher_redemptions (
-      stripe_session_id TEXT PRIMARY KEY,
-      voucher_code TEXT NOT NULL,
-      amount INTEGER NOT NULL CHECK (amount > 0),
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `;
 }
 
 async function clearExpiredVoucherReservations(sql) {
@@ -119,7 +88,7 @@ async function getStripeCheckoutSession(stripeSecretKey, sessionId) {
   return await response.json();
 }
 
-async function expireStripeCheckoutSession(stripeSecretKey, sessionId) {
+async function expireStripeCheckoutSession(stripeSecretKey, sessionId, sql) {
   if (!sessionId) return false;
 
   const response = await fetch(
@@ -142,6 +111,7 @@ async function expireStripeCheckoutSession(stripeSecretKey, sessionId) {
     );
   }
 
+  if (sql) await releaseStripeStock(sql, sessionId);
   return true;
 }
 
@@ -172,6 +142,7 @@ async function createStripeCoupon(stripeSecretKey, voucher) {
 }
 
 export default async function handler(req, res) {
+  if (req.query?.provider === 'paypal') return paypalCheckout(req, res);
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Methode nicht erlaubt." });
   }
@@ -254,7 +225,8 @@ export default async function handler(req, res) {
           // Die alte Stripe-Session darf dann nicht mehr geöffnet werden.
           await expireStripeCheckoutSession(
             stripeSecretKey,
-            voucher.reserved_session_id
+            voucher.reserved_session_id,
+            sql
           );
           await releaseVoucherReservation(sql, voucher.reservation_token);
         } else if (existingSession?.status === "expired") {
@@ -277,6 +249,24 @@ export default async function handler(req, res) {
       balance: Number(voucher.balance),
       initialValue: Number(voucher.initial_value)
     });
+  }
+
+  if (action === 'release-stock') {
+    const token = String(req.body?.stockReservation || '');
+    if (!/^[a-f0-9-]{36}$/.test(token)) return res.status(400).json({ error: 'Ungültiger Bezahlvorgang.' });
+    const rows = await sql`SELECT session_id FROM stripe_stock_claims WHERE id = ${token} AND status = 'active'`;
+    if (rows[0]?.session_id) {
+      const key = process.env.VERCEL_ENV === 'preview' ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
+      if (!key) return res.status(503).json({ error: 'Bezahlvorgang kann gerade nicht geprüft werden.' });
+      const session = await getStripeCheckoutSession(key, rows[0].session_id);
+      if (session?.status === 'open' && session.payment_status !== 'paid') {
+        await expireStripeCheckoutSession(key, rows[0].session_id, sql);
+        await releaseStripeStock(sql, rows[0].session_id);
+      } else if (session?.status === 'expired' && session.payment_status !== 'paid') {
+        await releaseStripeStock(sql, rows[0].session_id);
+      }
+    }
+    return res.status(200).json({ ok: true });
   }
 
   if (action === "release-voucher") {
@@ -330,7 +320,7 @@ export default async function handler(req, res) {
     }
 
     const rows = await sql`
-      SELECT product_id, name, price, status
+      SELECT product_id, name, price, status, updated_at::text AS stock_version
       FROM products WHERE product_id = ANY(${ids})
     `;
     const productsById = new Map(rows.map(row => [row.product_id, row]));
@@ -361,7 +351,7 @@ export default async function handler(req, res) {
         });
       }
 
-      selected.push({ id, product: { name: dbProduct.name, amount } });
+      selected.push({ id, product: { name: dbProduct.name, amount, stockVersion: dbProduct.stock_version } });
     }
   } catch (error) {
     console.error("Bestandsprüfung fehlgeschlagen:", error);
@@ -436,7 +426,8 @@ export default async function handler(req, res) {
           // Gutscheinreservierung sofort für den neuen Warenkorb freigeben.
           await expireStripeCheckoutSession(
             stripeSecretKey,
-            voucher.reserved_session_id
+            voucher.reserved_session_id,
+            sql
           );
           await releaseVoucherReservation(sql, voucher.reservation_token);
         } else if (existingSession?.status === "expired") {
@@ -486,18 +477,22 @@ export default async function handler(req, res) {
   }
 
   let stripeCouponId = null;
+  let stockClaimId = null;
 
   try {
     if (voucherReservation) {
       stripeCouponId = await createStripeCoupon(stripeSecretKey, voucherReservation);
     }
 
+    stockClaimId = await reserveStripeStock(sql, selected);
+
     const origin = `${req.headers["x-forwarded-proto"] || "https"}://${req.headers.host}`;
     const params = new URLSearchParams();
     params.set("mode", "payment");
+    params.set("expires_at", String(Math.floor(Date.now() / 1000) + 31 * 60));
     params.set("success_url", `${origin}/?checkout=success#shop`);
 
-    const cancelQuery = new URLSearchParams({ checkout: "cancel" });
+    const cancelQuery = new URLSearchParams({ checkout: "cancel", stockReservation: stockClaimId });
     if (voucherReservation?.token) {
       cancelQuery.set("voucherReservation", voucherReservation.token);
       params.set("expires_at", String(Math.floor(Date.now() / 1000) + 31 * 60));
@@ -535,7 +530,8 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${stripeSecretKey}`,
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Idempotency-Key": stockClaimId
       },
       body: params.toString()
     });
@@ -546,11 +542,14 @@ export default async function handler(req, res) {
       if (voucherReservation) {
         await releaseVoucherReservation(sql, voucherReservation.token);
       }
+      await sql`UPDATE stripe_stock_claims SET status = 'released' WHERE id = ${stockClaimId}`;
       console.error("Stripe:", data);
       return res.status(502).json({
         error: data?.error?.message || "Stripe Checkout konnte nicht erstellt werden."
       });
     }
+
+    await sql`UPDATE stripe_stock_claims SET session_id = ${data.id} WHERE id = ${stockClaimId}`;
 
     if (voucherReservation) {
       await sql`
@@ -571,7 +570,7 @@ export default async function handler(req, res) {
     }
 
     console.error("Stripe Checkout Fehler:", error);
-    return res.status(500).json({
+    return res.status(error.status || 500).json({
       error: error?.message || "Verbindung zu Stripe fehlgeschlagen."
     });
   }
