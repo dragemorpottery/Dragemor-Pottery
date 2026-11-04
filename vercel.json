@@ -8,5 +8,13 @@
       "source": "/sitemap-produkte.xml",
       "destination": "/api/products?sitemap=1"
     }
-  ]
+  ],
+  "functions": {
+    "api/create-checkout-session.js": {
+      "maxDuration": 60
+    },
+    "api/stripe-webhook.js": {
+      "maxDuration": 60
+    }
+  }
 }
