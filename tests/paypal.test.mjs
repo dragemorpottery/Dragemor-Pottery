@@ -247,6 +247,25 @@ test('incomplete market products are hidden and stale sale requests cannot sell 
   assert.equal((await snapshot(sql)).products.find(p=>p.id==='invalid-1').price,500);
 });
 
+test('retired shop articles stay out of market inventory and reject stale sales', async()=>{
+  await fixture();
+  for (const id of ['keramik-17','keramik-29','keramik-37','keramik-55']) {
+    await sql`INSERT INTO products (product_id,name,price,status) VALUES (${id},'Ausgemustert',1400,'available')`;
+    const version=(await sql`SELECT updated_at::text AS version FROM products WHERE product_id=${id}`)[0].version;
+    const sale={id:'retired-sale-'+id,productId:id,quantity:1,total:1400,payment:'Bar',way:'Mitgenommen',day:'2026-11-06',note:''};
+    const res=response();await marketHandler(post({action:'sale',sale,productVersion:version}),res,sql);
+    assert.equal(res.code,409);
+    assert.equal((await sql`SELECT status FROM products WHERE product_id=${id}`)[0].status,'available');
+    assert.equal((await sql`SELECT COUNT(*)::int AS n FROM market_sales WHERE id=${sale.id}`)[0].n,0);
+  }
+  assert.equal((await snapshot(sql)).products.some(p=>p.id.startsWith('keramik-')),false);
+  const payload={id:'retired-history-37',productId:'keramik-37',name:'SilverRustik',category:'Keramik',total:1400};
+  await sql`INSERT INTO market_sales (id,event,product_id,payload,claim_updated_at) VALUES (${payload.id},'advent-emkendorf-2026',${payload.productId},${JSON.stringify(payload)}::jsonb,NOW())`;
+  const history=await snapshot(sql);
+  assert.equal(history.products.find(p=>p.id==='keramik-37').quantity,0);
+  assert.equal(history.sales.find(s=>s.id===payload.id).name,'SilverRustik');
+});
+
 test('sandbox accepts its branch preview origin and returns to that same test shop', async()=>{
   await fixture();const prior=process.env.VERCEL_BRANCH_URL;process.env.VERCEL_BRANCH_URL='shop-git-paypal-example.vercel.app';
   let payload;const req=post({action:'create',items:[{id:'tasse-1'}]});req.headers.origin='https://'+process.env.VERCEL_BRANCH_URL;
