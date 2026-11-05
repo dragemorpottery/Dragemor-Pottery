@@ -686,6 +686,26 @@
             transform: scale(1.05);
         }
 
+        .emkendorf-fotos {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .emkendorf-fotos img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: #241e19;
+            border: 1px solid #493824;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        @media (max-width: 650px) {
+            .emkendorf-fotos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .emkendorf-fotos img { height: 180px; }
+        }
+
         .naechster-markt {
             max-width: 650px;
 
@@ -7802,6 +7822,27 @@ async function ladeOeffentlicheMaerkte() {
         ${markt.info ? `<br>${markt.info}` : ""}
       `;
 
+      if (markt.name === "Adventsmarkt auf Gut Emkendorf") {
+        const fotos = document.createElement("div");
+        fotos.className = "emkendorf-fotos";
+        const standFotos = [
+          ["emkendorf-stand-aussen.webp", "Beleuchtetes Zelt von Dragemor Pottery auf Gut Emkendorf"],
+          ["emkendorf-stand-eingang.webp", "Blick in den Marktstand mit Keramik und Adventsschmuck"],
+          ["emkendorf-stand-banner.webp", "Dragemor Pottery Banner und handgefertigte Keramik"],
+          ["emkendorf-stand-advent.webp", "Adventskeramik, Kerzen und warme Lichter"],
+          ["emkendorf-stand-keramik.webp", "Keramikregale im Marktstand von Dragemor Pottery"]
+        ];
+        for (const [filename, description] of standFotos) {
+          const photo = document.createElement("img");
+          photo.src = "bilder/" + filename;
+          photo.alt = description;
+          photo.loading = "lazy";
+          photo.decoding = "async";
+          photo.onclick = () => openLightbox(photo.src);
+          fotos.appendChild(photo);
+        }
+        termin.appendChild(fotos);
+      }
       marktListe.appendChild(termin);
     });
 
