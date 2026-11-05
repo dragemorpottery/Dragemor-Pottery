@@ -70,7 +70,7 @@ test('create uses database prices, names, voucher and EUR shipping instead of cl
   await fixture(); let payload;
   const res = response();
   await paypalCheckout(post({action: 'create', items:[{id:'tasse-1',price:1},{id:'teller-1'}], voucherCode:'drg test 15', total:1}),res,{cfg,sql,
-    api: async (_cfg, _path, options) => {payload=options.body;return {id:'NEWPAYPAL12345'};}});
+    api: async (_cfg, _path, options) => {payload=options.body;return {id:'NEWPAYPAL12345',links:[{rel:'payer-action',href:'https://www.sandbox.paypal.com/checkoutnow?token=NEWPAYPAL12345'}]};}});
   assert.equal(res.code,200); assert.equal(res.body.token.length,64);
   assert.deepEqual(payload.purchase_units[0].amount.breakdown.shipping,{currency_code:'EUR',value:'6.99'});
   assert.equal(payload.purchase_units[0].amount.value,'46.99');
@@ -270,7 +270,7 @@ test('sandbox accepts its branch preview origin and returns to that same test sh
   await fixture();const prior=process.env.VERCEL_BRANCH_URL;process.env.VERCEL_BRANCH_URL='shop-git-paypal-example.vercel.app';
   let payload;const req=post({action:'create',items:[{id:'tasse-1'}]});req.headers.origin='https://'+process.env.VERCEL_BRANCH_URL;
   const res=response();
-  try{await paypalCheckout(req,res,{cfg,sql,api:async(_cfg,_path,options)=>{payload=options.body;return{id:'PREVIEWORDER123'};}});}
+  try{await paypalCheckout(req,res,{cfg,sql,api:async(_cfg,_path,options)=>{payload=options.body;return{id:'PREVIEWORDER123',links:[{rel:'payer-action',href:'https://www.sandbox.paypal.com/checkoutnow?token=PREVIEWORDER123'}]};}});}
   finally{if(prior===undefined)delete process.env.VERCEL_BRANCH_URL;else process.env.VERCEL_BRANCH_URL=prior;}
   assert.equal(res.code,200);
   assert.equal(payload.payment_source.paypal.experience_context.return_url,req.headers.origin+'/?paypal=return');
