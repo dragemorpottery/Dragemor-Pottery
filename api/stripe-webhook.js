@@ -1,6 +1,6 @@
 import { releaseStripeStock } from '../lib/checkout-stock.js';
 import { ensureVoucherTables } from '../lib/vouchers.js';
-import { createInvoice, sendInternalOrderEmail, sendCustomerOrderEmail, sendInvoiceEmail } from '../lib/order-fulfillment.js';
+import { createInvoice, sendInternalOrderEmail, sendCustomerOrderEmail, sendInvoiceEmail, orderNumberFromInvoice } from '../lib/order-fulfillment.js';
 import { paypalWebhook } from '../lib/paypal.js';
 import crypto from 'crypto';
 
@@ -239,6 +239,7 @@ async function processPaidCheckoutSession(session) {
   await redeemVoucherFromSession(session);
 
   const invoiceNumber = await createInvoice(session, lineItems);
+  session.order_number = orderNumberFromInvoice(invoiceNumber);
 
   await sendInternalOrderEmail(session, lineItems);
   await sendCustomerOrderEmail(session, lineItems);
