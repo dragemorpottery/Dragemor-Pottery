@@ -255,19 +255,26 @@ export default async function handler(req, res) {
   if (action === 'release-stock') {
     const token = String(req.body?.stockReservation || '');
     if (!/^[a-f0-9-]{36}$/.test(token)) return res.status(400).json({ error: 'Ungültiger Bezahlvorgang.' });
-    const rows = await sql`SELECT session_id FROM stripe_stock_claims WHERE id = ${token} AND status = 'active'`;
-    if (rows[0]?.session_id) {
+    try {
+      const [claim] = await sql`SELECT session_id FROM stripe_stock_claims WHERE id = ${token}`;
+      if (!claim?.session_id) return res.status(409).json({ error: 'Bezahlvorgang konnte noch nicht beendet werden.' });
       const key = process.env.VERCEL_ENV === 'preview' ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
       if (!key) return res.status(503).json({ error: 'Bezahlvorgang kann gerade nicht geprüft werden.' });
-      const session = await getStripeCheckoutSession(key, rows[0].session_id);
-      if (session?.status === 'open' && session.payment_status !== 'paid') {
-        await expireStripeCheckoutSession(key, rows[0].session_id, sql);
-        await releaseStripeStock(sql, rows[0].session_id);
-      } else if (session?.status === 'expired' && session.payment_status !== 'paid') {
-        await releaseStripeStock(sql, rows[0].session_id);
+      const session = await getStripeCheckoutSession(key, claim.session_id);
+      if (session?.status === 'open' && session.payment_status === 'unpaid') {
+        await expireStripeCheckoutSession(key, claim.session_id, sql);
+      } else if (session?.status === 'expired' && session.payment_status === 'unpaid') {
+        await releaseStripeStock(sql, claim.session_id);
+      } else {
+        return res.status(409).json({ error: 'Stripe hat den Abbruch noch nicht bestätigt. Prüfe bitte deinen Zahlungsstatus.' });
       }
+      const [voucher] = await sql`SELECT reservation_token FROM vouchers WHERE reserved_session_id = ${claim.session_id}`;
+      if (voucher?.reservation_token) await releaseVoucherReservation(sql, voucher.reservation_token);
+      return res.status(200).json({ ok: true });
+    } catch (error) {
+      console.error('Stripe-Abbruch konnte nicht bestätigt werden:', error);
+      return res.status(502).json({ error: 'Stripe hat den Abbruch noch nicht bestätigt. Bitte versuche es erneut.' });
     }
-    return res.status(200).json({ ok: true });
   }
 
   if (action === "release-voucher") {
@@ -409,6 +416,7 @@ export default async function handler(req, res) {
         ) {
           return res.status(200).json({
             url: existingSession.url,
+            expiresAt: existingSession.expires_at,
             reused: true
           });
         }
@@ -560,7 +568,7 @@ export default async function handler(req, res) {
       `;
     }
 
-    return res.status(200).json({ url: data.url, expiresAt: data.expires_at });
+    return res.status(200).json({ url: data.url, expiresAt: data.expires_at, stockReservation: stockClaimId });
   } catch (error) {
     if (voucherReservation) {
       try {

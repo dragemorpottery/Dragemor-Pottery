@@ -6027,6 +6027,7 @@ async function loadDatabaseProducts() {
                 _databaseImageVersion: databaseHasImages ? record.updated_at : null,
                 _databaseGalleryVersion: sameGallery ? record.updated_at : null,
                 price,
+                reserved: record.reserved === true,
                 available: record.status === "available"
             };
             if (!merged.images.length) continue;
@@ -6148,7 +6149,8 @@ async function loadDatabaseProducts() {
     // Wenn in einem zweiten Tab etwas bearbeitet wurde: beim Zurueckkehren
     // in den Shop die aktuellen Verwaltungsdaten neu abrufen.
     window.addEventListener("focus", () => {
-        if (document.getElementById("collection-modal")?.classList.contains("active")) {
+        if (document.getElementById("collection-modal")?.classList.contains("active") ||
+            document.getElementById("cartDrawer")?.classList.contains("open")) {
             void refreshShopProductData(true);
         }
     });
@@ -6329,7 +6331,7 @@ function dragemorDisplayName(product) {
 
             const info = document.createElement("div");
             info.className = "product-card-info";
-            info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+            info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.reserved ? '<p class="shop-card-checking">Kurzzeitig reserviert</p>' : product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
 
             appendShareableProductPageLink(info, product);
             card.append(img, info);
@@ -6995,7 +6997,7 @@ function renderCeramicCategory(category){
 
         const info = document.createElement("div");
         info.className = "product-card-info";
-        info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+        info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.reserved ? '<p class="shop-card-checking">Kurzzeitig reserviert</p>' : product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
         appendShareableProductPageLink(info, product);
         card.append(img, info);
         grid.appendChild(card);
@@ -7033,7 +7035,7 @@ function renderAllCeramics(pushHistory = true){
         img.decoding = "async";
         const info = document.createElement("div");
         info.className = "product-card-info";
-        info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+        info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.reserved ? '<p class="shop-card-checking">Kurzzeitig reserviert</p>' : product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
         appendShareableProductPageLink(info, product);
         card.append(img, info);
         grid.appendChild(card);
@@ -7103,7 +7105,8 @@ function navigateShop(kind, value){
     <div id="cartAfterVoucherRow" class="cart-summary-row final" style="display:none;"><span>Warenwert nach Gutschein</span><span id="cartAfterVoucher">0,00 €</span></div>
     <p class="cart-note" style="margin:10px 0 13px;">Versand: 6,99 € pro Bestellung innerhalb Deutschlands (DHL Paket, versichert). Vorrätige Keramik wird in der Regel innerhalb von 1–2 Werktagen nach Bestelleingang verschickt; die DHL-Laufzeit kommt hinzu. Der Gesamtbetrag wird im Checkout vor der Zahlung angezeigt.</p>
     <button id="cartCheckout" class="cart-checkout" type="button" onclick="startStripeCheckout()" disabled>Zur Kasse</button>
-    <p id="checkoutStatus" class="cart-note">Sichere Bezahlung.</p>
+    <button id="cancelStripeCheckout" class="voucher-remove" type="button" onclick="cancelPreparedStripeCheckout()" hidden>Bezahlvorgang abbrechen</button>
+    <p id="checkoutStatus" class="cart-note" role="status">Sichere Bezahlung.</p>
     <div id="paypalCheckout" hidden style="margin:12px 0;">
       <button id="paypalChoose" type="button" class="cart-checkout" style="background:#ffc439;color:#172c4b;" disabled>Mit PayPal bezahlen</button>
       <div id="paypalButtons"></div>
@@ -7157,20 +7160,20 @@ const stripeCheckoutStorageKey = 'dragemorStripeCheckout';
 let preparedStripeCheckout;
 let stripeCheckoutStarting = false;
 
-function savePreparedStripeCheckout(url, fingerprint, expiresAt){
-  preparedStripeCheckout={url, fingerprint, expiresAt};
+function savePreparedStripeCheckout(url, fingerprint, expiresAt, stockReservation){
+  preparedStripeCheckout={url, fingerprint, expiresAt, stockReservation};
   try{ sessionStorage.setItem(stripeCheckoutStorageKey, JSON.stringify(preparedStripeCheckout)); }catch(e){}
 }
 
-function currentPreparedStripeCheckout(){
+function currentPreparedStripeCheckout(matchCart=true){
   let prepared=preparedStripeCheckout;
   if(!prepared){
     try{ prepared=JSON.parse(sessionStorage.getItem(stripeCheckoutStorageKey) || 'null'); }catch(e){}
   }
-  if(!prepared || prepared.fingerprint !== currentCheckoutFingerprint() || !Number.isFinite(prepared.expiresAt) || prepared.expiresAt <= Date.now()) return null;
+  if(!prepared || (matchCart && prepared.fingerprint !== currentCheckoutFingerprint()) || !Number.isFinite(prepared.expiresAt) || prepared.expiresAt <= Date.now()) return null;
   try{
     const url=new URL(prepared.url);
-    if(url.protocol === 'https:' && url.hostname === 'checkout.stripe.com') return url.href;
+    if(url.protocol === 'https:' && url.hostname === 'checkout.stripe.com') return prepared;
   }catch(e){}
   return null;
 }
@@ -7293,14 +7296,19 @@ function saveCart(){
   clearPreparedStripeCheckout();
   renderCart();
 }
-function openCart(){ document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartBackdrop').classList.add('open'); renderCart(); }
+function openCart(){
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartBackdrop').classList.add('open');
+  renderCart();
+  void refreshShopProductData();
+}
 function closeCart(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartBackdrop').classList.remove('open'); }
 function addCurrentProductToCart(){
   const type = currentCollection;
   const id = document.getElementById('product-detail')?.dataset.productId;
   const product = (shopProducts[type] || []).find(p => p.id === id);
   if(!catalogSyncSucceeded || !product || deletedProductIds.has(product.id) ||
-     product.available === false || product.available === null) return;
+     product.reserved || product.available === false || product.available === null) return;
   const value = numericEuroPrice(product.price);
   if(value === null) return;
   if(!dragemorCart.some(x => x.id === product.id)){
@@ -7368,6 +7376,7 @@ function synchronizeCartWithLiveProducts(){
   }
 }
 
+function cartHasReservation(){ return dragemorCart.some(item => getLiveProduct(item)?.reserved); }
 function cartHasComingSoon(){ return dragemorCart.some(item => getLiveProduct(item)?.available === false); }
 function cartHasPendingAvailability(){ return dragemorCart.some(item => getLiveProduct(item)?.available === null); }
 function renderCart(){
@@ -7394,8 +7403,9 @@ function renderCart(){
   dragemorCart.forEach(item=>{
     const row=document.createElement('div'); row.className='cart-item';
     const liveProduct=getLiveProduct(item); const comingSoon=liveProduct?.available === false;
+    const reserved=liveProduct?.reserved;
     if(comingSoon) row.classList.add("coming-soon");
-    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${liveProduct ? dragemorDisplayName(liveProduct) : item.name}</h3><p>${comingSoon ? "" : item.priceText}</p>${comingSoon ? '<span class="cart-item-coming">Kommt bald wieder ♡</span>' : ''}</div><button class="cart-remove" type="button">Entfernen</button>`;
+    row.innerHTML=`<img src="${item.image}" alt=""><div><h3>${liveProduct ? dragemorDisplayName(liveProduct) : item.name}</h3><p>${comingSoon ? "" : item.priceText}</p>${comingSoon ? '<span class="cart-item-coming">Kommt bald wieder ♡</span>' : reserved ? '<span class="cart-item-coming">Kurzzeitig reserviert</span>' : ''}</div><button class="cart-remove" type="button">Entfernen</button>`;
     row.querySelector('button').onclick=()=>removeCartItem(item.id); box.appendChild(row);
   });
   const hasComingSoon=cartHasComingSoon();
@@ -7405,12 +7415,17 @@ function renderCart(){
   const sum=purchasableItems.reduce((a,x)=>a+Number(x.price||0),0);
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
   renderVoucherSummary(sum);
+  const prepared=currentPreparedStripeCheckout();
+  const hasReservation=cartHasReservation();
+  const cancelButton=document.getElementById('cancelStripeCheckout');
+  cancelButton.hidden=!currentPreparedStripeCheckout(false)?.stockReservation;
+  cancelButton.disabled=stripeCheckoutStarting;
   checkout.disabled=stripeCheckoutStarting || !catalogSyncSucceeded || !dragemorCart.length ||
-      hasMissing || hasComingSoon || cartHasPendingAvailability();
-  if(!stripeCheckoutStarting) checkout.textContent=currentPreparedStripeCheckout() ? 'Jetzt bezahlen →' : 'Zur Kasse';
+      hasMissing || hasComingSoon || cartHasPendingAvailability() || (hasReservation && !prepared);
+  if(!stripeCheckoutStarting) checkout.textContent=prepared ? 'Zahlung fortsetzen' : 'Zur Kasse';
   const status=document.getElementById("checkoutStatus");
-  if(status && !stripeCheckoutStarting) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung.';
-  if(window.refreshPayPalCheckout) window.refreshPayPalCheckout(checkout.disabled);
+  if(status && !stripeCheckoutStarting) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : hasReservation && !prepared ? 'Ein Artikel ist gerade kurzzeitig reserviert. Prüfe die Verfügbarkeit später erneut.' : 'Sichere Bezahlung.';
+  if(window.refreshPayPalCheckout) window.refreshPayPalCheckout(checkout.disabled || hasReservation || !!prepared);
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
@@ -7418,9 +7433,9 @@ async function startStripeCheckout(){
 
   if(stripeCheckoutStarting || checkout.disabled) return;
   const checkoutFingerprint=currentCheckoutFingerprint();
-  const existingUrl=currentPreparedStripeCheckout();
-  if(existingUrl){
-    window.location.assign(existingUrl);
+  const existingCheckout=currentPreparedStripeCheckout();
+  if(existingCheckout){
+    window.location.assign(existingCheckout.url);
     return;
   }
 
@@ -7451,6 +7466,7 @@ async function startStripeCheckout(){
     const data=await response.json().catch(()=>({}));
 
     if(!response.ok || !data.url){
+      if(response.status === 409) await refreshShopProductData(true);
       throw new Error(data.error || 'Checkout konnte nicht gestartet werden.');
     }
 
@@ -7465,10 +7481,10 @@ async function startStripeCheckout(){
       throw new Error('Die Checkout-Adresse von Stripe konnte nicht bestätigt werden.');
     }
 
-    savePreparedStripeCheckout(stripeUrl.href, checkoutFingerprint, Number(data.expiresAt)*1000);
+    savePreparedStripeCheckout(stripeUrl.href, checkoutFingerprint, Number(data.expiresAt)*1000, data.stockReservation);
     if(currentCheckoutFingerprint() !== checkoutFingerprint) return;
-    checkout.textContent='Jetzt bezahlen →';
-    if(status) status.textContent='Falls Stripe sich nicht öffnet, tippe auf „Jetzt bezahlen →“.';
+    checkout.textContent='Zahlung fortsetzen';
+    if(status) status.textContent='Falls Stripe sich nicht öffnet, tippe auf „Zahlung fortsetzen“.';
     window.location.assign(stripeUrl.href);
   }catch(error){
     console.error('Stripe Checkout Fehler:',error);
@@ -7476,11 +7492,45 @@ async function startStripeCheckout(){
     checkout.textContent='Zur Kasse';
   }finally{
     stripeCheckoutStarting=false;
+    const prepared=currentPreparedStripeCheckout();
+    document.getElementById('cancelStripeCheckout').hidden=!currentPreparedStripeCheckout(false)?.stockReservation;
     checkout.disabled=!catalogSyncSucceeded || !dragemorCart.length ||
-      dragemorCart.some(item=>deletedProductIds.has(item.id)) || cartHasComingSoon() || cartHasPendingAvailability();
+      dragemorCart.some(item=>deletedProductIds.has(item.id)) || cartHasComingSoon() || cartHasPendingAvailability() || (cartHasReservation() && !prepared);
   }
 }
 
+
+async function cancelPreparedStripeCheckout(stockReservation){
+  const token=typeof stockReservation === 'string' ? stockReservation : currentPreparedStripeCheckout(false)?.stockReservation;
+  if(!token || stripeCheckoutStarting) return;
+  stripeCheckoutStarting=true;
+  renderCart();
+  const status=document.getElementById('checkoutStatus');
+  status.textContent='Stripe-Abbruch wird geprüft …';
+  let message;
+  try{
+    const response=await fetch('/api/create-checkout-session',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'release-stock',stockReservation:token})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok || !result.ok) throw new Error(result.error || 'Der Abbruch konnte noch nicht bestätigt werden.');
+    forgetPreparedStripeCheckout();
+    const url=new URL(window.location.href);
+    if(url.searchParams.get('checkout') === 'cancel' && url.searchParams.get('stockReservation') === token){
+      for(const key of ['checkout','stockReservation','voucherReservation']) url.searchParams.delete(key);
+      window.history.replaceState(window.history.state,'',url);
+    }
+    await refreshShopProductData(true);
+    message='Die Kasse wurde beendet. Deine Artikel bleiben im Warenkorb.';
+  }catch(error){
+    message=error.message;
+  }finally{
+    stripeCheckoutStarting=false;
+    renderCart();
+    status.textContent=message;
+  }
+}
 
 function prepareCartButton(product){
   const detail=document.getElementById('product-detail'); if(!detail) return;
@@ -7528,6 +7578,7 @@ function prepareCartButton(product){
   const already=dragemorCart.some(x=>x.id===product.id);
   if(product.available === null){ btn.disabled=true; btn.textContent='Verfügbarkeit wird geprüft …'; note.textContent='Wir gleichen den Bestand mit der Verwaltung ab.'; }
   else if(product.available === false){ btn.disabled=true; btn.textContent='Kommt bald wieder ♡'; note.textContent='Ein ähnliches Stück kommt bald wieder.'; }
+  else if(product.reserved){ btn.disabled=true; btn.textContent='Kurzzeitig reserviert'; note.textContent='Dieses Einzelstück ist gerade in einem Bezahlvorgang.'; }
   else if(price===null){ btn.disabled=true; btn.textContent='Variante / Preis noch auswählen'; note.textContent='Dieses Produkt hat noch keinen eindeutigen Einzelpreis und kann deshalb noch nicht in den Warenkorb gelegt werden.'; }
   else if(already){ btn.disabled=true; btn.textContent='Bereits im Warenkorb'; note.textContent='Dieses handgefertigte Einzelstück ist bereits für deinen Warenkorb vorgemerkt.'; }
   else { btn.disabled=false; btn.textContent='In den Warenkorb'; note.textContent='Einzelstück – daher maximal 1 Stück verfügbar.'; }
@@ -7663,23 +7714,21 @@ function handleCheckoutReturn(){
       document.body.style.overflow='hidden';
     }
   } else if(checkoutResult==='cancel'){
-    forgetPreparedStripeCheckout();
+    openCart();
     const stockReservation=params.get('stockReservation');
     if(stockReservation){
-      fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'release-stock',stockReservation})}).catch(()=>{});
+      void cancelPreparedStripeCheckout(stockReservation);
+    }else{
+      forgetPreparedStripeCheckout();
+      const reservation=params.get('voucherReservation');
+      if(reservation){
+        fetch('/api/create-checkout-session',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'release-voucher',reservationToken:reservation})
+        }).catch(()=>{});
+      }
     }
-    const reservation=params.get('voucherReservation');
-    if(reservation){
-      fetch('/api/create-checkout-session',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'release-voucher',reservationToken:reservation})
-      }).catch(()=>{});
-    }
-    const status=document.getElementById('checkoutStatus');
-    if(status) status.textContent='Die Zahlung wurde abgebrochen. Deine Artikel und dein Gutschein bleiben im Warenkorb.';
-    openCart();
   }
 }
 // Clear stored items immediately, even if the cart script has not run yet.
