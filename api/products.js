@@ -1,3 +1,4 @@
+import { refreshExpiredStripeClaims } from '../lib/checkout-stock.js';
 import { serveProductPage, serveProductSitemap, serveMerchantFeed } from '../lib/seo.js';
 
 // Dragemor Pottery: schneller Produktkatalog mit Bildern über dieselbe API.
@@ -82,20 +83,28 @@ export default async function handler(req, res) {
     }
 
     // Produktübersicht: Texte und Bildanzahl, aber keine Base64-Bilddaten.
-    const [rows, table] = await Promise.all([
+    const [rows, table, stockTable] = await Promise.all([
       sql`SELECT product_id, status, name, category, price, measure, description,
                  updated_at,
                  CASE WHEN jsonb_typeof(to_jsonb(images)) = 'array'
                       THEN jsonb_array_length(to_jsonb(images)) ELSE 0 END AS image_count
           FROM products ORDER BY updated_at DESC`,
-      sql`SELECT to_regclass('public.deleted_products') AS relation`
+      sql`SELECT to_regclass('public.deleted_products') AS relation`,
+      sql`SELECT to_regclass('public.stripe_stock_claims') AS relation`
     ]);
+    const reservedIds = new Set();
+    if (stockTable[0]?.relation) {
+      await refreshExpiredStripeClaims(sql);
+      const claims = await sql`SELECT unnest(product_ids) AS product_id FROM stripe_stock_claims WHERE status = 'active'`;
+      for (const claim of claims) reservedIds.add(claim.product_id);
+    }
     const products = rows.map(({ image_count, ...record }) => {
       const imageCount = Number(image_count || 0);
       const previewUrl = '/api/products?image=1&id=' + encodeURIComponent(record.product_id) +
         '&v=' + encodeURIComponent(record.updated_at || '');
       return {
         ...record,
+        reserved: record.status === 'available' && reservedIds.has(record.product_id),
         images: imageCount > 0 ? [previewUrl] : [],
         imageCount
       };
