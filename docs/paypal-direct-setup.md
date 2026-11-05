@@ -39,14 +39,14 @@ Für Sandbox/Preview heißen die vier PayPal-Zugangsdaten `PAYPAL_TEST_CLIENT_ID
 1. Sandbox-App und -Webhook mit öffentlich erreichbarer Test-URL einrichten; keine echten Kundenartikel verwenden.
 2. Test mit und ohne Gutschein: Datenbankpreise und 6,99 € Versand stimmen; nur deutsche Lieferadressen werden vor der Abbuchung akzeptiert.
 3. Zahlung bestätigen: Bestand wird zentral `sold`, derselbe Artikel ist im Marktbegleiter nicht mehr verfügbar. Die bestätigte PayPal-Rückmeldung erstellt eine Rechnung im bestehenden Nummernkreis und verschickt interne Nachricht, Bestellbestätigung und Rechnungs-PDF.
-4. PayPal-Fenster abbrechen: Warenkorb und Gutschein bleiben erhalten. Wiederholte Rückmeldungen verbuchen den Gutschein nicht erneut und versenden abgeschlossene E-Mail-Schritte nicht erneut.
+4. Bei PayPal abbrechen: Warenkorb und Gutschein bleiben erhalten. Wiederholte Rückmeldungen verbuchen den Gutschein nicht erneut und versenden abgeschlossene E-Mail-Schritte nicht erneut.
 5. Preis/Bestand zwischen Öffnen und Bestätigen ändern: PayPal darf anschließend keine neue Abbuchung starten.
-6. Mobilgerät, Popup, Rückkehr aus der PayPal-App und Browser-Neuladen prüfen. Ungeklärte Zahlungen lassen sich im selben Browser-Tab über „Zahlung fortsetzen / Status prüfen“ wieder aufnehmen.
+6. Mobilgerät, Weiterleitung, Rückkehr aus der PayPal-App und Browser-Neuladen prüfen. Ungeklärte Zahlungen lassen sich im selben Browser-Tab über „Zahlung fortsetzen / Status prüfen“ wieder aufnehmen.
 7. Danach Live-Zugangsdaten konfigurieren, veröffentlichen und eine ausdrücklich autorisierte kleine Live-Testbestellung einschließlich Webhook, E-Mails und Rechnung prüfen.
 
 ## Betriebsdetails und Grenzen
 
-- Der SDK wird erst auf ausdrückliche Auswahl von PayPal geladen. Der öffentliche Konfigurationsaufruf gibt nur Freigabestatus und Client-ID zurück.
+- Der Checkout leitet nach Auswahl von PayPal im selben Tab zur Zahlungsfreigabe weiter. Der öffentliche Konfigurationsaufruf gibt nur Freigabestatus und Client-ID zurück.
 - Produktpreise, Versionen, Gutschein und Bestand werden serverseitig geprüft. Vor dem Capture werden alle Produkte und der Gutschein in einer atomaren SQL-Anweisung verbucht. Andere Marktverkäufe sehen ab diesem Zeitpunkt `sold`.
 - Bei unklarem Capture-Ausgang bleibt der Bestand gesperrt. Ein zweiter Versuch verwendet dieselbe PayPal-Idempotenzkennung. Nur eine endgültig abgelehnte, bei PayPal erneut geprüfte Zahlung gibt noch unveränderten Bestand und Gutschein automatisch frei. Bei API-Fehlern ohne endgültiges Capture-Ergebnis ist eine Prüfung der Bestellung nötig; niemals blind wieder auf verfügbar setzen.
 - Rechnungen und E-Mails werden durch den verifizierten Webhook verarbeitet. Fehlgeschlagene Schritte bleiben gespeichert und führen zur erneuten Webhook-Zustellung. PDF-Anhang und E-Mail-Idempotenzkennungen bleiben bei Wiederholungen gleich. Resend-Idempotenz ist zeitlich begrenzt; bei längeren Störungen die protokollierten Sendeschritte prüfen.

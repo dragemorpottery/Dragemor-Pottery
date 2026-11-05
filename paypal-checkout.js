@@ -1,14 +1,13 @@
-/* Direct PayPal checkout. SDK loads only after the customer chooses PayPal. */
+/* Direct PayPal checkout with a return to the shop in the same tab. */
 (() => {
   const endpoint = '/api/create-checkout-session?provider=paypal';
   const box = document.getElementById('paypalCheckout');
   const choose = document.getElementById('paypalChoose');
-  const buttons = document.getElementById('paypalButtons');
   const status = document.getElementById('paypalStatus');
   const retry = document.getElementById('paypalRetry');
   const cancel = document.getElementById('paypalCancel');
   if (!box) return;
-  let configPromise, sdkPromise, rendered = false, busy = false, pending = null, unavailable = true;
+  let configPromise, busy = false, pending = null, unavailable = true;
   const storageKey = 'dragemorPayPalPending';
   try { pending = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); } catch (_) {}
   if (pending && (!pending.orderId || !pending.token || !Array.isArray(pending.items))) pending = null;
@@ -29,8 +28,6 @@
     retry.hidden = !pending;
     retry.disabled = busy;
     cancel.hidden = !pending; cancel.disabled = busy;
-    buttons.style.pointerEvents = busy || unavailable || pending ? 'none' : '';
-    buttons.style.opacity = busy || unavailable || pending ? '.5' : '';
   }
   window.refreshPayPalCheckout = function (disabled) {
     unavailable = !!disabled;
@@ -38,20 +35,9 @@
     if (!document.getElementById('cartDrawer')?.classList.contains('open')) return;
     if (!configPromise) {
       configPromise = fetch(endpoint, { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(); return r.json(); });
-      configPromise.then(cfg => { box.hidden = !cfg.enabled; }).catch(() => { box.hidden = true; configPromise = null; });
+      configPromise.then(cfg => { box.hidden = !cfg.enabled && !pending && !paypalReturn; }).catch(() => { box.hidden = !pending && !paypalReturn; configPromise = null; });
     }
   };
-  function loadSdk(clientId) {
-    if (!sdkPromise) sdkPromise = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(clientId) + '&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,paylater,venmo';
-      script.dataset.namespace = 'dragemorPayPal';
-      script.onload = () => resolve(window.dragemorPayPal);
-      script.onerror = () => { script.remove(); sdkPromise = null; reject(new Error('PayPal konnte nicht geladen werden. Bitte erneut versuchen.')); };
-      document.head.appendChild(script);
-    });
-    return sdkPromise;
-  }
   function success() {
     const completed = pending;
     if (!completed) return;
@@ -95,50 +81,54 @@
   }
   retry.addEventListener('click', () => check('capture'));
   cancel.addEventListener('click', () => check('cancel'));
+  const returnUrl = new URL(window.location.href);
+  const paypalReturn = returnUrl.searchParams.get('paypal');
+
   choose.addEventListener('click', async () => {
     if (busy || unavailable || pending) return;
-    choose.disabled = true;
-    message('PayPal wird geladen …');
+    busy = true; refresh();
+    message('PayPal wird geöffnet …');
+    let redirecting = false;
     try {
       const cfg = await configPromise;
       if (!cfg?.enabled) throw new Error('PayPal ist momentan nicht verfügbar.');
-      const sdk = await loadSdk(cfg.clientId);
-      if (!rendered) {
-        await sdk.Buttons({
-          fundingSource: sdk.FUNDING.PAYPAL,
-          style: { layout: 'vertical', color: 'gold', label: 'pay', shape: 'rect', height: 45 },
-          onClick: (_data, actions) => {
-            if (busy || unavailable || pending) return actions.reject();
-            return actions.resolve();
-          },
-          createOrder: async () => {
-            busy = true; refresh();
-            const items = dragemorCart.map(i => ({ id: i.id }));
-            const voucherCode = dragemorVoucher?.code || '';
-            try {
-              const result = await request({ action: 'create', items, voucherCode });
-              setPending({ ...result, items, voucherCode });
-              message('Prüfe bei PayPal bitte Artikel, Lieferadresse und Gesamtbetrag einschließlich Versand.');
-              return result.orderId;
-            } finally { busy = false; refresh(); }
-          },
-          onApprove: data => {
-            if (!pending || data.orderID !== pending.orderId) throw new Error('Die PayPal-Bestellung passt nicht zur Zahlungssitzung.');
-            return check('capture');
-          },
-          onCancel: () => check('cancel'),
-          onError: () => {
-            message(pending ? 'PayPal konnte noch nicht bestätigt werden. Bitte „Zahlung fortsetzen / Status prüfen“ wählen.' : 'PayPal konnte nicht geöffnet werden. Bitte erneut versuchen.');
-            busy = false; refresh();
-          }
-        }).render(buttons);
-        rendered = true;
+      const items = dragemorCart.map(i => ({ id: i.id }));
+      const voucherCode = dragemorVoucher?.code || '';
+      const { orderId, token, approvalUrl } = await request({ action: 'create', items, voucherCode });
+      if (!approvalUrl) throw new Error('PayPal hat keinen Zahlungslink geliefert. Bitte erneut versuchen.');
+      setPending({ orderId, token, items, voucherCode });
+      if (!sessionStorage.getItem(storageKey)) {
+        throw new Error('Der Browser konnte die Zahlungssitzung nicht speichern.');
       }
-      choose.hidden = true;
-      message('Mit PayPal bezahlen. Versand innerhalb Deutschlands: 6,99 €.');
+      window.location.assign(approvalUrl);
+      redirecting = true;
     } catch (e) { message(e.message); }
-    finally { refresh(); }
+    finally { if (!redirecting) { busy = false; refresh(); } }
   });
+
   if (pending) message('Eine PayPal-Zahlung ist noch offen. Bitte zuerst den Status prüfen.');
   refresh();
+
+  if (paypalReturn === 'return' || paypalReturn === 'cancel') {
+    const orderId = returnUrl.searchParams.get('token');
+    for (const key of ['paypal', 'token', 'PayerID']) returnUrl.searchParams.delete(key);
+    window.history.replaceState(window.history.state, '', returnUrl);
+    openCart();
+    box.hidden = false;
+    if (pending && orderId === pending.orderId) {
+      void check(paypalReturn === 'return' ? 'capture' : 'cancel');
+    } else {
+      message('Die PayPal-Rückkehr konnte keiner Zahlung in diesem Tab zugeordnet werden. Bitte prüfe zuerst deine PayPal-Aktivitäten.');
+    }
+  }
+
+  // A browser Back action can restore the pre-redirect page from memory.
+  window.addEventListener('pageshow', event => {
+    if (event.persisted && pending) {
+      try { pending = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); } catch (_) {}
+      busy = false;
+      message(pending ? 'Eine PayPal-Zahlung ist noch offen. Bitte zuerst den Status prüfen.' : '');
+      refresh();
+    }
+  });
 })();
