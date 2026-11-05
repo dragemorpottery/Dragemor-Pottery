@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import crypto from 'node:crypto';
-import { marketHandler } from '../lib/market.js';
+import { marketHandler, snapshot } from '../lib/market.js';
 import { Readable } from 'node:stream';
 import { reserveStripeStock, releaseStripeStock, checkoutStockReady } from '../lib/checkout-stock.js';
 import { PGlite } from '@electric-sql/pglite';
@@ -227,6 +227,24 @@ test('market sale respects an open Stripe checkout and succeeds after its confir
   await releaseStripeStock(sql,'cs_market_1');
   res=response();await marketHandler(req,res,sql);assert.equal(res.code,200);
   assert.equal((await sql`SELECT status FROM products WHERE product_id='tasse-1'`)[0].status,'sold');
+});
+
+test('incomplete market products are hidden and stale sale requests cannot sell them', async()=>{
+  await fixture();
+  for (const [i, name, price] of [[1,null,null],[2,'   ',1200],[3,'Ohne Preis',null],[4,'Nullpreis',0],[5,'Negativ',-100]]) {
+    await sql`INSERT INTO products (product_id,name,price,status) VALUES (${'invalid-'+i},${name},${price},'available')`;
+    const version=(await sql`SELECT updated_at::text AS version FROM products WHERE product_id=${'invalid-'+i}`)[0].version;
+    const sale={id:'invalid-sale-'+i,productId:'invalid-'+i,quantity:1,total:500,payment:'Bar',way:'Mitgenommen',day:'2026-11-06',note:''};
+    const res=response();await marketHandler(post({action:'sale',sale,productVersion:version}),res,sql);
+    assert.equal(res.code,409);
+    assert.equal((await sql`SELECT status FROM products WHERE product_id=${sale.productId}`)[0].status,'available');
+    assert.equal((await sql`SELECT COUNT(*)::int AS n FROM market_sales WHERE id=${sale.id}`)[0].n,0);
+  }
+  const before=await snapshot(sql);
+  assert.equal(before.products.some(p=>p.id.startsWith('invalid-')),false);
+  assert.equal(before.products.find(p=>p.id==='teller-1').quantity,1);
+  await sql`UPDATE products SET name='Vervollständigt',price=500 WHERE product_id='invalid-1'`;
+  assert.equal((await snapshot(sql)).products.find(p=>p.id==='invalid-1').price,500);
 });
 
 test('sandbox accepts its branch preview origin and returns to that same test shop', async()=>{
