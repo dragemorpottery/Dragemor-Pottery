@@ -217,7 +217,8 @@ export default async function handler(req, res) {
               balance: Number(voucher.balance),
               initialValue: Number(voucher.initial_value),
               reserved: true,
-              checkoutUrl: existingSession.url
+              checkoutUrl: existingSession.url,
+              checkoutExpiresAt: existingSession.expires_at
             });
           }
 
@@ -559,7 +560,7 @@ export default async function handler(req, res) {
       `;
     }
 
-    return res.status(200).json({ url: data.url });
+    return res.status(200).json({ url: data.url, expiresAt: data.expires_at });
   } catch (error) {
     if (voucherReservation) {
       try {

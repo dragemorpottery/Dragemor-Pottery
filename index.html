@@ -7153,12 +7153,37 @@ function currentCheckoutFingerprint(){
   });
 }
 
+const stripeCheckoutStorageKey = 'dragemorStripeCheckout';
+let preparedStripeCheckout;
+let stripeCheckoutStarting = false;
+
+function savePreparedStripeCheckout(url, fingerprint, expiresAt){
+  preparedStripeCheckout={url, fingerprint, expiresAt};
+  try{ sessionStorage.setItem(stripeCheckoutStorageKey, JSON.stringify(preparedStripeCheckout)); }catch(e){}
+}
+
+function currentPreparedStripeCheckout(){
+  let prepared=preparedStripeCheckout;
+  if(!prepared){
+    try{ prepared=JSON.parse(sessionStorage.getItem(stripeCheckoutStorageKey) || 'null'); }catch(e){}
+  }
+  if(!prepared || prepared.fingerprint !== currentCheckoutFingerprint() || !Number.isFinite(prepared.expiresAt) || prepared.expiresAt <= Date.now()) return null;
+  try{
+    const url=new URL(prepared.url);
+    if(url.protocol === 'https:' && url.hostname === 'checkout.stripe.com') return url.href;
+  }catch(e){}
+  return null;
+}
+
 function clearPreparedStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
-  if(!checkout) return;
-  delete checkout.dataset.stripeUrl;
-  delete checkout.dataset.checkoutFingerprint;
-  if(!checkout.disabled) checkout.textContent='Zur Kasse';
+  if(checkout && !checkout.disabled) checkout.textContent='Zur Kasse';
+}
+
+function forgetPreparedStripeCheckout(){
+  preparedStripeCheckout=null;
+  try{ sessionStorage.removeItem(stripeCheckoutStorageKey); }catch(e){}
+  clearPreparedStripeCheckout();
 }
 function removeVoucher(){
   dragemorVoucher=null;
@@ -7201,8 +7226,7 @@ async function applyVoucher(){
     if(data.checkoutUrl){
       const checkout=document.getElementById('cartCheckout');
       if(checkout){
-        checkout.dataset.stripeUrl=data.checkoutUrl;
-        checkout.dataset.checkoutFingerprint=currentCheckoutFingerprint();
+        savePreparedStripeCheckout(data.checkoutUrl, currentCheckoutFingerprint(), Number(data.checkoutExpiresAt)*1000);
         checkout.disabled=false;
         checkout.textContent='Jetzt bezahlen →';
       }
@@ -7381,30 +7405,23 @@ function renderCart(){
   const sum=purchasableItems.reduce((a,x)=>a+Number(x.price||0),0);
   total.textContent=sum.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
   renderVoucherSummary(sum);
-  checkout.disabled=!catalogSyncSucceeded || !dragemorCart.length ||
+  checkout.disabled=stripeCheckoutStarting || !catalogSyncSucceeded || !dragemorCart.length ||
       hasMissing || hasComingSoon || cartHasPendingAvailability();
+  if(!stripeCheckoutStarting) checkout.textContent=currentPreparedStripeCheckout() ? 'Jetzt bezahlen →' : 'Zur Kasse';
   const status=document.getElementById("checkoutStatus");
-  if(status) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung.';
+  if(status && !stripeCheckoutStarting) status.innerHTML=hasMissing ? 'Ein Produkt wurde entfernt. Bitte lösche es aus deinem Warenkorb.' : hasComingSoon ? '<span class="cart-warning"><strong>♡ Kommt bald wieder</strong>Ein Stück in deinem Warenkorb ist momentan nicht verfügbar.<br>Bitte entferne es, um mit deiner Bestellung fortzufahren.</span>' : cartHasPendingAvailability() ? 'Die Verfügbarkeit wird geprüft. Bitte einen Moment warten.' : 'Sichere Bezahlung.';
   if(window.refreshPayPalCheckout) window.refreshPayPalCheckout(checkout.disabled);
 }
 async function startStripeCheckout(){
   const checkout=document.getElementById('cartCheckout');
   const status=document.getElementById('checkoutStatus');
 
-  // Eine vorbereitete Stripe-Session darf nur wiederverwendet werden,
-  // solange Warenkorb UND Gutschein seitdem unverändert sind.
+  if(stripeCheckoutStarting || checkout.disabled) return;
   const checkoutFingerprint=currentCheckoutFingerprint();
-
-  if(checkout?.dataset?.stripeUrl){
-    if(checkout.dataset.checkoutFingerprint === checkoutFingerprint){
-      window.location.href=checkout.dataset.stripeUrl;
-      return;
-    }
-
-    // Warenkorb oder Gutschein wurde geändert: alte Session verwerfen.
-    delete checkout.dataset.stripeUrl;
-    delete checkout.dataset.checkoutFingerprint;
-    checkout.textContent='Zur Kasse';
+  const existingUrl=currentPreparedStripeCheckout();
+  if(existingUrl){
+    window.location.assign(existingUrl);
+    return;
   }
 
   if(!dragemorCart.length) return;
@@ -7414,6 +7431,7 @@ async function startStripeCheckout(){
     return;
   }
 
+  stripeCheckoutStarting=true;
   checkout.disabled=true;
   checkout.textContent='Checkout wird vorbereitet …';
   if(status) status.textContent='Warenkorb und Gutschein werden sicher geprüft …';
@@ -7443,43 +7461,26 @@ async function startStripeCheckout(){
       throw new Error('Stripe hat keine gültige Checkout-Adresse zurückgegeben.');
     }
 
-    if(
-      stripeUrl.protocol !== 'https:' ||
-      !(stripeUrl.hostname === 'stripe.com' || stripeUrl.hostname.endsWith('.stripe.com'))
-    ){
+    if(stripeUrl.protocol !== 'https:' || stripeUrl.hostname !== 'checkout.stripe.com'){
       throw new Error('Die Checkout-Adresse von Stripe konnte nicht bestätigt werden.');
     }
 
-    // Auf mobilen Browsern kann eine Navigation, die erst nach mehreren
-    // asynchronen Prüfungen erfolgt, blockiert werden. Deshalb wird die fertige
-    // Stripe-Adresse gespeichert und mit einem zweiten echten Fingertipp geöffnet.
-    checkout.dataset.stripeUrl=stripeUrl.href;
-    checkout.dataset.checkoutFingerprint=checkoutFingerprint;
-    checkout.disabled=false;
+    savePreparedStripeCheckout(stripeUrl.href, checkoutFingerprint, Number(data.expiresAt)*1000);
+    if(currentCheckoutFingerprint() !== checkoutFingerprint) return;
     checkout.textContent='Jetzt bezahlen →';
-
-    if(status){
-      status.textContent='Checkout ist bereit. Tippe jetzt auf „Jetzt bezahlen →“.';
-    }
-
+    if(status) status.textContent='Falls Stripe sich nicht öffnet, tippe auf „Jetzt bezahlen →“.';
+    window.location.assign(stripeUrl.href);
   }catch(error){
     console.error('Stripe Checkout Fehler:',error);
     if(status) status.textContent=error.message || 'Checkout konnte nicht gestartet werden.';
-    if(checkout?.dataset){
-      delete checkout.dataset.stripeUrl;
-      delete checkout.dataset.checkoutFingerprint;
-    }
-    checkout.disabled=false;
     checkout.textContent='Zur Kasse';
+  }finally{
+    stripeCheckoutStarting=false;
+    checkout.disabled=!catalogSyncSucceeded || !dragemorCart.length ||
+      dragemorCart.some(item=>deletedProductIds.has(item.id)) || cartHasComingSoon() || cartHasPendingAvailability();
   }
 }
 
-
-window.addEventListener('pageshow', function(){
-  if(typeof clearPreparedStripeCheckout === 'function'){
-    clearPreparedStripeCheckout();
-  }
-});
 
 function prepareCartButton(product){
   const detail=document.getElementById('product-detail'); if(!detail) return;
@@ -7636,6 +7637,7 @@ function handleCheckoutReturn(){
   const params=new URLSearchParams(window.location.search);
   const checkoutResult=params.get('checkout');
   if(checkoutResult==='success'){
+    forgetPreparedStripeCheckout();
     // Each optional cart operation must leave the confirmation usable on failure.
     try { localStorage.removeItem('dragemorCart'); } catch(e) {}
     try { localStorage.removeItem('dragemorVoucher'); } catch(e) {}
@@ -7661,6 +7663,7 @@ function handleCheckoutReturn(){
       document.body.style.overflow='hidden';
     }
   } else if(checkoutResult==='cancel'){
+    forgetPreparedStripeCheckout();
     const stockReservation=params.get('stockReservation');
     if(stockReservation){
       fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},
