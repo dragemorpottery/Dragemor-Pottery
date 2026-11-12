@@ -25,15 +25,23 @@ export default async function handler(req, res) {
         end_date,
         time_text,
         location,
-        info
+        info,
+        COALESCE(end_date, market_date) < (NOW() AT TIME ZONE 'Europe/Berlin')::date AS is_past
       FROM markets
-      WHERE COALESCE(end_date, market_date) >= CURRENT_DATE
-      ORDER BY market_date ASC
+      ORDER BY market_date ASC, id ASC
     `;
 
-    return res.status(200).json({
-      markets
-    });
+    const upcoming = [];
+    const pastMarkets = [];
+    for (const { is_past, ...market } of markets) {
+      if (is_past) {
+        const { id, name, market_date, end_date, location } = market;
+        pastMarkets.push({ id, name, market_date, end_date, location });
+      } else {
+        upcoming.push(market);
+      }
+    }
+    return res.status(200).json({ markets: upcoming, pastMarkets: pastMarkets.reverse() });
 
   } catch (error) {
     console.error("Öffentliche Markt-Termine Fehler:", error);
