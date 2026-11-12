@@ -4833,7 +4833,7 @@ section,
         </div>
       </div>
 
-      <a href="#ueber-uns">Über uns</a>
+      <a href="#ueber-mich">Über mich</a>
 
       <div class="dp-nav-dropdown">
         <button type="button" class="dp-nav-trigger">Infos <span>⌄</span></button>
@@ -4895,7 +4895,7 @@ section,
     <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('weihnachten'); return false;">Weihnachtswerkstatt</a>
     <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('leder'); return false;">Leder</a>
     <a href="#maerkte" onclick="document.body.classList.remove('dp-menu-open')">Märkte</a>
-    <a href="#ueber-uns" onclick="document.body.classList.remove('dp-menu-open')">Über uns</a>
+    <a href="#ueber-mich" onclick="document.body.classList.remove('dp-menu-open')">Über mich</a>
     <a href="#kontakt" onclick="document.body.classList.remove('dp-menu-open')">Kontakt</a>
     <a href="#widerruf" onclick="document.body.classList.remove('dp-menu-open')">Widerrufsrecht</a>
   </nav>
@@ -5173,10 +5173,11 @@ section,
      ÜBER UNS
 ======================================== -->
 
-<section class="ueber-uns" id="ueber-uns">
+<section class="ueber-uns" id="ueber-mich">
+    <span id="ueber-uns" aria-hidden="true"></span>
     <div class="container">
         <div class="section-title">
-            <h2>Über uns</h2>
+            <h2>Über mich</h2>
             <p>Dragemor Pottery – handgefertigte Steinzeugkeramik aus der eigenen Werkstatt in Tielen, Schleswig-Holstein. Entstanden aus der Liebe zu natürlichen Materialien, echter Handarbeit und der Schönheit des Unvollkommenen.</p>
         </div>
 
@@ -5213,42 +5214,6 @@ section,
                         <p>Wenn du ein Stück meiner Keramik in den Händen hältst, hoffe ich, dass du genau das spürst: Ein Stück Entschleunigung, ein bisschen Wärme und die Liebe zu einem Handwerk, das ganz ohne Eile entstanden ist. Danke, dass du mich auf diesem Weg begleitest.</p>
                     </div>
                 </article>
-            </div>
-
-            <article class="ueber-uns-person">
-                <img src="bilder/ueber-uns-andre.jpg" alt="André – handgefertigte Lederarbeiten" loading="lazy" decoding="async">
-                <div class="ueber-uns-person-text">
-                    <h3>André Spring – Von der Leidenschaft zum Unikat</h3>
-                    <p><strong>Echtes Lederhandwerk von André</strong></p>
-                    <p>Manchmal sucht man einfach nach einem neuen Hobby – und findet stattdessen eine echte Passion. Genau so ging es mir mit der Lederverarbeitung. Was mit dem ersten eigenen Lederarmband begann, ist heute meine absolute Leidenschaft. Bei mir entstehen Lieblingsteile aus 100 % echtem Leder, handgefertigt mit viel Blick fürs Detail und einem hohen Anspruch an Qualität.</p>
-
-                    <p><strong>Mein Sortiment: Der Anfang ist gemacht</strong></p>
-                    <p>Mein Fokus liegt aktuell auf maßgefertigten Lederarmbändern – stilvolle Begleiter für jeden Tag. Aber die Werkstatt steht niemals still. Freu dich schon jetzt auf weitere hochwertige Stücke, die sich aktuell in der Entwicklung befinden:</p>
-                    <ul>
-                        <li>Langlebige Gürtel, die mit den Jahren immer besser werden</li>
-                        <li>Stilvolle Taschen für jeden Anlass</li>
-                        <li>Durchdachte Geldbeutel, die Funktion und Design vereinen</li>
-                    </ul>
-
-                    <p><strong>Warum echtes Lederhandwerk?</strong></p>
-                    <ul>
-                        <li><strong>Jedes Stück ein Unikat:</strong> Leder ist ein lebendiges Naturmaterial. Jedes Produkt hat seine eigene Narbung und Struktur. Du bekommst keine Massenware, sondern ein echtes Einzelstück mit Charakter.</li>
-                        <li><strong>Handarbeit mit Anspruch:</strong> Vom ersten Zuschnitt bis zur letzten Naht setze ich auf sorgfältige Verarbeitung. Das sieht man und das fühlt man.</li>
-                        <li><strong>Deine Idee nach Maß:</strong> Du hast eine genaue Vorstellung von deinem perfekten Leder-Accessoire? Ich erfülle deine individuellen Wünsche. Lass uns einfach über deine Ideen sprechen, und ich fertige dein ganz persönliches Wunsch-Design.</li>
-                    </ul>
-
-                    <p>Schau dich in Ruhe um und finde dein neues Lieblingsstück aus echtem Leder!</p>
-                </div>
-            </article>
-
-            <div class="ueber-uns-gemeinsam">
-                <img src="bilder/ueber-uns-gemeinsam.jpg" alt="Franca und André – gemeinsamer Marktauftritt" loading="lazy" decoding="async">
-                <div class="ueber-uns-gemeinsam-text">
-                    <h3>Gemeinsam auf Märkten</h3>
-                    <p>Keramik und Leder sind zwei unterschiedliche Handwerke, doch uns verbindet die Freude am kreativen Arbeiten, an natürlichen Materialien und daran, mit den eigenen Händen etwas Besonderes entstehen zu lassen.</p>
-                    <p><strong>Gemeinsam findet ihr uns auf Märkten unter dem Namen „Drachenfeuer und Lederwind“.</strong></p>
-                    <div class="zitat">„Handgemacht bedeutet, dass kein Stück dem anderen gleicht.“</div>
-                </div>
             </div>
         </div>
     </div>
@@ -5849,6 +5814,7 @@ section,
                     <p><strong>Material:</strong> <span id="product-material">Steinzeugkeramik</span></p>
                     <p><strong>Details / Farbe & Glasur:</strong></p>
                     <p id="product-description" class="placeholder">Beschreibung folgt.</p>
+                    <p id="product-bracelet-credit" hidden>createt by Andre</p>
                     <p><strong>Maße / Volumen:</strong> <span id="product-measure"></span></p>
                     <p><strong>Preis:</strong> <span id="product-price"></span></p>
                     <p class="shop-shipping-info" style="font-size:.9rem;line-height:1.55;color:#52604f;margin:6px 0 12px;">zzgl. 6,99 € Versand pro Bestellung innerhalb Deutschlands (DHL Paket, versichert).</p>
@@ -6098,7 +6064,7 @@ async function loadDatabaseProducts() {
         document.getElementById("product-material").textContent = currentCollection === "leder" ? "Leder – Einzelheiten siehe Beschreibung" : "Steinzeugkeramik";
         const dispatchNote = document.getElementById("product-dispatch-note");
         if (dispatchNote) dispatchNote.hidden = currentCollection === "leder" || product.available !== true;
-                    document.getElementById("product-description").textContent = product.description;
+                    renderProductDescription(product);
                     document.getElementById("product-measure").textContent = product.measure;
                     document.getElementById("product-price").textContent = product.price;
                     const firstPhoto = product.images?.[0];
@@ -6237,6 +6203,13 @@ function dragemorDisplayName(product) {
     String(product.category || '').toLowerCase() === 'leder';
   return dragemorReadableProductName(product.name, product.description, leather, product.id);
 }
+
+    function renderProductDescription(product) {
+        document.getElementById("product-description").textContent = product.description;
+        const isBracelet = currentCollection === "leder" &&
+            /armband|armbänder/i.test([product.name, product.description].join(" "));
+        document.getElementById("product-bracelet-credit").hidden = !isBracelet;
+    }
 
     function appendShareableProductPageLink(info, product) {
         if (!info || !product || product.available !== true ||
@@ -6510,7 +6483,7 @@ async function openProductById(productId) {
         document.getElementById("product-material").textContent = currentCollection === "leder" ? "Leder – Einzelheiten siehe Beschreibung" : "Steinzeugkeramik";
         const dispatchNote = document.getElementById("product-dispatch-note");
         if (dispatchNote) dispatchNote.hidden = currentCollection === "leder" || product.available !== true;
-        document.getElementById("product-description").textContent = product.description;
+        renderProductDescription(product);
         document.getElementById("product-measure").textContent = product.measure;
         document.getElementById("product-price").textContent = product.price;
 
