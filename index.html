@@ -6268,6 +6268,58 @@ function dragemorDisplayName(product) {
             intro.innerHTML = `<h3>Keramik entdecken</h3><p>Wähle zuerst aus, welche Keramik du dir ansehen möchtest.</p>`;
             grid.appendChild(intro);
         }
+
+
+        const addProductCard = (product, index, target = grid) => {
+            if (!catalogSyncSucceeded || deletedProductIds.has(product.id)) return;
+            const card = document.createElement("article");
+            card.className = "collection-grid-item product-card";
+            if (product.available === false) card.classList.add("coming-soon");
+            card.onclick = () => openProduct(type, index);
+
+            const img = document.createElement("img");
+            img.src = product.images[0];
+            img.alt = dragemorDisplayName(product);
+            img.loading = index < 4 ? "eager" : "lazy";
+            img.decoding = "async";
+
+            const info = document.createElement("div");
+            info.className = "product-card-info";
+            info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.reserved ? '<p class="shop-card-checking">Kurzzeitig reserviert</p>' : product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
+
+            appendShareableProductPageLink(info, product);
+            card.append(img, info);
+            target.appendChild(card);
+        };
+
+        if (type === "keramik") {
+            const categories = [
+                ["Alle Keramik", "Alle handgefertigten Keramikstücke"],
+                ["Momente des Innehaltens", "Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält."],
+                ["Gemeinsame Zeit", "Teller, Servierschalen und Schüsseln, die den Tisch bereichern."],
+                ["Raum für Natur", "Vasen, Blumentöpfe und Steckvasen."],
+                ["Kleine Schätze", "Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte."]
+            ];
+            const choices = document.createElement("div");
+            choices.className = "shop-category-choice-grid";
+            choices.style.gridColumn = "1 / -1";
+            categories.forEach(([category, description]) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "shop-category-choice";
+                button.innerHTML = `<h3>${category}</h3><p>${description}</p>`;
+                button.onclick = () => category === "Alle Keramik" ? renderAllCeramics() : openShopCategory(category);
+                choices.appendChild(button);
+            });
+            grid.appendChild(choices);
+        } else {
+            const products = shopProducts[type].map((product, index) => ({ product, index }));
+            if (type === "weihnachten") {
+                products.sort((a, b) => Number(b.product.available === true) - Number(a.product.available === true));
+            }
+            products.forEach(({ product, index }) => addProductCard(product, index));
+        }
+
         if (type === "weihnachten") {
             const intro = document.createElement("div");
             intro.className = "christmas-intro";
@@ -6324,52 +6376,6 @@ function dragemorDisplayName(product) {
   </section>
 </div>`;
             grid.appendChild(intro);
-        }
-
-        const addProductCard = (product, index, target = grid) => {
-            if (!catalogSyncSucceeded || deletedProductIds.has(product.id)) return;
-            const card = document.createElement("article");
-            card.className = "collection-grid-item product-card";
-            if (product.available === false) card.classList.add("coming-soon");
-            card.onclick = () => openProduct(type, index);
-
-            const img = document.createElement("img");
-            img.src = product.images[0];
-            img.alt = dragemorDisplayName(product);
-            img.loading = index < 4 ? "eager" : "lazy";
-            img.decoding = "async";
-
-            const info = document.createElement("div");
-            info.className = "product-card-info";
-            info.innerHTML = `<h3>${dragemorDisplayName(product)}</h3><p class="shop-card-price">${product.price}</p>${product.reserved ? '<p class="shop-card-checking">Kurzzeitig reserviert</p>' : product.available === null ? '<p class="shop-card-checking">Verfügbarkeit wird geprüft …</p>' : ''}<p>Details ansehen →</p>`;
-
-            appendShareableProductPageLink(info, product);
-            card.append(img, info);
-            target.appendChild(card);
-        };
-
-        if (type === "keramik") {
-            const categories = [
-                ["Alle Keramik", "Alle handgefertigten Keramikstücke"],
-                ["Momente des Innehaltens", "Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält."],
-                ["Gemeinsame Zeit", "Teller, Servierschalen und Schüsseln, die den Tisch bereichern."],
-                ["Raum für Natur", "Vasen, Blumentöpfe und Steckvasen."],
-                ["Kleine Schätze", "Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte."]
-            ];
-            const choices = document.createElement("div");
-            choices.className = "shop-category-choice-grid";
-            choices.style.gridColumn = "1 / -1";
-            categories.forEach(([category, description]) => {
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "shop-category-choice";
-                button.innerHTML = `<h3>${category}</h3><p>${description}</p>`;
-                button.onclick = () => category === "Alle Keramik" ? renderAllCeramics() : openShopCategory(category);
-                choices.appendChild(button);
-            });
-            grid.appendChild(choices);
-        } else {
-            shopProducts[type].forEach((product, index) => addProductCard(product, index));
         }
     }
 
