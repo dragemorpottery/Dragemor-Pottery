@@ -4808,20 +4808,20 @@ section,
     </div>
     <div class="shop-category-choice-grid">
       <button class="shop-category-choice" onclick="navigateShop('category','Momente des Innehaltens')">
-        <h3>Momente des Innehaltens</h3>
-        <p>Tassen, Becher und Teeschalen</p>
+        <h3>Tassen &amp; Becher</h3>
+        <p>Für Kaffee und Tee – auch Krüge und Kännchen</p>
       </button>
       <button class="shop-category-choice" onclick="navigateShop('category','Gemeinsame Zeit')">
-        <h3>Gemeinsame Zeit</h3>
-        <p>Teller, Servierschalen und Schüsseln</p>
+        <h3>Teller, Schalen &amp; Löffel</h3>
+        <p>Geschirr und Löffel zum Essen und Servieren</p>
       </button>
       <button class="shop-category-choice" onclick="navigateShop('category','Raum für Natur')">
-        <h3>Raum für Natur</h3>
+        <h3>Vasen &amp; Blumentöpfe</h3>
         <p>Vasen, Blumentöpfe und Steckvasen</p>
       </button>
       <button class="shop-category-choice" onclick="navigateShop('category','Kleine Schätze')">
         <h3>Kleine Schätze</h3>
-        <p>Besondere Einzelstücke, Seifenschalen und Deko-Objekte</p>
+        <p>Deko, Kerzenhalter und Seifenschalen – abseits von Essen und Trinken</p>
       </button>
       <button class="shop-category-choice special" onclick="navigateShop('collection','weihnachten')">
         <h3>Weihnachtswerkstatt</h3>
@@ -6237,6 +6237,15 @@ function dragemorDisplayName(product) {
         info.appendChild(link);
     }
 
+    // Keep stored category keys and existing links stable while showing clear names.
+    function ceramicCategoryLabel(category) {
+        return {
+            "Momente des Innehaltens": "Tassen & Becher",
+            "Gemeinsame Zeit": "Teller, Schalen & Löffel",
+            "Raum für Natur": "Vasen & Blumentöpfe"
+        }[category] || category;
+    }
+
     function renderCollection(type) {
         currentCollection = type;
         const title = document.getElementById("collection-title");
@@ -6295,10 +6304,10 @@ function dragemorDisplayName(product) {
         if (type === "keramik") {
             const categories = [
                 ["Alle Keramik", "Alle handgefertigten Keramikstücke"],
-                ["Momente des Innehaltens", "Tassen, Becher und Teeschalen – alles, was man mit beiden Händen hält."],
-                ["Gemeinsame Zeit", "Teller, Servierschalen und Schüsseln, die den Tisch bereichern."],
+                ["Momente des Innehaltens", "Für Kaffee und Tee – auch Krüge und Kännchen."],
+                ["Gemeinsame Zeit", "Geschirr und Löffel zum Essen und Servieren."],
                 ["Raum für Natur", "Vasen, Blumentöpfe und Steckvasen."],
-                ["Kleine Schätze", "Ganz besondere Einzelstücke, Seifenschalen und Deko-Objekte."]
+                ["Kleine Schätze", "Deko, Kerzenhalter und Seifenschalen – abseits von Essen und Trinken."]
             ];
             const choices = document.createElement("div");
             choices.className = "shop-category-choice-grid";
@@ -6307,7 +6316,7 @@ function dragemorDisplayName(product) {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "shop-category-choice";
-                button.innerHTML = `<h3>${category}</h3><p>${description}</p>`;
+                button.innerHTML = `<h3>${ceramicCategoryLabel(category)}</h3><p>${description}</p>`;
                 button.onclick = () => category === "Alle Keramik" ? renderAllCeramics() : openShopCategory(category);
                 choices.appendChild(button);
             });
@@ -6976,7 +6985,7 @@ function renderCeramicCategory(category){
     const tabs = document.getElementById("shop-tabs");
     if (!grid) return;
 
-    if (title) title.textContent = `Keramik · ${category}`;
+    if (title) title.textContent = `Keramik · ${ceramicCategoryLabel(category)}`;
     if (detail) detail.classList.remove("active");
     if (tabs) tabs.style.display = "none";
     grid.style.display = "grid";
@@ -7613,24 +7622,24 @@ openProduct = function(type,index,pushHistory=true){
 <script>
 (function(){
     const categoryDescriptions = {
-        "Momente des Innehaltens": "Tassen · Becher · Krüge · Teeschalen",
-        "Gemeinsame Zeit": "Teller · Schalen · Servierschalen · Schüsseln",
+        "Momente des Innehaltens": "Tassen · Becher · Krüge · Kännchen",
+        "Gemeinsame Zeit": "Teller · Schalen · Schüsseln · Löffel",
         "Raum für Natur": "Vasen · Blumentöpfe · Steckvasen",
-        "Kleine Schätze": "Seifenschalen · Deko-Objekte · besondere Einzelstücke"
+        "Kleine Schätze": "Deko · Kerzenhalter · Seifenschalen – abseits von Essen und Trinken"
     };
 
     function updateShopCategoryDescription(){
-        const headings = Array.from(document.querySelectorAll("h1,h2,h3"));
+        const headings = [document.getElementById("collection-title")].filter(Boolean);
         const heading = headings.find(el => {
             const t = (el.textContent || "").trim();
             return Object.keys(categoryDescriptions).some(name =>
-                t === name || t.endsWith("· " + name) || t.includes("Keramik · " + name)
+                t === ceramicCategoryLabel(name) || t.endsWith("· " + ceramicCategoryLabel(name))
             );
         });
         if(!heading) return;
 
         const name = Object.keys(categoryDescriptions).find(n =>
-            (heading.textContent || "").includes(n)
+            (heading.textContent || "").includes(ceramicCategoryLabel(n))
         );
         if(!name) return;
 
