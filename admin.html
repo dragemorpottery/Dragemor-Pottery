@@ -253,10 +253,10 @@
       <h2 id="produktBereichTitel">Produkte</h2>
 
       <div id="keramikKategorien" class="keramikKategorien">
-        <button type="button" data-kategorie="Momente des Innehaltens">Momente des Innehaltens</button>
-        <button type="button" data-kategorie="Gemeinsame Zeit">Gemeinsame Zeit</button>
-        <button type="button" data-kategorie="Raum für Natur">Raum für Natur</button>
-        <button type="button" data-kategorie="Kleine Schätze">Kleine Schätze</button>
+        <button type="button" data-kategorie="Momente des Innehaltens">Tassen &amp; Becher</button>
+        <button type="button" data-kategorie="Gemeinsame Zeit">Teller, Schalen &amp; Löffel</button>
+        <button type="button" data-kategorie="Raum für Natur">Vasen &amp; Blumentöpfe</button>
+        <button type="button" data-kategorie="Kleine Schätze">Kleine Schätze · Deko &amp; mehr</button>
         <button type="button" data-kategorie="Weihnachtswerkstatt">Weihnachtswerkstatt</button>
       </div>
 
@@ -268,10 +268,10 @@
 
           <select id="produktKategorie">
             <option value="">Kategorie auswählen</option>
-            <option value="Momente des Innehaltens">Momente des Innehaltens</option>
-            <option value="Gemeinsame Zeit">Gemeinsame Zeit</option>
-            <option value="Raum für Natur">Raum für Natur</option>
-            <option value="Kleine Schätze">Kleine Schätze</option>
+            <option value="Momente des Innehaltens">Tassen &amp; Becher</option>
+            <option value="Gemeinsame Zeit">Teller, Schalen &amp; Löffel</option>
+            <option value="Raum für Natur">Vasen &amp; Blumentöpfe</option>
+            <option value="Kleine Schätze">Kleine Schätze · Deko &amp; mehr</option>
             <option value="Weihnachtswerkstatt">Weihnachtswerkstatt</option>
             <option value="Leder">Leder</option>
           </select>
@@ -1182,7 +1182,7 @@
             <span>${statusText}</span>
 
             <div style="margin-top:10px;line-height:1.6;">
-              <div><strong>Kategorie:</strong> ${product.category || "–"}</div>
+              <div><strong>Kategorie:</strong> ${({"Momente des Innehaltens":"Tassen &amp; Becher","Gemeinsame Zeit":"Teller, Schalen &amp; Löffel","Raum für Natur":"Vasen &amp; Blumentöpfe","Kleine Schätze":"Kleine Schätze · Deko &amp; mehr"})[product.category] || product.category || "–"}</div>
               <div><strong>Preis:</strong> ${product.price ? (Number(product.price) / 100).toFixed(2).replace(".", ",") + " €" : "–"}</div>
               <div><strong>Maß:</strong> ${product.measure || "–"}</div>
               <div><strong>Beschreibung:</strong> ${product.description || "–"}</div>
