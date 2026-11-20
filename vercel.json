@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/produkte",
+      "destination": "/api/products?overview=1"
+    },
+    {
       "source": "/produkt/:id",
       "destination": "/api/products?seo=1&id=:id"
     },

@@ -1,5 +1,5 @@
 import { refreshExpiredStripeClaims } from '../lib/checkout-stock.js';
-import { serveProductPage, serveProductSitemap, serveMerchantFeed } from '../lib/seo.js';
+import { serveProductPage, serveProductSitemap, serveMerchantFeed, serveProductOverview } from '../lib/seo.js';
 
 // Dragemor Pottery: schneller Produktkatalog mit Bildern über dieselbe API.
 // Funktioniert mit Vercel Hobby: keine zusätzliche api/product-image.js nötig.
@@ -9,6 +9,7 @@ import { serveProductPage, serveProductSitemap, serveMerchantFeed } from '../lib
 //   /api/products?image=1&id=PRODUKT-ID -> erstes Bild als Bildantwort
 export default async function handler(req, res) {
   // SEO-Seiten über dieselbe bestehende API ausliefern; unverändertes Katalogverhalten darunter.
+  if (req.query?.overview === '1') return serveProductOverview(req, res);
   if (req.query?.seo === '1') return serveProductPage(req, res);
   if (req.query?.sitemap === '1') return serveProductSitemap(req, res);
   if (req.query?.merchant === '1') return serveMerchantFeed(req, res);
