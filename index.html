@@ -4823,10 +4823,6 @@ section,
         <h3>Kleine Schätze</h3>
         <p>Dekoration für Haus und Garten – Kerzenhalter, Seifenschalen und besondere Einzelstücke</p>
       </button>
-      <button class="shop-category-choice special" onclick="navigateShop('collection','weihnachten')">
-        <h3>Weihnachtswerkstatt</h3>
-        <p>Handgefertigte Stücke für die Weihnachtszeit</p>
-      </button>
       <button class="shop-category-choice special" onclick="navigateShop('collection','leder')">
         <h3>Leder</h3>
         <p>Handgefertigte Lederarbeiten</p>
@@ -4852,7 +4848,6 @@ section,
         <button type="button" class="dp-nav-trigger">Produkte <span>⌄</span></button>
         <div class="dp-dropdown">
           <a href="javascript:void(0)" onclick="openCollection('keramik'); return false;">Keramik</a>
-          <a href="javascript:void(0)" onclick="openCollection('weihnachten'); return false;">Weihnachtswerkstatt</a>
           <a href="javascript:void(0)" onclick="openCollection('leder'); return false;">Leder</a>
         </div>
       </div>
@@ -4916,7 +4911,6 @@ section,
   <nav class="dp-mobile-nav" aria-label="Mobile Navigation">
     <a href="#start" onclick="document.body.classList.remove('dp-menu-open')">Startseite</a>
     <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('keramik'); return false;">Keramik</a>
-    <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('weihnachten'); return false;">Weihnachtswerkstatt</a>
     <a href="javascript:void(0)" onclick="document.body.classList.remove('dp-menu-open'); openCollection('leder'); return false;">Leder</a>
     <a href="#maerkte" onclick="document.body.classList.remove('dp-menu-open')">Märkte</a>
     <a href="#ueber-mich" onclick="document.body.classList.remove('dp-menu-open')">Über mich</a>
@@ -5809,7 +5803,6 @@ section,
         <div id="shop-tabs" class="shop-tabs">
             <button class="shop-tab" id="tab-keramik" onclick="renderCollection('keramik')">Keramik</button>
             <button class="shop-tab" id="tab-leder" onclick="renderCollection('leder')">Lederarbeiten</button>
-            <button class="shop-tab" id="tab-weihnachten" onclick="renderCollection('weihnachten')">Weihnachtswerkstatt ✦</button>
         </div>
 
         <div id="collection-grid" class="collection-grid"></div>
@@ -6312,7 +6305,8 @@ function dragemorDisplayName(product) {
                 ["Momente des Innehaltens", "Für Kaffee und Tee – auch Krüge und Kännchen."],
                 ["Gemeinsame Zeit", "Geschirr und Löffel zum Essen und Servieren."],
                 ["Raum für Natur", "Vasen, Blumentöpfe und Steckvasen."],
-                ["Kleine Schätze", "Dekoration für Haus und Garten – Kerzenhalter, Seifenschalen und besondere Einzelstücke."]
+                ["Kleine Schätze", "Dekoration für Haus und Garten – Kerzenhalter, Seifenschalen und besondere Einzelstücke."],
+                ["Weihnachtswerkstatt", "Handgefertigte Stücke für die Advents- und Weihnachtszeit."]
             ];
             const choices = document.createElement("div");
             choices.className = "shop-category-choice-grid";
@@ -6322,7 +6316,7 @@ function dragemorDisplayName(product) {
                 button.type = "button";
                 button.className = "shop-category-choice";
                 button.innerHTML = `<h3>${ceramicCategoryLabel(category)}</h3><p>${description}</p>`;
-                button.onclick = () => category === "Alle Keramik" ? renderAllCeramics() : openShopCategory(category);
+                button.onclick = () => category === "Alle Keramik" ? renderAllCeramics() : category === "Weihnachtswerkstatt" ? openCollection("weihnachten") : openShopCategory(category);
                 choices.appendChild(button);
             });
             grid.appendChild(choices);
